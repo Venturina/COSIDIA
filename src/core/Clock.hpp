@@ -1,0 +1,33 @@
+#ifndef _CLOCK_HPP_LSDNFO
+#define _CLOCK_HPP_LSDNFO
+
+#include <chrono>
+
+namespace paresis
+{
+namespace core
+{
+
+
+
+class Clock
+{
+public:
+    Clock(float simSpeed) : mSimSpeed(simSpeed) {}
+
+    uint64_t getSimTimeNow();
+    void updateSimTime(uint64_t);  // is called whenever the simulation executes an event
+    std::chrono::time_point<std::chrono::high_resolution_clock> getRealTimeForSimTime(); // returns expected RealTime for given SimTime
+    std::chrono::nanoseconds getDurationUntil(uint64_t);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
+
+private:
+    float mSimSpeed;
+
+    std::chrono::time_point<std::chrono::high_resolution_clock> mStartTime;
+    uint64_t mSimTime = 0; // in ns
+};
+
+} // ns core
+} // ns paresis
+
+#endif /* _CLOCK_HPP_LSDNFO */
