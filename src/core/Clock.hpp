@@ -9,7 +9,9 @@ namespace paresis
 class Clock
 {
 public:
-    Clock(float simSpeed) : mSimSpeed(simSpeed) {}
+    Clock(float simSpeed) : mSimSpeed(simSpeed) {
+        mStartTime = std::chrono::high_resolution_clock::now();
+    }
 
     uint64_t getSimTimeNow();
     void updateSimTime(uint64_t);  // is called whenever the simulation executes an event

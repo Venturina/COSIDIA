@@ -26,7 +26,7 @@ private:
     Clock mClock;
     boost::asio::io_service mIoService;
     ActionList mActions;
-    ConstActionP mCurrentAction;
+    ActionP mCurrentAction;
 
     boost::fibers::condition_variable mConditionClose;
     bool mIsFinished = false;

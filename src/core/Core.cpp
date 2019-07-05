@@ -35,16 +35,20 @@ void Core::setup()
     // spawn thread
         //threads.emplace_back( thread, 4);
 
-    auto test = new BaseObject;
-    // auto medium = std::make_shared<BaseObject>(test);
+    MediumAccess m;
 
-    //Action a(1000000, Action::Kind::START, 1000000, medium);
-    // Action b(1000000, Action::Kind::START, 1000000, &medium);
-    // Action c(1000000, Action::Kind::START, 1000000, &medium);
+    auto medium = std::make_shared<BaseObject>(m);
 
-    // mActions.insertAction(std::make_shared<Action>(&a));
-    // mActions.insertAction(std::make_shared<Action>(&b));
-    // mActions.insertAction(std::make_shared<Action>(&c));
+
+
+    Action a(uint32_t(1000000), Action::Kind::START, uint64_t(1000000), medium);
+    Action b(uint32_t(1000000), Action::Kind::START, uint64_t(1000000), medium);
+    Action c(uint32_t(1000000), Action::Kind::START, uint64_t(1000000), medium);
+
+    mActions.insertAction(std::make_shared<Action>(a));
+    std::cout << "insert" << std::endl;
+    mActions.insertAction(std::make_shared<Action>(b));
+    mActions.insertAction(std::make_shared<Action>(c));
 
 }
 
@@ -55,6 +59,7 @@ void Core::runSimulationLoop()
         sleep(5);
         finishSimulation();
     } else {
+        std::cout << "pick next action" << std::endl;
         boost::asio::high_resolution_timer t(mIoService, mClock.getTimePointforSimTime(mCurrentAction->getStartTime()));
         t.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
     }
@@ -65,7 +70,11 @@ void Core::executeActionOnFinishedTimer()
     if(!(mCurrentAction == mActions.getNextAction())) {
         throw std::runtime_error("messed up with upcoming tasks");
     } else {
-
+        auto l = mCurrentAction->getAffected();
+        for(auto & elem : *l)
+        {
+            elem->execute(mCurrentAction);
+        }
     }
 }
 

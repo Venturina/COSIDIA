@@ -11,8 +11,9 @@ namespace paresis
 class BaseObject
 {
 public:
+    BaseObject() {};
     virtual void execute(std::shared_ptr<Action>);
-    virtual void startExecution(std::shared_ptr<Action>) {};
+    virtual void startExecution(std::shared_ptr<Action>) {std::cout << "base action start" << std::endl;};
     virtual void endExecution(std::shared_ptr<Action>) {};
     virtual void initObject(std::shared_ptr<Action>) {};
     virtual ObjectContext copyContext() {};

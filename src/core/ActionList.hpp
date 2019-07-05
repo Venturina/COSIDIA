@@ -21,7 +21,7 @@ public:
     ActionList();
     void insertAction(ActionP);
     ActionP popNextAction();
-    ConstActionP getNextAction() const;
+    ActionP getNextAction();
 
 
 private:

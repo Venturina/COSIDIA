@@ -8,10 +8,7 @@
 
 namespace paresis
 {
-namespace object
-{
     class BaseObject;
-}
 }
 
 namespace paresis
@@ -33,9 +30,10 @@ public:
     };
 
     //Action(uint32_t duration) : mDuration(duration) {}
-    Action(uint32_t duration, Kind k, uint64_t start, std::shared_ptr<object::BaseObject>);
+    Action(uint32_t duration, Kind k, uint64_t start, std::shared_ptr<BaseObject>);
     uint64_t getStartTime() const { return mStartTime; }
     Kind getKind() { return mKind; }
+    std::list<std::shared_ptr<BaseObject>>* getAffected() { return &mAffectedObjects; };
 
 
 protected:
@@ -63,7 +61,7 @@ protected:
     /**
      * All objects which are affected by this action
      */
-    std::list<std::shared_ptr<object::BaseObject>> mAffectedObjects;
+    std::list<std::shared_ptr<BaseObject>> mAffectedObjects;
 
 private:
     Kind mKind;
