@@ -5,10 +5,6 @@
 
 namespace paresis
 {
-namespace core
-{
-
-
 
 class Clock
 {
@@ -28,7 +24,6 @@ private:
     uint64_t mSimTime = 0; // in ns
 };
 
-} // ns core
 } // ns paresis
 
 #endif /* _CLOCK_HPP_LSDNFO */

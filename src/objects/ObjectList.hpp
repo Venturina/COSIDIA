@@ -7,8 +7,6 @@
 
 namespace paresis
 {
-namespace object
-{
 
 using ObjectContainer = std::shared_ptr<std::list<std::shared_ptr<BaseObject>>>;
 using ObjectContainerList = std::list<std::shared_ptr<BaseObject>>;
@@ -25,6 +23,5 @@ private:
     ObjectContainer mCurrentCopy;
 };
 
-}
 }
 #endif /* _OBJECT_LIST_NVOS */

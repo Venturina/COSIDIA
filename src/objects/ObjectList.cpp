@@ -2,8 +2,6 @@
 
 namespace paresis
 {
-namespace object
-{
 
 void ObjectList::addToObjectContainer(BaseObject& object)
 {
@@ -16,5 +14,4 @@ ObjectContainer ObjectList::getCurrentObjectList()
     return mCurrentCopy;
 }
 
-}
 }

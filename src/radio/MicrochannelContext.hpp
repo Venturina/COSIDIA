@@ -7,9 +7,6 @@
 
 namespace paresis
 {
-namespace radio
-{
-
 
 class MicrochannelContext : public ObjectContext
 {
@@ -19,7 +16,6 @@ private:
     std::vector<Transmission> activeTransmissions;
 };
 
-}
 }
 
 #endif /* MICROCHANNEL_CONTEXT_HPP_ */

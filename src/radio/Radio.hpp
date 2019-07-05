@@ -5,21 +5,17 @@
 
 namespace paresis
 {
-namespace radio
-{
 
-class Radio : public object::BaseObject
+class Radio : public BaseObject
 {
 public:
-    void startExecution(std::shared_ptr<core::Action>) override;
-    void endExecution(std::shared_ptr<core::Action>) override;
+    void startExecution(std::shared_ptr<Action>) override;
+    void endExecution(std::shared_ptr<Action>) override;
 
 private:
 
 };
 
-
-}
 }
 
 #endif /* _RADIO_HPP_NSDK */

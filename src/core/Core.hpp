@@ -8,9 +8,6 @@
 
 namespace paresis
 {
-namespace core
-{
-
 
 class Core
 {
@@ -40,7 +37,6 @@ private:
 
 };
 
-} // ns core
 } // ns paresis
 
 

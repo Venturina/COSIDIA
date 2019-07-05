@@ -6,12 +6,11 @@
 #include <boost/fiber/operations.hpp>
 #include <iostream>
 
+#include <radio/MediumAccess.hpp>
+
 
 namespace paresis
 {
-namespace core
-{
-
 void Core::startThreads(int thread_count) {
     // thread registers itself at work-stealing scheduler
     boost::fibers::use_scheduling_algorithm< boost::fibers::algo::work_stealing >( thread_count);
@@ -36,7 +35,17 @@ void Core::setup()
     // spawn thread
         //threads.emplace_back( thread, 4);
 
-    // create first task!
+    auto test = new BaseObject;
+    // auto medium = std::make_shared<BaseObject>(test);
+
+    //Action a(1000000, Action::Kind::START, 1000000, medium);
+    // Action b(1000000, Action::Kind::START, 1000000, &medium);
+    // Action c(1000000, Action::Kind::START, 1000000, &medium);
+
+    // mActions.insertAction(std::make_shared<Action>(&a));
+    // mActions.insertAction(std::make_shared<Action>(&b));
+    // mActions.insertAction(std::make_shared<Action>(&c));
+
 }
 
 void Core::runSimulationLoop()
@@ -73,5 +82,4 @@ void Core::finishSimulation()
 }
 
 
-} // ns core
 } // ns paresis

@@ -3,8 +3,6 @@
 
 namespace paresis
 {
-namespace core
-{
 
 bool compareFunction(uint64_t lhs, uint64_t rhs)
 {
@@ -42,5 +40,4 @@ ConstActionP ActionList::getNextAction() const
     }
 }
 
-} // ns core
 } // ns paresis

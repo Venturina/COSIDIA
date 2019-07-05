@@ -2,19 +2,17 @@
 
 namespace paresis
 {
-namespace object
-{
 
-void BaseObject::execute(std::shared_ptr<core::Action> action)
+void BaseObject::execute(std::shared_ptr<Action> action)
 {
     switch (action->getKind()) {
-        case core::Action::Kind::START:
+        case Action::Kind::START:
             startExecution(action);
             break;
-        case core::Action::Kind::END:
+        case Action::Kind::END:
             endExecution(action);
             break;
-        case core::Action::Kind::INIT:
+        case Action::Kind::INIT:
             initObject(action);
             break;
         default:
@@ -22,5 +20,4 @@ void BaseObject::execute(std::shared_ptr<core::Action> action)
     }
 }
 
-}
 }

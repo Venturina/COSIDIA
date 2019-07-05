@@ -6,15 +6,13 @@
 
 namespace paresis
 {
-namespace radio
-{
 
-class MediumAccess : public object::BaseObject
+class MediumAccess : public BaseObject
 {
 public:
     MediumAccess();
-    void startExecution(std::shared_ptr<core::Action>) override;
-    void endExecution(std::shared_ptr<core::Action>) override {};
+    void startExecution(std::shared_ptr<Action>) override;
+    void endExecution(std::shared_ptr<Action>) override {};
 
 private:
     int executeLongOperation();
@@ -23,8 +21,5 @@ private:
 };
 
 
-
-
-}
 }
 #endif /* _MEDIUM_ACCESS_HPP_SDFN */

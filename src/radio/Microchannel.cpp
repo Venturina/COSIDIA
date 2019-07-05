@@ -3,8 +3,6 @@
 
 namespace paresis
 {
-namespace radio
-{
 
 void Microchannel::startExecution(ObjectContext& context)
 {
@@ -16,5 +14,4 @@ void Microchannel::endExecution(ObjectContext& context)
 
 }
 
-}
 }

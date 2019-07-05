@@ -8,8 +8,6 @@
 
 namespace paresis
 {
-namespace core
-{
 
 using ActionP = std::shared_ptr<Action>;
 using ConstActionP = std::shared_ptr<const Action>;
@@ -30,7 +28,6 @@ private:
     std::unique_ptr<ActionMap> mActionMap;
 };
 
-} // ns core
 } // ns paresis
 
 #endif /* _ACTION_LIST_HPP_SDNOL */

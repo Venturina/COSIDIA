@@ -6,16 +6,21 @@
 #include "core/ActionData.hpp"
 #include "objects/ObjectContext.hpp"
 
-class BaseObject;
+namespace paresis
+{
+namespace object
+{
+    class BaseObject;
+}
+}
 
 namespace paresis
 {
-namespace core
-{
 
-/** A action describes a specific action in the paresis system.
+
+/** A action describes
+ *  a specific action in the paresis system.
  * It contains a start time point, a duration and something to execute
- * 
  */
 
 class Action
@@ -27,7 +32,8 @@ public:
         END
     };
 
-    Action(uint32_t duration) : mDuration(duration) {}
+    //Action(uint32_t duration) : mDuration(duration) {}
+    Action(uint32_t duration, Kind k, uint64_t start, std::shared_ptr<object::BaseObject>);
     uint64_t getStartTime() const { return mStartTime; }
     Kind getKind() { return mKind; }
 
@@ -50,21 +56,19 @@ protected:
 
     /**
      * Start time
-     * If startTime == 0, start immediately 
+     * If startTime == 0, start immediately
      */
     uint64_t mStartTime = 0;
 
     /**
      * All objects which are affected by this action
      */
-    std::list<std::shared_ptr<BaseObject>> mAffectedObjects;
+    std::list<std::shared_ptr<object::BaseObject>> mAffectedObjects;
 
 private:
     Kind mKind;
 };
 
-
-} // ns core
 } // ns paresis
 
 

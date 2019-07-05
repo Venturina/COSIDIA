@@ -12,6 +12,7 @@ find_package(Boost COMPONENTS context system fiber thread REQUIRED)
 include_directories(src)
 
 add_executable( paresis
+        src/core/Action.cpp
         src/core/ActionList.cpp
         src/core/Clock.cpp
         src/core/Core.cpp

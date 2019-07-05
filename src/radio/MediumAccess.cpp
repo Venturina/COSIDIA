@@ -3,15 +3,13 @@
 
 namespace paresis
 {
-namespace radio
-{
 
 MediumAccess::MediumAccess()
 {
 
 }
 
-void MediumAccess::startExecution(std::shared_ptr<core::Action>)
+void MediumAccess::startExecution(std::shared_ptr<Action>)
 {
     boost::fibers::packaged_task<int()> pt(std::bind(&MediumAccess::executeLongOperation, this));
 }
@@ -22,5 +20,4 @@ int MediumAccess::executeLongOperation()
     std::cout << "launched on thread: " << my_thread << std::endl;
 }
 
-}
 }

@@ -6,7 +6,7 @@
 int main()
 {
     std::cout << "Hello, World!" << std::endl;
-    paresis::core::Core test;
+    paresis::Core test;
 
     while(true) {};
 

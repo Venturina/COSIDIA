@@ -7,23 +7,20 @@
 
 namespace paresis
 {
-namespace object
-{
 
 class BaseObject
 {
 public:
-    virtual void execute(std::shared_ptr<core::Action>);
-    virtual void startExecution(std::shared_ptr<core::Action>) {};
-    virtual void endExecution(std::shared_ptr<core::Action>) {};
-    virtual void initObject(std::shared_ptr<core::Action>) {};
+    virtual void execute(std::shared_ptr<Action>);
+    virtual void startExecution(std::shared_ptr<Action>) {};
+    virtual void endExecution(std::shared_ptr<Action>) {};
+    virtual void initObject(std::shared_ptr<Action>) {};
     virtual ObjectContext copyContext() {};
 
 private:
     boost::fibers::fiber* mFiber;
 };
 
-} // ns object
 } // ns paresis
 
 #endif /* _BASE_OBJECT_HPP_ */

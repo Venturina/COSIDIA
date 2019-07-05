@@ -7,10 +7,8 @@
 
 namespace paresis
 {
-namespace radio
-{
 
-class Microchannel : public object::BaseObject
+class Microchannel : public BaseObject
 {
 public:
     void startExecution(ObjectContext&);
@@ -19,7 +17,6 @@ private:
     ObjectContext copyContext();
 };
 
-}
 }
 
 #endif /* _MICROCHANNEL_HPP_OSNSAO */

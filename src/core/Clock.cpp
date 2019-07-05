@@ -4,8 +4,6 @@
 
 namespace paresis
 {
-namespace core
-{
 
 void Clock::updateSimTime(uint64_t newTime)
 {
@@ -36,5 +34,4 @@ std::chrono::time_point<std::chrono::high_resolution_clock> Clock::getTimePointf
     return mStartTime + getDurationUntil(until);
 }
 
-} // ns core
 } // ns paresis

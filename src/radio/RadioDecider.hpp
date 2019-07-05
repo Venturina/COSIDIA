@@ -3,6 +3,6 @@
 
 class RadioDecider {
     
-}
+};
 
 #endif /* RADIO_DECIDER_HPP_LSDNF */
