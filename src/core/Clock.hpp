@@ -19,6 +19,7 @@ public:
     void updateSimTime(uint64_t);  // is called whenever the simulation executes an event
     std::chrono::time_point<std::chrono::high_resolution_clock> getRealTimeForSimTime(); // returns expected RealTime for given SimTime
     std::chrono::nanoseconds getDurationUntil(uint64_t);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
+    std::chrono::time_point<std::chrono::high_resolution_clock>getTimePointforSimTime(uint64_t);
 
 private:
     float mSimSpeed;

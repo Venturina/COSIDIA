@@ -10,13 +10,13 @@ namespace paresis
 namespace radio
 {
 
-class Microchannel : public BaseObject
+class Microchannel : public object::BaseObject
 {
 public:
     void startExecution(ObjectContext&);
     void endExecution(ObjectContext&);
 private:
-    MicrochannelContext copyContext();
+    ObjectContext copyContext();
 };
 
 }

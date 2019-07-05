@@ -4,6 +4,7 @@
 #include <list>
 #include <memory>
 #include "core/ActionData.hpp"
+#include "objects/ObjectContext.hpp"
 
 class BaseObject;
 
@@ -20,7 +21,15 @@ namespace core
 class Action
 {
 public:
+    enum class Kind {
+        INIT,
+        START,
+        END
+    };
+
     Action(uint32_t duration) : mDuration(duration) {}
+    uint64_t getStartTime() const { return mStartTime; }
+    Kind getKind() { return mKind; }
 
 
 protected:
@@ -28,6 +37,11 @@ protected:
      * Action Data contains the needed data provided for action (like transmissions)
      */
     ActionData mActionData;
+
+    /**
+     * Contains all object related data
+     */
+    ObjectContext mObjectContext;
 
     /**
      * Time after which the gathering action should be scheduled
@@ -44,6 +58,9 @@ protected:
      * All objects which are affected by this action
      */
     std::list<std::shared_ptr<BaseObject>> mAffectedObjects;
+
+private:
+    Kind mKind;
 };
 
 

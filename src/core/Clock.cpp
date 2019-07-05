@@ -13,7 +13,6 @@ void Clock::updateSimTime(uint64_t newTime)
     mSimTime = newTime;
 }
 
-
 std::chrono::time_point<std::chrono::high_resolution_clock> Clock::getRealTimeForSimTime()
 {
     return mStartTime + std::chrono::nanoseconds(static_cast<uint64_t>(mSimTime * mSimSpeed));
@@ -30,6 +29,11 @@ std::chrono::nanoseconds Clock::getDurationUntil(uint64_t until)
 {
     updateSimTime(getSimTimeNow());
     return std::chrono::nanoseconds(static_cast<uint64_t>((until - mSimTime) * mSimSpeed));
+}
+
+std::chrono::time_point<std::chrono::high_resolution_clock> Clock::getTimePointforSimTime(uint64_t until)
+{
+    return mStartTime + getDurationUntil(until);
 }
 
 } // ns core
