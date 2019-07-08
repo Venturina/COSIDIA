@@ -2,9 +2,10 @@
 #define _CORE_HPP_ONSO
 
 #include <boost/asio.hpp>
+#include "boost/asio/steady_timer.hpp"
 #include <boost/fiber/condition_variable.hpp>
 #include "core/ActionList.hpp"
-#include "core/Clock.hpp"
+#include "core/SteadyClock.hpp"
 
 namespace paresis
 {
@@ -23,8 +24,9 @@ private:
 
     void executeActionOnFinishedTimer();
 
-    Clock mClock;
+    SteadyClock mClock;
     boost::asio::io_service mIoService;
+    boost::asio::steady_timer mTimer;
     ActionList mActions;
     ActionP mCurrentAction;
 

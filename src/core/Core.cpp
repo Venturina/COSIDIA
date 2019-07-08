@@ -1,10 +1,10 @@
 #include "core/Core.hpp"
-#include "boost/asio/high_resolution_timer.hpp"
 #include <boost/bind.hpp>
 #include <boost/fiber/algo/work_stealing.hpp>
 #include <boost/fiber/fiber.hpp>
 #include <boost/fiber/operations.hpp>
 #include <iostream>
+#include <sstream>
 
 #include <radio/MediumAccess.hpp>
 
@@ -14,14 +14,18 @@ namespace paresis
 void Core::startThreads(int thread_count) {
     // thread registers itself at work-stealing scheduler
     boost::fibers::use_scheduling_algorithm< boost::fibers::algo::work_stealing >( thread_count);
-    std::thread::id my_thread = std::this_thread::get_id();
-    std::cout << "launched thread: " << my_thread << std::endl;
+
+    std::stringstream str;
+    str << "launched thread: " << std::this_thread::get_id();
+    std::cout <<  str.str() << std::endl;
     std::unique_lock< boost::fibers::mutex > lk( mFiberMutex);
     mConditionClose.wait(lk, [this](){ return this->mIsFinished; });
-    std::cout << "finished thread" << my_thread << std::endl;
+    str.str("");
+    str << "finished thread: " << std::this_thread::get_id();
+    std::cout << str.str() << std::endl;
 }
 
-Core::Core() : mClock(Clock(1))
+Core::Core() : mClock(SteadyClock(1)), mTimer(mIoService)
 {
     setup();
     mIoService.run();
@@ -30,23 +34,24 @@ Core::Core() : mClock(Clock(1))
 
 void Core::setup()
 {
-    t = std::thread(&Core::startThreads, this, 2);
-    t2 = std::thread(&Core::startThreads, this, 2);
+    int threadCount = 3;
+    t = std::thread(&Core::startThreads, this, threadCount);
+    t2 = std::thread(&Core::startThreads, this, threadCount);
+    boost::fibers::use_scheduling_algorithm< boost::fibers::algo::work_stealing >( threadCount);
     // spawn thread
         //threads.emplace_back( thread, 4);
 
-    MediumAccess m;
+    //std::shared_ptr<MediumAccess> m;
 
-    auto medium = std::make_shared<BaseObject>(m);
+    auto medium = std::make_shared<MediumAccess>();
+    auto medium1 = std::make_shared<MediumAccess>();
+    auto medium2 = std::make_shared<MediumAccess>();
 
-
-
-    Action a(uint32_t(1000000), Action::Kind::START, uint64_t(1000000), medium);
-    Action b(uint32_t(1000000), Action::Kind::START, uint64_t(1000000), medium);
-    Action c(uint32_t(1000000), Action::Kind::START, uint64_t(1000000), medium);
+    Action a(uint32_t(1e+9), Action::Kind::START, uint64_t(1e+9), medium);
+    Action b(uint32_t(1e+9), Action::Kind::START, uint64_t(1e+9), medium1);
+    Action c(uint32_t(1e+9), Action::Kind::START, uint64_t(1e+9), medium2);
 
     mActions.insertAction(std::make_shared<Action>(a));
-    std::cout << "insert" << std::endl;
     mActions.insertAction(std::make_shared<Action>(b));
     mActions.insertAction(std::make_shared<Action>(c));
 
@@ -54,19 +59,24 @@ void Core::setup()
 
 void Core::runSimulationLoop()
 {
-    mCurrentAction.reset(mActions.getNextAction().get());
+    mCurrentAction = mActions.getNextAction();
     if(!mCurrentAction) {
-        sleep(5);
+        //sleep(5);
         finishSimulation();
     } else {
         std::cout << "pick next action" << std::endl;
-        boost::asio::high_resolution_timer t(mIoService, mClock.getTimePointforSimTime(mCurrentAction->getStartTime()));
-        t.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
+        mTimer.expires_after(mClock.getDurationUntil(mCurrentAction->getStartTime()));
+        mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
+        if(mIoService.stopped()) {
+            mIoService.restart();
+            mIoService.run();
+        }
     }
 }
 
 void Core::executeActionOnFinishedTimer()
 {
+    std::cout << "execute" << std::endl;
     if(!(mCurrentAction == mActions.getNextAction())) {
         throw std::runtime_error("messed up with upcoming tasks");
     } else {
@@ -75,6 +85,11 @@ void Core::executeActionOnFinishedTimer()
         {
             elem->execute(mCurrentAction);
         }
+        if(mCurrentAction->getDuration() > 0) {
+            mActions.insertAction(std::make_shared<Action>(0, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), std::move(*(mCurrentAction->getAffected()))));
+        }
+        mActions.popNextAction();
+        runSimulationLoop();
     }
 }
 
@@ -85,6 +100,7 @@ void Core::finishSimulation()
         std::unique_lock<boost::fibers::mutex>lk(mFiberMutex);
         mIsFinished = true;
     }
+    mIoService.stop();
     mConditionClose.notify_all();
     t.join();
     t2.join();

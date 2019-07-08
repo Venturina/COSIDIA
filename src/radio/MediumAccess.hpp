@@ -11,8 +11,8 @@ class MediumAccess : public BaseObject
 {
 public:
     MediumAccess();
-    void startExecution(std::shared_ptr<Action>) override;
-    void endExecution(std::shared_ptr<Action>) override {};
+    virtual void startExecution(std::shared_ptr<Action>) override;
+    virtual void endExecution(std::shared_ptr<Action>) override;
 
 private:
     int executeLongOperation();

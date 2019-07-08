@@ -17,6 +17,7 @@ add_executable( paresis
         src/core/Clock.cpp
         src/core/Core.cpp
         src/core/main.cpp
+        src/core/SteadyClock.cpp
         src/objects/BaseObject.cpp
         src/objects/ObjectContext.cpp
         src/objects/ObjectList.cpp
