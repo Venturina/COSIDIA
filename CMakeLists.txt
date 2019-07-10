@@ -18,6 +18,7 @@ add_executable( paresis
         src/core/Core.cpp
         src/core/main.cpp
         src/core/SteadyClock.cpp
+        src/fiber/customWorkStealing.cpp
         src/objects/BaseObject.cpp
         src/objects/ObjectContext.cpp
         src/objects/ObjectList.cpp

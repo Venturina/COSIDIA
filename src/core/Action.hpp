@@ -30,10 +30,10 @@ public:
     };
 
     //Action(uint32_t duration) : mDuration(duration) {}
-    Action(uint32_t duration, Kind k, uint64_t start, std::shared_ptr<BaseObject>);
-    Action(uint32_t duration, Kind k, uint64_t start, std::list<std::shared_ptr<BaseObject>>);
+    Action(uint64_t duration, Kind k, uint64_t start, std::shared_ptr<BaseObject>);
+    Action(uint64_t duration, Kind k, uint64_t start, std::list<std::shared_ptr<BaseObject>>);
     uint64_t getStartTime() const { return mStartTime; }
-    uint32_t getDuration() const { return mDuration; }
+    uint64_t getDuration() const { return mDuration; }
     Kind getKind() { return mKind; }
     std::list<std::shared_ptr<BaseObject>>* getAffected() { return &mAffectedObjects; };
 
@@ -52,7 +52,7 @@ protected:
     /**
      * Time after which the gathering action should be scheduled
      */
-    uint32_t mDuration;
+    uint64_t mDuration;
 
     /**
      * Start time

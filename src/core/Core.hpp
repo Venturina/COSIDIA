@@ -20,7 +20,7 @@ private:
     void runSimulationLoop();
     void finishSimulation();
 
-    void startThreads(int);
+    void startThreads(int, std::thread::id);
 
     void executeActionOnFinishedTimer();
 
@@ -34,8 +34,7 @@ private:
     bool mIsFinished = false;
     boost::fibers::mutex mFiberMutex;
 
-    std::thread t;
-    std::thread t2;
+    std::vector<std::thread> mThreads;
 
 };
 

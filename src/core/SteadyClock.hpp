@@ -16,6 +16,10 @@ public:
         mStartTime = std::chrono::steady_clock::now();
     }
 
+    void restart() {
+        mStartTime = std::chrono::steady_clock::now();
+    }
+
     uint64_t getSimTimeNow();
     void updateSimTime(uint64_t);  // is called whenever the simulation executes an event
     std::chrono::time_point<std::chrono::steady_clock> getRealTimeForSimTime(); // returns expected RealTime for given SimTime

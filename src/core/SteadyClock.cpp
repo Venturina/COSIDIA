@@ -34,9 +34,9 @@ std::chrono::nanoseconds SteadyClock::getDurationUntil(uint64_t until)
 std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getTimePointforSimTime(uint64_t until)
 {
     auto u = getDurationUntil(until);
-    std::cout << u.count() << std::endl;
+    //std::cout << u.count() << std::endl;
     auto til = mStartTime + u - std::chrono::steady_clock::now();
-    std::cout << til.count() << std::endl;
+    //std::cout << til.count() << std::endl;
     return mStartTime + getDurationUntil(until);
 }
 
