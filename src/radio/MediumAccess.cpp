@@ -16,7 +16,7 @@ void MediumAccess::startExecution(std::shared_ptr<Action>)
     boost::fibers::packaged_task<int()> pt(std::bind(&MediumAccess::executeLongOperation, this));
     mFuture = pt.get_future();
     boost::fibers::fiber(std::move(pt)).detach();
-    mFuture.wait();
+    
     //fi.wait();
     //assert(fi.get()==42);
 
@@ -34,12 +34,14 @@ int MediumAccess::executeLongOperation()
     {
         x=x+x;
     }
+    //sleep(2);
     return 42;
 }
 
 void MediumAccess::endExecution(std::shared_ptr<Action>)
 {
-    std::cout << mFuture.get() << std::endl;
+    //mFuture.wait();
+    //std::cout << mFuture.get() << std::endl;
 }
 
 }
