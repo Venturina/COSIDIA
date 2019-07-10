@@ -26,8 +26,11 @@ uint64_t SteadyClock::getSimTimeNow()
 std::chrono::nanoseconds SteadyClock::getDurationUntil(uint64_t until)
 {
     updateSimTime(getSimTimeNow());
-    auto u = std::chrono::nanoseconds(static_cast<uint64_t>((until - mSimTime) * mSimSpeed));
-    std::cout << u.count() << std::endl;
+    //auto u = std::chrono::nanoseconds(static_cast<uint64_t>((until - mSimTime) * mSimSpeed));
+    int64_t s = (int64_t)mSimTime - until;
+    //std::cout << (int64_t)mSimTime << std::endl;
+    //std::cout << until << std::endl;
+    //std::cout << s << std::endl;
     return std::chrono::nanoseconds(static_cast<uint64_t>((until - mSimTime) * mSimSpeed));
 }
 

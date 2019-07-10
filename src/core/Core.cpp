@@ -51,7 +51,7 @@ void Core::setup()
         std::cout <<  str.str() << std::endl;
     }
 
-    for(unsigned x = 0; x < concurentThreadsSupported-1; x++) {
+    for(unsigned x = 0; x < concurentThreadsSupported-2; x++) {
         mThreads.emplace_back(&Core::startThreads, this, concurentThreadsSupported, std::this_thread::get_id());
     }
 
@@ -60,7 +60,7 @@ void Core::setup()
     for (int x = 0; x < 200; x++)
     {
         auto m = std::make_shared<MediumAccess>();
-        Action a(uint64_t(3e+9), Action::Kind::START, uint64_t(1e+9), m);
+        Action a(uint64_t(3e+9), Action::Kind::START, uint64_t((1e+9) + 100000*x), m);
         mActions.insertAction(std::make_shared<Action>(a));
     }
 
@@ -86,10 +86,12 @@ void Core::runSimulationLoop()
         //sleep(5);
         finishSimulation();
     } else {
-        std::cout << "next action in: ";
-        auto t = mClock.getDurationUntil(mCurrentAction->getStartTime());
+        //std::cout << "next action in: ";
+        //auto t = mClock.getDurationUntil(mCurrentAction->getStartTime());
+        auto expiry = mClock.getDurationUntil(mCurrentAction->getStartTime());
         mTimer.expires_after(mClock.getDurationUntil(mCurrentAction->getStartTime()));
         mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
+        //std::cout << (int64_t)mClock.getSimTimeNow() - (int64_t)mCurrentAction->getStartTime() << std::endl;
     }
 }
 
@@ -103,6 +105,7 @@ void Core::executeActionOnFinishedTimer()
         {
             elem->execute(mCurrentAction);
         }
+        std::cout << (int64_t)mClock.getSimTimeNow() - (int64_t)mCurrentAction->getStartTime() << std::endl;
         if(mCurrentAction->getDuration() > 0) {
             mActions.insertAction(std::make_shared<Action>(0, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), std::move(*(mCurrentAction->getAffected()))));
         }

@@ -8,7 +8,5 @@ int main()
     std::cout << "Hello, World!" << std::endl;
     paresis::Core test;
 
-    while(true) {};
-
     return 0;
 }
