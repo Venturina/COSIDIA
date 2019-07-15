@@ -47,7 +47,7 @@ void Core::setup()
     // t4 = std::thread(&Core::startThreads, this, threadCount, std::this_thread::get_id());
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
     // spawn thread
-    unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
+    int concurentThreadsSupported = std::thread::hardware_concurrency();
     if(concurentThreadsSupported == 0) {
         throw(std::runtime_error("Could not detect number of cores"));
     } else {
@@ -56,16 +56,16 @@ void Core::setup()
         std::cout <<  str.str() << std::endl;
     }
 
-    for(unsigned x = 0; x < concurentThreadsSupported-1; x++) {
+    for(unsigned x = 0; x < std::min(concurentThreadsSupported-2, 30 ); x++) {
         mThreads.emplace_back(&Core::startThreads, this, concurentThreadsSupported, std::this_thread::get_id());
     }
 
     //std::shared_ptr<MediumAccess> m;
 
-    for (int x = 0; x < 200; x++)
+    for (int x = 0; x < 10000; x++)
     {
         auto m = std::make_shared<MediumAccess>(this);
-        Action a(std::chrono::nanoseconds{int(3e+9)}, Action::Kind::START, std::chrono::nanoseconds{int(1e+9 + 100000*x)}, m);
+        Action a(std::chrono::nanoseconds{int(3e+9)}, Action::Kind::START, std::chrono::nanoseconds{int(1e+9 + 1000000*x)}, m);
         mActions.insertAction(std::make_shared<Action>(a));
     }
 
@@ -94,6 +94,7 @@ void Core::runSimulationLoop()
         //std::cout << "next action in: ";
         //auto t = mClock.getDurationUntil(mCurrentAction->getStartTime());
         auto expiry = mClock.getDurationUntil(mCurrentAction->getStartTime());
+        std::cout << mClock.getDurationUntil(mCurrentAction->getStartTime()).count() << std::endl;
         mTimer.expires_after(mClock.getDurationUntil(mCurrentAction->getStartTime()));
         mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
         //std::cout << (int64_t)mClock.getSimTimeNow() - (int64_t)mCurrentAction->getStartTime() << std::endl;
@@ -110,7 +111,7 @@ void Core::executeActionOnFinishedTimer()
         {
             elem->execute(mCurrentAction);
         }
-        std::cout << (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count() << std::endl;
+        //std::cout << (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count() << std::endl;
         if(mCurrentAction->getKind() == Action::Kind::START && mCurrentAction->getDuration() > std::chrono::nanoseconds{0}) {
             mActions.insertAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), std::move(*(mCurrentAction->getAffected()))));
         }
