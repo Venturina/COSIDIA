@@ -14,7 +14,7 @@ using ObjectContainerList = std::list<std::shared_ptr<BaseObject>>;
 
 class ObjectList
 {
-    void addToObjectContainer(BaseObject&);
+    void addToObjectContainer(std::shared_ptr<BaseObject>);
     void removeObjectById(int id);
     ObjectContainer getCurrentObjectList();
 

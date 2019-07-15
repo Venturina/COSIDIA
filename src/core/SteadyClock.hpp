@@ -12,7 +12,7 @@ namespace paresis
 class SteadyClock
 {
 public:
-    SteadyClock(float simSpeed) : mSimSpeed(simSpeed) {
+    SteadyClock(float simSpeed) : mSimSpeed(simSpeed), mSimTime(0) {
         mStartTime = std::chrono::steady_clock::now();
     }
 
@@ -20,17 +20,17 @@ public:
         mStartTime = std::chrono::steady_clock::now();
     }
 
-    uint64_t getSimTimeNow();
-    void updateSimTime(uint64_t);  // is called whenever the simulation executes an event
+    std::chrono::nanoseconds getSimTimeNow();
+    void updateSimTime(std::chrono::nanoseconds);  // is called whenever the simulation executes an event
     std::chrono::time_point<std::chrono::steady_clock> getRealTimeForSimTime(); // returns expected RealTime for given SimTime
-    std::chrono::nanoseconds getDurationUntil(uint64_t);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
-    std::chrono::time_point<std::chrono::steady_clock>getTimePointforSimTime(uint64_t);
+    std::chrono::nanoseconds getDurationUntil(std::chrono::nanoseconds);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
+    std::chrono::time_point<std::chrono::steady_clock> getTimePointforSimTime(std::chrono::nanoseconds);
 
 private:
     float mSimSpeed;
 
     std::chrono::time_point<std::chrono::steady_clock> mStartTime;
-    uint64_t mSimTime = 0; // in ns
+    std::chrono::nanoseconds mSimTime; // in ns
 };
 
 } // ns paresis

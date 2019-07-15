@@ -1,3 +1,4 @@
+#include "core/Core.hpp"
 #include "radio/MediumAccess.hpp"
 #include "boost/fiber/future.hpp"
 #include <sstream>
@@ -6,7 +7,7 @@
 namespace paresis
 {
 
-MediumAccess::MediumAccess()
+MediumAccess::MediumAccess(Core* c) : BaseObject(c)
 {
 
 }
@@ -41,7 +42,7 @@ int MediumAccess::executeLongOperation()
 void MediumAccess::endExecution(std::shared_ptr<Action>)
 {
     //mFuture.wait();
-    //std::cout << mFuture.get() << std::endl;
+    std::cout << mFuture.get() << std::endl;
 }
 
 }

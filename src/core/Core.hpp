@@ -14,7 +14,12 @@ class Core
 {
 public:
     Core();
-    
+
+    int getNextObjectId();
+    int getNextActionId();
+
+    void scheduleAction();
+
 private:
     void setup();
     void runSimulationLoop();
@@ -35,6 +40,9 @@ private:
     boost::fibers::mutex mFiberMutex;
 
     std::vector<std::thread> mThreads;
+
+    int mCurrentObjectId;
+    int mCurrentActionId;
 
 };
 

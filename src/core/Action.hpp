@@ -1,6 +1,8 @@
 #ifndef _ACTION_HPP_NVOS
 #define _ACTION_HPP_NVOS
 
+
+#include <chrono>
 #include <list>
 #include <memory>
 #include "core/ActionData.hpp"
@@ -30,10 +32,10 @@ public:
     };
 
     //Action(uint32_t duration) : mDuration(duration) {}
-    Action(uint64_t duration, Kind k, uint64_t start, std::shared_ptr<BaseObject>);
-    Action(uint64_t duration, Kind k, uint64_t start, std::list<std::shared_ptr<BaseObject>>);
-    uint64_t getStartTime() const { return mStartTime; }
-    uint64_t getDuration() const { return mDuration; }
+    Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, std::shared_ptr<BaseObject>);
+    Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, std::list<std::shared_ptr<BaseObject>>);
+    std::chrono::nanoseconds getStartTime() const { return mStartTime; }
+    std::chrono::nanoseconds getDuration() const { return mDuration; }
     Kind getKind() { return mKind; }
     std::list<std::shared_ptr<BaseObject>>* getAffected() { return &mAffectedObjects; };
 
@@ -52,13 +54,13 @@ protected:
     /**
      * Time after which the gathering action should be scheduled
      */
-    uint64_t mDuration;
+    std::chrono::nanoseconds mDuration;
 
     /**
      * Start time
      * If startTime == 0, start immediately
      */
-    uint64_t mStartTime = 0;
+    std::chrono::nanoseconds mStartTime;
 
     /**
      * All objects which are affected by this action

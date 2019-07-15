@@ -7,12 +7,16 @@
 namespace paresis
 {
 
+class Core;
+
 class MediumAccess : public BaseObject
 {
 public:
-    MediumAccess();
+    MediumAccess(Core* c);
     virtual void startExecution(std::shared_ptr<Action>) override;
     virtual void endExecution(std::shared_ptr<Action>) override;
+    virtual void initObject(std::shared_ptr<Action>) {};
+    virtual ObjectContext copyContext() {};
 
 private:
     int executeLongOperation();

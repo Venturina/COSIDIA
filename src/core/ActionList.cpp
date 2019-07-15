@@ -4,7 +4,7 @@
 namespace paresis
 {
 
-bool compareFunction(uint64_t lhs, uint64_t rhs)
+bool compareFunction(std::chrono::nanoseconds lhs, std::chrono::nanoseconds rhs)
 {
     return lhs < rhs;
 }
@@ -16,7 +16,7 @@ ActionList::ActionList()
 
 void ActionList::insertAction(ActionP action)
 {
-    mActionMap->insert(std::pair<uint64_t, ActionP>(action->getStartTime(), action));
+    mActionMap->insert(std::pair<std::chrono::nanoseconds, ActionP>(action->getStartTime(), action));
 }
 
 ActionP ActionList::popNextAction()

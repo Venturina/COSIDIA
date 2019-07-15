@@ -5,7 +5,7 @@
 namespace paresis
 {
 
-void SteadyClock::updateSimTime(uint64_t newTime)
+void SteadyClock::updateSimTime(std::chrono::nanoseconds newTime)
 {
     assert(newTime >= mSimTime);
     mSimTime = newTime;
@@ -13,28 +13,28 @@ void SteadyClock::updateSimTime(uint64_t newTime)
 
 std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getRealTimeForSimTime()
 {
-    return mStartTime + std::chrono::nanoseconds(static_cast<uint64_t>(mSimTime * mSimSpeed));
+    return mStartTime + std::chrono::duration_cast<std::chrono::nanoseconds>(mSimTime * mSimSpeed);
 }
 
-uint64_t SteadyClock::getSimTimeNow()
+std::chrono::nanoseconds SteadyClock::getSimTimeNow()
 {
-    auto elapsedRealTime = std::chrono::steady_clock::now() - mStartTime;
-    auto elapsedSimTime = elapsedRealTime * mSimSpeed;
-    return elapsedSimTime.count();
+    std::chrono::nanoseconds elapsedRealTime = std::chrono::steady_clock::now() - mStartTime;
+    std::chrono::nanoseconds elapsedSimTime = std::chrono::duration_cast<std::chrono::nanoseconds>(elapsedRealTime * mSimSpeed);
+    return elapsedSimTime;
 }
 
-std::chrono::nanoseconds SteadyClock::getDurationUntil(uint64_t until)
+std::chrono::nanoseconds SteadyClock::getDurationUntil(std::chrono::nanoseconds until)
 {
     updateSimTime(getSimTimeNow());
     //auto u = std::chrono::nanoseconds(static_cast<uint64_t>((until - mSimTime) * mSimSpeed));
-    int64_t s = (int64_t)mSimTime - until;
+    std::chrono::nanoseconds s = mSimTime - until;
     //std::cout << (int64_t)mSimTime << std::endl;
     //std::cout << until << std::endl;
     //std::cout << s << std::endl;
-    return std::chrono::nanoseconds(static_cast<uint64_t>((until - mSimTime) * mSimSpeed));
+    return std::chrono::duration_cast<std::chrono::nanoseconds>((until - mSimTime) * mSimSpeed);
 }
 
-std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getTimePointforSimTime(uint64_t until)
+std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getTimePointforSimTime(std::chrono::nanoseconds until)
 {
     auto u = getDurationUntil(until);
     //std::cout << u.count() << std::endl;

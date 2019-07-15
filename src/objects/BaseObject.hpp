@@ -8,18 +8,20 @@
 namespace paresis
 {
 
+class Core;
+
 class BaseObject
 {
 public:
-    BaseObject() {};
+    BaseObject(Core* c) : mCore(c) {};
     virtual void execute(std::shared_ptr<Action>);
-    virtual void startExecution(std::shared_ptr<Action>) {std::cout << "base action start" << std::endl;};
-    virtual void endExecution(std::shared_ptr<Action>) {};
-    virtual void initObject(std::shared_ptr<Action>) {};
-    virtual ObjectContext copyContext() {};
+    virtual void startExecution(std::shared_ptr<Action>) = 0;
+    virtual void endExecution(std::shared_ptr<Action>) = 0;
+    virtual void initObject(std::shared_ptr<Action>) = 0;
+    virtual ObjectContext copyContext() = 0;
 
-private:
-    boost::fibers::fiber* mFiber;
+protected:
+    Core* mCore;
 };
 
 } // ns paresis
