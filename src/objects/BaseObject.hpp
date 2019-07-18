@@ -19,9 +19,11 @@ public:
     virtual void endExecution(std::shared_ptr<Action>) = 0;
     virtual void initObject(std::shared_ptr<Action>) = 0;
     virtual ObjectContext copyContext() = 0;
+    virtual void setObjectId(int id) { mObjectId = id; }
 
 protected:
     Core* mCore;
+    uint mObjectId = 0;
 };
 
 } // ns paresis
