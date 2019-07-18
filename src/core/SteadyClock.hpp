@@ -12,6 +12,11 @@ namespace paresis
 class SteadyClock
 {
 public:
+    typedef int64_t rep;
+    typedef std::nano period;
+    typedef std::chrono::duration<rep, period> duration;
+    typedef std::chrono::time_point<SteadyClock> time_point;
+
     SteadyClock(float simSpeed) : mSimSpeed(simSpeed), mSimTime(0) {
         mStartTime = std::chrono::steady_clock::now();
     }
@@ -30,7 +35,7 @@ private:
     float mSimSpeed;
 
     std::chrono::time_point<std::chrono::steady_clock> mStartTime;
-    std::chrono::nanoseconds mSimTime; // in ns
+    duration mSimTime; // in ns
 };
 
 } // ns paresis

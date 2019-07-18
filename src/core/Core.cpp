@@ -64,8 +64,9 @@ void Core::setup()
 
     for (int x = 0; x < 10000; x++)
     {
+        std::cout << "create action" << x  << std::endl;
         auto m = std::make_shared<MediumAccess>(this);
-        Action a(std::chrono::nanoseconds{int(3e+9)}, Action::Kind::START, std::chrono::nanoseconds{int(1e+9 + 1000000*x)}, m);
+        Action a(std::chrono::seconds{1} + std::chrono::nanoseconds{200}, Action::Kind::START, std::chrono::seconds{1} + std::chrono::milliseconds{x}, m);
         mActions.insertAction(std::make_shared<Action>(a));
     }
 
@@ -94,7 +95,7 @@ void Core::runSimulationLoop()
         //std::cout << "next action in: ";
         //auto t = mClock.getDurationUntil(mCurrentAction->getStartTime());
         auto expiry = mClock.getDurationUntil(mCurrentAction->getStartTime());
-        std::cout << mClock.getDurationUntil(mCurrentAction->getStartTime()).count() << std::endl;
+        //std::cout << mClock.getDurationUntil(mCurrentAction->getStartTime()).count() << std::endl;
         mTimer.expires_after(mClock.getDurationUntil(mCurrentAction->getStartTime()));
         mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
         //std::cout << (int64_t)mClock.getSimTimeNow() - (int64_t)mCurrentAction->getStartTime() << std::endl;
@@ -111,7 +112,7 @@ void Core::executeActionOnFinishedTimer()
         {
             elem->execute(mCurrentAction);
         }
-        //std::cout << (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count() << std::endl;
+        std::cout << (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count() << std::endl;
         if(mCurrentAction->getKind() == Action::Kind::START && mCurrentAction->getDuration() > std::chrono::nanoseconds{0}) {
             mActions.insertAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), std::move(*(mCurrentAction->getAffected()))));
         }
