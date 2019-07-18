@@ -6,6 +6,7 @@
 #include <boost/fiber/condition_variable.hpp>
 #include "core/ActionList.hpp"
 #include "core/SteadyClock.hpp"
+#include "objects/ObjectList.hpp"
 
 namespace paresis
 {
@@ -34,6 +35,8 @@ private:
     boost::asio::steady_timer mTimer;
     ActionList mActions;
     ActionP mCurrentAction;
+
+    ObjectList mObjectList;
 
     boost::fibers::condition_variable mConditionClose;
     bool mIsFinished = false;
