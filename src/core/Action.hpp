@@ -54,7 +54,7 @@ protected:
     /**
      * Time after which the gathering action should be scheduled
      */
-    std::chrono::nanoseconds mDuration;
+    std::chrono::duration<int64_t, std::nano> mDuration;
 
     /**
      * Start time
