@@ -23,12 +23,10 @@ public:
 
 private:
     void setup();
-    void runSimulationLoop();
-    void finishSimulation();
-
     void startThreads(int, std::thread::id);
-
+    void runSimulationLoop();
     void executeActionOnFinishedTimer();
+    void finishSimulation();
 
     SteadyClock mClock;
     boost::asio::io_service mIoService;

@@ -12,18 +12,6 @@
 
 namespace paresis
 {
-void Core::startThreads(int thread_count, std::thread::id mainThread) {
-    // thread registers itself at work-stealing scheduler
-    boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
-    std::stringstream str;
-    str << "launched thread: " << std::this_thread::get_id() << " with main thread: " << mainThread;
-    std::cout <<  str.str() << std::endl;
-    std::unique_lock< boost::fibers::mutex > lk( mFiberMutex);
-    mConditionClose.wait(lk, [this](){ return this->mIsFinished; });
-    str.str("");
-    str << "finished thread: " << std::this_thread::get_id();
-    std::cout << str.str() << std::endl;
-}
 
 Core::Core() : mClock(SteadyClock(1)), mTimer(mIoService)
 {
@@ -40,11 +28,6 @@ int Core::getNextActionId()
 
 void Core::setup()
 {
-    int threadCount = 5;
-    // t = std::thread(&Core::startThreads, this, threadCount, std::this_thread::get_id());
-    // t2 = std::thread(&Core::startThreads, this, threadCount, std::this_thread::get_id());
-    // t3 = std::thread(&Core::startThreads, this, threadCount, std::this_thread::get_id());
-    // t4 = std::thread(&Core::startThreads, this, threadCount, std::this_thread::get_id());
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
     // spawn thread
     int concurentThreadsSupported = std::thread::hardware_concurrency();
@@ -60,8 +43,7 @@ void Core::setup()
         mThreads.emplace_back(&Core::startThreads, this, concurentThreadsSupported, std::this_thread::get_id());
     }
 
-    //std::shared_ptr<MediumAccess> m;
-
+    // create dummy actions
     for (int x = 0; x < 10000; x++)
     {
         std::cout << "create action" << x  << std::endl;
@@ -70,19 +52,19 @@ void Core::setup()
         mActions.insertAction(std::make_shared<Action>(a));
     }
 
+}
 
-
-    // auto medium = std::make_shared<MediumAccess>();
-    // auto medium1 = std::make_shared<MediumAccess>();
-    // auto medium2 = std::make_shared<MediumAccess>();
-
-    // Action a(uint64_t(3e+9), Action::Kind::START, uint64_t(1e+9), medium);
-    // Action b(uint64_t(3e+9), Action::Kind::START, uint64_t(2e+9), medium1);
-    // Action c(uint64_t(3e+9), Action::Kind::START, uint64_t(3e+9), medium2);
-
-    // mActions.insertAction(std::make_shared<Action>(a));
-    // mActions.insertAction(std::make_shared<Action>(b));
-    // mActions.insertAction(std::make_shared<Action>(c));
+void Core::startThreads(int thread_count, std::thread::id mainThread) {
+    // thread registers itself at work-stealing scheduler
+    boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
+    std::stringstream str;
+    str << "launched thread: " << std::this_thread::get_id() << " with main thread: " << mainThread;
+    std::cout <<  str.str() << std::endl;
+    std::unique_lock< boost::fibers::mutex > lk( mFiberMutex);
+    mConditionClose.wait(lk, [this](){ return this->mIsFinished; });
+    str.str("");
+    str << "finished thread: " << std::this_thread::get_id();
+    std::cout << str.str() << std::endl;
 }
 
 void Core::runSimulationLoop()
