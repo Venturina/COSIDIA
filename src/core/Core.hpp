@@ -42,8 +42,7 @@ private:
 
     std::vector<std::thread> mThreads;
 
-    int mCurrentObjectId;
-    int mCurrentActionId;
+    std::atomic<long int> mCurrentActionId{0};
 
 };
 

@@ -21,9 +21,15 @@ Core::Core() : mClock(SteadyClock(1)), mTimer(mIoService)
     mIoService.run();
 }
 
+// is this ok?
+int Core::getNextObjectId()
+{
+    return mObjectList.getCurrentObjectId().fetch_add(1, std::memory_order::memory_order_relaxed);
+}
+
 int Core::getNextActionId()
 {
-    return ++mCurrentActionId;
+    return mCurrentActionId.fetch_add(1, std::memory_order::memory_order_relaxed);
 }
 
 void Core::setup()
