@@ -6,6 +6,7 @@
 #include <list>
 #include <memory>
 #include "core/ActionData.hpp"
+#include "core/SteadyClock.hpp"
 #include "objects/ObjectContext.hpp"
 
 namespace paresis
@@ -32,10 +33,10 @@ public:
     };
 
     //Action(uint32_t duration) : mDuration(duration) {}
-    Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, std::shared_ptr<BaseObject>);
-    Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, std::list<std::shared_ptr<BaseObject>>);
-    std::chrono::nanoseconds getStartTime() const { return mStartTime; }
-    std::chrono::nanoseconds getDuration() const { return mDuration; }
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::shared_ptr<BaseObject>);
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<std::shared_ptr<BaseObject>>);
+    SteadyClock::duration getStartTime() const { return mStartTime; }
+    SteadyClock::duration getDuration() const { return mDuration; }
     Kind getKind() { return mKind; }
     std::list<std::shared_ptr<BaseObject>>* getAffected() { return &mAffectedObjects; };
 
@@ -54,13 +55,13 @@ protected:
     /**
      * Time after which the gathering action should be scheduled
      */
-    std::chrono::duration<int64_t, std::nano> mDuration;
+    SteadyClock::duration mDuration;
 
     /**
      * Start time
      * If startTime == 0, start immediately
      */
-    std::chrono::nanoseconds mStartTime;
+    SteadyClock::duration mStartTime;
 
     /**
      * All objects which are affected by this action
