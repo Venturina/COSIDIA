@@ -3,27 +3,28 @@
 
 #include "objects/BaseObject.hpp"
 #include <atomic>
-#include <vector>
+#include <unordered_map>
 
 namespace paresis
 {
 
-using ObjectContainerVector = std::vector<std::shared_ptr<BaseObject>>;
-using ObjectContainer = std::shared_ptr<ObjectContainerVector>;
+using ObjectContainer = std::unordered_map<int, std::shared_ptr<BaseObject>>;
+using ObjectContainer_ptr = std::shared_ptr<ObjectContainer>;
 
 
 
 class ObjectList
 {
 public:
-    void addToObjectContainer(std::shared_ptr<BaseObject>);
+    ObjectList();
+    void addToObjectContainer(int objectId, std::shared_ptr<BaseObject>);
     void removeObjectById(int id);
-    ObjectContainer getCurrentObjectList();
+    ObjectContainer_ptr getCurrentObjectList();
     std::atomic<long int>& getCurrentObjectId() { return mCurrentObjectId; }
 
 private:
-    ObjectContainer mWorkingCopy;
-    ObjectContainer mCurrentCopy;
+    ObjectContainer_ptr mWorkingCopy;
+    ObjectContainer_ptr mCurrentCopy;
 
     std::atomic<long int> mCurrentObjectId{0};
 };

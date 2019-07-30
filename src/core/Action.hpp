@@ -9,14 +9,13 @@
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectContext.hpp"
 
-namespace paresis
-{
-    class BaseObject;
-}
 
 namespace paresis
 {
 
+class BaseObject;
+
+typedef int ActionId;
 
 /** A action describes
  *  a specific action in the paresis system.

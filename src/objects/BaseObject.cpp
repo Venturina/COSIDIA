@@ -1,7 +1,13 @@
+#include "core/Core.hpp"
 #include "objects/BaseObject.hpp"
 
 namespace paresis
 {
+
+BaseObject::BaseObject(Core* c) : mCore(c)
+{
+    mObjectId = mCore->getNextObjectId();
+}
 
 void BaseObject::execute(std::shared_ptr<Action> action)
 {
@@ -13,6 +19,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
             endExecution(action);
             break;
         case Action::Kind::INIT:
+            std::cout << "init ssssssssssssssssssssssssssssssssssssss" << std::endl;
             initObject(action);
             break;
         default:

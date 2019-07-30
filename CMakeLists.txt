@@ -19,9 +19,11 @@ add_executable( paresis
         src/core/main.cpp
         src/core/SteadyClock.cpp
         src/fiber/customWorkStealing.cpp
+        src/mobility/MobilityManager.cpp
         src/objects/BaseObject.cpp
         src/objects/ObjectContext.cpp
         src/objects/ObjectList.cpp
+        src/objects/SimulationManager.cpp
         src/radio/MediumAccess.cpp
         src/radio/Microchannel.cpp
         src/radio/Radio.cpp

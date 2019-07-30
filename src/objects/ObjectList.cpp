@@ -3,13 +3,18 @@
 namespace paresis
 {
 
-void ObjectList::addToObjectContainer(std::shared_ptr<BaseObject> object)
+ObjectList::ObjectList()
 {
-    mWorkingCopy->push_back(object);  // modify current working copy, no changes for other threads
-    mCurrentCopy = std::make_shared<ObjectContainerVector>(*mWorkingCopy);
+    mWorkingCopy = std::make_shared<ObjectContainer>();
 }
 
-ObjectContainer ObjectList::getCurrentObjectList()
+void ObjectList::addToObjectContainer(int objectId, std::shared_ptr<BaseObject> object)
+{
+    (*mWorkingCopy)[objectId] = object;  // modify current working copy, no changes for other threads
+    mCurrentCopy = std::make_shared<ObjectContainer>(*mWorkingCopy);
+}
+
+ObjectContainer_ptr ObjectList::getCurrentObjectList()
 {
     return mCurrentCopy;
 }

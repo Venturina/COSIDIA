@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include <radio/MediumAccess.hpp>
+#include <objects/SimulationManager.hpp>
 
 
 namespace paresis
@@ -32,6 +33,16 @@ int Core::getNextActionId()
     return mCurrentActionId.fetch_add(1, std::memory_order::memory_order_relaxed);
 }
 
+void Core::scheduleAction(std::shared_ptr<Action> action)
+{
+    mActions.insertAction(action);
+}
+
+void Core::addObject(std::shared_ptr<BaseObject> obj)
+{
+    mObjectList.addToObjectContainer(obj->getObjectId(), obj);
+}
+
 void Core::setup()
 {
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
@@ -50,14 +61,16 @@ void Core::setup()
     }
 
     // create dummy actions
-    for (int x = 0; x < 10000; x++)
-    {
-        std::cout << "create action" << x  << std::endl;
-        auto m = std::make_shared<MediumAccess>(this);
-        Action a(std::chrono::seconds{1} + std::chrono::nanoseconds{200}, Action::Kind::START, std::chrono::seconds{1} + std::chrono::milliseconds{x}, m);
-        mActions.insertAction(std::make_shared<Action>(a));
-    }
+    // for (int x = 0; x < 10000; x++)
+    // {
+    //     std::cout << "create action" << x  << std::endl;
+    //     auto m = std::make_shared<MediumAccess>(this);
+    //     Action a(std::chrono::seconds{1} + std::chrono::nanoseconds{200}, Action::Kind::START, std::chrono::seconds{1} + std::chrono::milliseconds{x}, m);
+    //     mActions.insertAction(std::make_shared<Action>(a));
+    // }
 
+    auto manager = std::make_shared<SimulationManager>(this);
+    mObjectList.addToObjectContainer(manager->getObjectId(), manager);
 }
 
 void Core::startThreads(int thread_count, std::thread::id mainThread) {

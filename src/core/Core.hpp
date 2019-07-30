@@ -16,10 +16,28 @@ class Core
 public:
     Core();
 
-    int getNextObjectId();
-    int getNextActionId();
+    /** Fetch the current ObjectId
+     * Atomic fetch_add to increase the counter by one
+     * Can be called from any Fiber!
+     * @return: int ObjectId to use
+     **/
+    ObjectId getNextObjectId();
 
-    void scheduleAction();
+    /** Fetch the current ActionId
+     * Atomic fetch_add to increase the counter by one
+     * Can be called from any Fiber!
+     * @return: int ActionId to use
+     **/
+    ActionId getNextActionId();
+
+    /**
+     * Schedules a new action
+     * Only to be called from main Fiber!
+     * @param: action Action to be scheduled
+     **/
+    void scheduleAction(std::shared_ptr<Action>);
+
+    void addObject(std::shared_ptr<BaseObject>);
 
 private:
     void setup();
