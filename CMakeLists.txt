@@ -21,6 +21,7 @@ add_executable( paresis
         src/fiber/customWorkStealing.cpp
         src/mobility/MobilityManager.cpp
         src/objects/BaseObject.cpp
+        src/objects/ObjectActionManager.cpp
         src/objects/ObjectContext.cpp
         src/objects/ObjectList.cpp
         src/objects/SimulationManager.cpp
