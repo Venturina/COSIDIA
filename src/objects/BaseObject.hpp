@@ -1,10 +1,11 @@
 #ifndef _BASE_OBJECT_HPP_
 #define _BASE_OBJECT_HPP_
 
-#include <boost/fiber/all.hpp>
 #include "core/Action.hpp"
+#include "objects/ObjectActionManager.hpp"
 #include "objects/ObjectContext.hpp"
-#include "set"
+#include <boost/fiber/all.hpp>
+#include <set>
 
 namespace paresis
 {
@@ -33,6 +34,8 @@ protected:
     ObjectId mObjectId = -1;
     ObjectId mParent = -1;
     std::set<ObjectId> mChildIdList;
+
+    ObjectActionManager mActionManager;
 
     Core* mCore;
 

@@ -13,13 +13,17 @@ void BaseObject::execute(std::shared_ptr<Action> action)
 {
     switch (action->getKind()) {
         case Action::Kind::START:
-            startExecution(action);
+            if(!mActionManager.startOrDelay(action)) {
+                startExecution(action);
+            }
             break;
         case Action::Kind::END:
             endExecution(action);
+            if(mActionManager.isActionAvailable()) {
+                startExecution(mActionManager.popNextAction());
+            }
             break;
         case Action::Kind::INIT:
-            std::cout << "init ssssssssssssssssssssssssssssssssssssss" << std::endl;
             initObject(action);
             break;
         default:
