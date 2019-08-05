@@ -23,7 +23,9 @@ public:
     virtual ObjectContext copyContext(){};
 
 private:
+    // this has to go to object context possibly
     std::unordered_set<int> mVehicles;
+
 };
 
 

@@ -13,13 +13,11 @@ SimulationManager::SimulationManager(Core* c) : BaseObject(c)
     s << "id of Simulation Manager: " << mObjectId << std::endl;
     std::cout << s.str();
 
-    //auto mob = std::shared_ptr<MobilityManager>;
-    //mob.reset(new MobilityManager(mCore));
-    //MobilityManager mob(c);
-    auto mob = std::make_shared<MobilityManager>(c);
-    c->addObject(mob);
+    auto mob = std::make_shared<MobilityManager>(mCore);
+    mCore->addObject(mob);
+
     auto firstAction = std::make_shared<Action>(SteadyClock::duration{0}, Action::Kind::INIT, SteadyClock::duration{0}, mob);
-    c->scheduleAction(firstAction);
+    mCore->scheduleAction(firstAction);
 }
 
 } // namespace paresis

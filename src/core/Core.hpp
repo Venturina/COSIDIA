@@ -39,6 +39,8 @@ public:
 
     void addObject(std::shared_ptr<BaseObject>);
 
+    ObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectList(); };
+
 private:
     void setup();
     void startThreads(int, std::thread::id);

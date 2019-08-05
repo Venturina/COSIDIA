@@ -7,6 +7,10 @@ namespace paresis
 BaseObject::BaseObject(Core* c) : mCore(c)
 {
     mObjectId = mCore->getNextObjectId();
+
+    std::stringstream s;
+    s << "id of newly constructed object: " << mObjectId << std::endl;
+    std::cout << s.str();
 }
 
 void BaseObject::execute(std::shared_ptr<Action> action)
