@@ -10,6 +10,7 @@ namespace paresis
 
 using ObjectContainer = std::unordered_map<int, std::shared_ptr<BaseObject>>;
 using ObjectContainer_ptr = std::shared_ptr<ObjectContainer>;
+using AtomicObjectId = std::atomic<long int>;
 
 
 
@@ -20,13 +21,13 @@ public:
     void addToObjectContainer(int objectId, std::shared_ptr<BaseObject>);
     void removeObjectById(int id);
     ObjectContainer_ptr getCurrentObjectList();
-    std::atomic<long int>& getCurrentObjectId() { return mCurrentObjectId; }
+    AtomicObjectId& getCurrentObjectId() { return mCurrentObjectId; }
 
 private:
     ObjectContainer_ptr mWorkingCopy;
     ObjectContainer_ptr mCurrentCopy;
 
-    std::atomic<long int> mCurrentObjectId{0};
+    AtomicObjectId mCurrentObjectId{0};
 };
 
 }
