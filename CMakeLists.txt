@@ -26,8 +26,10 @@ add_executable( paresis
         src/objects/BaseObject.cpp
         src/objects/ObjectActionManager.cpp
         src/objects/ObjectContext.cpp
+        src/objects/ObjectFactory.cpp
         src/objects/ObjectList.cpp
         src/objects/SimulationManager.cpp
+        src/objects/VehicleObject.cpp
         src/radio/MediumAccess.cpp
         src/radio/Microchannel.cpp
         src/radio/Radio.cpp
