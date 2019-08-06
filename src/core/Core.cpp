@@ -7,6 +7,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <loguru/loguru.hpp>
+
 #include <radio/MediumAccess.hpp>
 #include <objects/SimulationManager.hpp>
 
@@ -51,9 +53,7 @@ void Core::setup()
     if(concurentThreadsSupported == 0) {
         throw(std::runtime_error("Could not detect number of cores"));
     } else {
-        std::stringstream str;
-        str << "detected " << concurentThreadsSupported << " concurrent cores";
-        std::cout <<  str.str() << std::endl;
+        DLOG_F(INFO, "detected %d number of concurrent cores", concurentThreadsSupported);
     }
 
     for(unsigned x = 0; x < std::min(concurentThreadsSupported-2, 30 ); x++) {
@@ -76,14 +76,17 @@ void Core::setup()
 void Core::startThreads(int thread_count, std::thread::id mainThread) {
     // thread registers itself at work-stealing scheduler
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
-    std::stringstream str;
-    str << "launched thread: " << std::this_thread::get_id() << " with main thread: " << mainThread;
-    std::cout <<  str.str() << std::endl;
+
+    std::stringstream s;
+    s << std::this_thread::get_id();
+    std::stringstream m;
+    m << mainThread;
+    DLOG_F(INFO, "launched thread: %s with main thread: %s", s.str().c_str(), m.str().c_str());
+
     std::unique_lock< boost::fibers::mutex > lk( mFiberMutex);
     mConditionClose.wait(lk, [this](){ return this->mIsFinished; });
-    str.str("");
-    str << "finished thread: " << std::this_thread::get_id();
-    std::cout << str.str() << std::endl;
+
+    DLOG_F(INFO, "Finished thread: %s", s.str().c_str());
 }
 
 void Core::runSimulationLoop()
@@ -113,7 +116,7 @@ void Core::executeActionOnFinishedTimer()
         {
             elem->execute(mCurrentAction);
         }
-        std::cout << (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count() << std::endl;
+        //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());
         if(mCurrentAction->getKind() == Action::Kind::START && mCurrentAction->getDuration() > std::chrono::nanoseconds{0}) {
             mActions.insertAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), std::move(*(mCurrentAction->getAffected()))));
         }

@@ -1,16 +1,15 @@
 #include "core/Core.hpp"
 #include "objects/BaseObject.hpp"
 
+#include <loguru/loguru.hpp>
+
 namespace paresis
 {
 
 BaseObject::BaseObject(Core* c) : mCore(c)
 {
     mObjectId = mCore->getNextObjectId();
-
-    std::stringstream s;
-    s << "id of newly constructed object: " << mObjectId << std::endl;
-    std::cout << s.str();
+    DLOG_F(INFO, "Constructed BaseObject with id %d", mObjectId);
 }
 
 void BaseObject::execute(std::shared_ptr<Action> action)

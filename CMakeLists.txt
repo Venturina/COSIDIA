@@ -10,8 +10,11 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 find_package(Boost COMPONENTS context system fiber thread REQUIRED)
 
 include_directories(src)
+include_directories(extern)
 
 add_executable( paresis
+        extern/loguru/loguru.cpp
+
         src/core/Action.cpp
         src/core/ActionList.cpp
         src/core/Clock.cpp
@@ -36,4 +39,5 @@ target_link_libraries(paresis
         Boost::system
         Boost::thread
         Boost::fiber
+        ${CMAKE_DL_LIBS}
 )

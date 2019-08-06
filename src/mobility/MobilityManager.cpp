@@ -1,11 +1,14 @@
 #include "core/Core.hpp"
 #include "mobility/MobilityManager.hpp"
 
+#include <loguru/loguru.hpp>
+
 namespace paresis
 {
 
 void MobilityManager::startExecution(std::shared_ptr<Action>)
 {
+    DLOG_F(INFO, "MobilityManager update");
 
 }
 
@@ -21,9 +24,7 @@ void MobilityManager::endExecution(std::shared_ptr<Action> action)
 
 void MobilityManager::initObject(std::shared_ptr<Action> action)
 {
-    std::stringstream s;
-    s << "Id of MobilityManager: " << mObjectId << std::endl;
-    std::cout << s.str() << std::endl;
+    DLOG_F(INFO, "Id of MobilityManager: %d", mObjectId);
 
     auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
         Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),

@@ -1,7 +1,8 @@
 #include "core/Core.hpp"
 #include "objects/SimulationManager.hpp"
-
 #include "mobility/MobilityManager.hpp"
+
+#include <loguru/loguru.hpp>
 
 namespace paresis
 {
@@ -9,14 +10,12 @@ namespace paresis
 SimulationManager::SimulationManager(Core* c) : BaseObject(c)
 {
 
-    std::stringstream s;
-    s << "id of Simulation Manager: " << mObjectId << std::endl;
-    std::cout << s.str();
+    DLOG_F(INFO, "Id of SimulationManager: %d", mObjectId);
 
     auto mob = std::make_shared<MobilityManager>(mCore);
     mCore->addObject(mob);
 
-    auto firstAction = std::make_shared<Action>(SteadyClock::duration{0}, Action::Kind::INIT, SteadyClock::duration{0}, mob);
+    auto firstAction = std::make_shared<Action>(SteadyClock::duration{0}, Action::Kind::INIT, SteadyClock::duration{0}, mob->getObjectId());
     mCore->scheduleAction(firstAction);
 }
 
