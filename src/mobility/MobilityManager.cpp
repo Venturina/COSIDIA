@@ -6,19 +6,18 @@
 namespace paresis
 {
 
-void MobilityManager::startExecution(std::shared_ptr<Action>)
+void MobilityManager::startExecution(std::shared_ptr<Action> action)
 {
     DLOG_F(INFO, "MobilityManager update");
+    auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
+        Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
+        mObjectId); // ugly as hell?
 
+    mCore->scheduleAction(newAction);
 }
 
 void MobilityManager::endExecution(std::shared_ptr<Action> action)
 {
-    auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
-        Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
-        (*mCore->getCurrentObjectList())[mObjectId]); // ugly as hell?
-
-    mCore->scheduleAction(newAction);
 
 }
 
@@ -28,7 +27,7 @@ void MobilityManager::initObject(std::shared_ptr<Action> action)
 
     auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
         Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
-        (*mCore->getCurrentObjectList())[mObjectId]); // ugly as hell?
+        mObjectId); // ugly as hell?
 
     mCore->scheduleAction(newAction);
 
