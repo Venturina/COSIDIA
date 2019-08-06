@@ -32,12 +32,12 @@ public:
     };
 
     //Action(uint32_t duration) : mDuration(duration) {}
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::shared_ptr<BaseObject>);
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<std::shared_ptr<BaseObject>>);
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, int id);
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<int> ids);
     SteadyClock::duration getStartTime() const { return mStartTime; }
     SteadyClock::duration getDuration() const { return mDuration; }
     Kind getKind() { return mKind; }
-    std::list<std::shared_ptr<BaseObject>>* getAffected() { return &mAffectedObjects; };
+    std::list<int>* getAffected() { return &mAffectedObjects; };
 
 
 protected:
@@ -65,7 +65,7 @@ protected:
     /**
      * All objects which are affected by this action
      */
-    std::list<std::shared_ptr<BaseObject>> mAffectedObjects;
+    std::list<int> mAffectedObjects;
 
 private:
     Kind mKind;

@@ -112,9 +112,12 @@ void Core::executeActionOnFinishedTimer()
         throw std::runtime_error("messed up with upcoming tasks");
     } else {
         auto l = mCurrentAction->getAffected();
-        for(auto & elem : *l)
+        for(auto & elemId : *l)
         {
-            elem->execute(mCurrentAction);
+            auto obj = mObjectList.getCurrentObjectList();
+            if (obj) {
+                (*obj)[elemId]->execute(mCurrentAction);
+            }
         }
         //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());
         if(mCurrentAction->getKind() == Action::Kind::START && mCurrentAction->getDuration() > std::chrono::nanoseconds{0}) {
