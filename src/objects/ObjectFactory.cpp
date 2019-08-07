@@ -9,7 +9,7 @@ namespace paresis
 
 std::list<std::shared_ptr<BaseObject>> ObjectFactory::createObject(std::string object)
 {
-    if(object.compare("vehicle")) {
+    if(!object.compare("vehicle")) {
         return createVehicleObject();
     } else {
         throw std::runtime_error("Unknown object requested");
