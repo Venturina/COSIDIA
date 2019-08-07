@@ -17,11 +17,11 @@ void BaseObject::execute(std::shared_ptr<Action> action)
     switch (action->getKind()) {
         case Action::Kind::START:
             if(!mActionManager.startOrDelay(action)) {
-                startExecution(action);
+                startExecution(std::move(action));
             }
             break;
         case Action::Kind::END:
-            endExecution(action);
+            endExecution(std::move(action));
             if(mActionManager.isActionAvailable()) {
                 startExecution(mActionManager.popNextAction());
             }

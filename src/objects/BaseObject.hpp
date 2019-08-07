@@ -22,7 +22,6 @@ public:
     virtual void startExecution(std::shared_ptr<Action>) = 0;
     virtual void endExecution(std::shared_ptr<Action>) = 0;
     virtual void initObject(std::shared_ptr<Action>) = 0;
-    virtual ObjectContext copyContext() = 0;
 
     virtual void setObjectId(int id) { mObjectId = id; }
     virtual void setParent(ObjectId id) { mParent = id; }
