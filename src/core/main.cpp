@@ -11,6 +11,6 @@ int main(int argc, char* argv[])
     loguru::add_file("everything.log", loguru::FileMode::Truncate, loguru::Verbosity_MAX);
     LOG_F(INFO, "Hello World");
     paresis::Core test;
-
+    loguru::shutdown();
     return 0;
 }
