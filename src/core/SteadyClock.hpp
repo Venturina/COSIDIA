@@ -25,13 +25,13 @@ public:
         mStartTime = std::chrono::steady_clock::now();
     }
 
-    std::chrono::nanoseconds getSimTimeNow();
-    void updateSimTime(std::chrono::nanoseconds);  // is called whenever the simulation executes an event
-    std::chrono::time_point<std::chrono::steady_clock> getRealTimeForSimTime(); // returns expected RealTime for given SimTime
-    std::chrono::nanoseconds getDurationUntil(std::chrono::nanoseconds);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
-    std::chrono::time_point<std::chrono::steady_clock> getTimePointforSimTime(std::chrono::nanoseconds);
+    virtual std::chrono::nanoseconds getSimTimeNow();
+    virtual void updateSimTime(std::chrono::nanoseconds);  // is called whenever the simulation executes an event
+    virtual std::chrono::time_point<std::chrono::steady_clock> getRealTimeForCurrentSimTime(); // returns expected RealTime for given SimTime
+    virtual std::chrono::nanoseconds getDurationUntil(std::chrono::nanoseconds);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
+    virtual std::chrono::time_point<std::chrono::steady_clock> getTimePointforSimTime(std::chrono::nanoseconds);
 
-private:
+protected:
     float mSimSpeed;
 
     std::chrono::time_point<std::chrono::steady_clock> mStartTime;
