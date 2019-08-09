@@ -30,6 +30,11 @@ Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService)
     mIoService.run();
 }
 
+int Core::getRandomNumber()
+{
+    return rand();
+}
+
 // is this ok?
 int Core::getNextObjectId()
 {

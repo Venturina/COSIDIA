@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/fiber/condition_variable.hpp>
+#include <stdlib.h>
 #include "core/ActionList.hpp"
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectList.hpp"
@@ -37,9 +38,13 @@ public:
      **/
     void scheduleAction(std::shared_ptr<Action>);
 
+    /** only call from main thread
+     **/
     void addObject(std::shared_ptr<BaseObject>);
 
     ObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectList(); };
+
+    int getRandomNumber();
 
 private:
     void setup();
