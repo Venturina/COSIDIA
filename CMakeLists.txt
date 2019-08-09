@@ -19,6 +19,7 @@ add_executable( paresis
         src/core/ActionList.cpp
         src/core/Clock.cpp
         src/core/Core.cpp
+        src/core/DebugClock.cpp
         src/core/main.cpp
         src/core/SteadyClock.cpp
         src/fiber/customWorkStealing.cpp
