@@ -14,7 +14,7 @@ namespace paresis
 class Core
 {
 public:
-    Core();
+    Core(std::shared_ptr<SteadyClock> = nullptr);
 
     /** Fetch the current ObjectId
      * Atomic fetch_add to increase the counter by one
@@ -48,7 +48,7 @@ private:
     void executeActionOnFinishedTimer();
     void finishSimulation();
 
-    SteadyClock mClock;
+    std::shared_ptr<SteadyClock> mClock;
     boost::asio::io_service mIoService;
     boost::asio::steady_timer mTimer;
     ActionList mActions;

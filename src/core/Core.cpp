@@ -16,9 +16,15 @@
 namespace paresis
 {
 
-Core::Core() : mClock(SteadyClock(1)), mTimer(mIoService)
+Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService)
 {
+    if(!clock) {
+        mClock = std::make_shared<SteadyClock>(1);
+    } else {
+        mClock = clock;
+    }
     setup();
+    srand(100);
     boost::asio::io_service::work work(mIoService);
     runSimulationLoop();
     mIoService.run();
@@ -92,15 +98,15 @@ void Core::startThreads(int thread_count, std::thread::id mainThread) {
 void Core::runSimulationLoop()
 {
     mCurrentAction = mActions.getNextAction();
-    if(!mCurrentAction) {
+    if(!mCurrentAction || mCurrentAction->getStartTime() > std::chrono::seconds(20)) {
         //sleep(5);
         finishSimulation();
     } else {
         //std::cout << "next action in: ";
         //auto t = mClock.getDurationUntil(mCurrentAction->getStartTime());
-        auto expiry = mClock.getDurationUntil(mCurrentAction->getStartTime());
+        auto expiry = mClock->getDurationUntil(mCurrentAction->getStartTime());
         //std::cout << mClock.getDurationUntil(mCurrentAction->getStartTime()).count() << std::endl;
-        mTimer.expires_after(mClock.getDurationUntil(mCurrentAction->getStartTime()));
+        mTimer.expires_after(mClock->getDurationUntil(mCurrentAction->getStartTime()));
         mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
         //std::cout << (int64_t)mClock.getSimTimeNow() - (int64_t)mCurrentAction->getStartTime() << std::endl;
     }
