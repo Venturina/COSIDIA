@@ -81,12 +81,12 @@ void Core::startThreads(int thread_count, std::thread::id mainThread) {
     s << std::this_thread::get_id();
     std::stringstream m;
     m << mainThread;
-    DLOG_F(INFO, "launched thread: %s with main thread: %s", s.str().c_str(), m.str().c_str());
+    LOG_F(INFO, "launched thread: %s with main thread: %s", s.str().c_str(), m.str().c_str());
 
     std::unique_lock< boost::fibers::mutex > lk( mFiberMutex);
     mConditionClose.wait(lk, [this](){ return this->mIsFinished; });
 
-    DLOG_F(INFO, "Finished thread: %s", s.str().c_str());
+    LOG_F(INFO, "Finished thread: %s", s.str().c_str());
 }
 
 void Core::runSimulationLoop()
@@ -130,7 +130,7 @@ void Core::executeActionOnFinishedTimer()
 
 void Core::finishSimulation()
 {
-    std::cout << "simulaton finished" << std::endl;
+    LOG_F(INFO, "simulaton finished");
     {
         std::unique_lock<boost::fibers::mutex>lk(mFiberMutex);
         mIsFinished = true;
