@@ -11,8 +11,9 @@ void SteadyClock::updateSimTime(std::chrono::nanoseconds newTime)
     mSimTime = newTime;
 }
 
-std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getRealTimeForSimTime()
+std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getRealTimeForCurrentSimTime()
 {
+    updateSimTime(getSimTimeNow());
     return mStartTime + std::chrono::duration_cast<std::chrono::nanoseconds>(mSimTime * mSimSpeed);
 }
 
