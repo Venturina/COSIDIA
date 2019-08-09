@@ -9,10 +9,10 @@ namespace paresis
 class VehicleObject : public BaseObject
 {
 public:
-    VehicleObject(Core* c) : BaseObject(c) {}
-    virtual void startExecution(std::shared_ptr<Action>) {};
-    virtual void endExecution(std::shared_ptr<Action>) {};
-    virtual void initObject(std::shared_ptr<Action>) {};
+    VehicleObject(Core* c);
+    virtual void startExecution(std::shared_ptr<Action>);
+    virtual void endExecution(std::shared_ptr<Action>);
+    virtual void initObject(std::shared_ptr<Action>);
     virtual ObjectContext copyContext() {};
 
 private:
