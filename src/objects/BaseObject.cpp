@@ -34,4 +34,9 @@ void BaseObject::execute(std::shared_ptr<Action> action)
     }
 }
 
+std::shared_ptr<Action> BaseObject::createSelfAction(SteadyClock::duration duration, SteadyClock::duration start)
+{
+    return std::move(std::make_shared<Action>(duration, Action::Kind::START, start, mObjectId));
+}
+
 }

@@ -30,6 +30,8 @@ public:
     virtual ObjectId getObjectId() { return mObjectId; }
 
 protected:
+    std::shared_ptr<Action> createSelfAction(SteadyClock::duration duration, SteadyClock::duration start);
+
     ObjectId mObjectId = -1;
     ObjectId mParent = -1;
     std::set<ObjectId> mChildIdList;
