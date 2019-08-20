@@ -68,7 +68,8 @@ private:
     std::vector<std::thread> mThreads;
 
     std::atomic<long int> mCurrentActionId{0};
-
+    std::mt19937 mRnd;
+    std::uniform_int_distribution<> mDistribution;
 };
 
 } // ns paresis

@@ -16,7 +16,7 @@
 namespace paresis
 {
 
-Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService)
+Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), mDistribution(1, 1000)
 {
     if(!clock) {
         mClock = std::make_shared<SteadyClock>(1);
@@ -24,7 +24,7 @@ Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService)
         mClock = clock;
     }
     setup();
-    srand(100);
+    // https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
     boost::asio::io_service::work work(mIoService);
     runSimulationLoop();
     mIoService.run();
@@ -32,7 +32,7 @@ Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService)
 
 int Core::getRandomNumber()
 {
-    return rand();
+    return mDistribution(mRnd);
 }
 
 // is this ok?
