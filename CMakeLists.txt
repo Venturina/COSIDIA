@@ -1,18 +1,19 @@
 project(paresis)
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_REQUIRED_FLAGS -std=c++17)
+set(CMAKE_CXX_STANDARD 17)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 find_package(Boost COMPONENTS context system fiber thread REQUIRED)
 
 include_directories(src)
+#src/core src/fiber src/mobility src/objects src/radio)
 include_directories(extern)
 
-add_executable( paresis
+add_executable(paresis
         extern/loguru/loguru.cpp
 
         src/core/Action.cpp
@@ -35,6 +36,7 @@ add_executable( paresis
         src/radio/Microchannel.cpp
         src/radio/Radio.cpp
         )
+
 
 target_link_libraries(paresis
         Boost::boost
