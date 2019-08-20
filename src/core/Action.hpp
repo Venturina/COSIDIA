@@ -67,8 +67,15 @@ protected:
      */
     std::list<int> mAffectedObjects;
 
+    /**
+     * Set type of Action: for more specific processing
+     */
+    void setType(std::string type) { mType = type; }
+
 private:
     Kind mKind;
+
+    std::string mType = "";
 };
 
 } // ns paresis
