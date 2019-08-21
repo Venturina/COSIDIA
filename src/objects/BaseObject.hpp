@@ -30,7 +30,9 @@ public:
     virtual ObjectId getObjectId() { return mObjectId; }
 
 protected:
+    void finishConstruction();
     std::shared_ptr<Action> createSelfAction(SteadyClock::duration duration, SteadyClock::duration start);
+
 
     ObjectId mObjectId = -1;
     ObjectId mParent = -1;
@@ -40,6 +42,7 @@ protected:
 
     Core* mCore;
 
+    std::string mObjectName = "";
 };
 
 } // ns paresis
