@@ -32,7 +32,7 @@ add_executable(paresis
         src/radio/Microchannel.cpp
         src/radio/Radio.cpp
 )
-target_include_directories(paresis src extern)
+target_include_directories(paresis PUBLIC src extern)
 target_link_libraries(paresis
         Boost::boost
         Boost::context
