@@ -1,17 +1,13 @@
 project(paresis)
 cmake_minimum_required(VERSION 3.13)
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-find_package(Boost COMPONENTS context system fiber thread REQUIRED)
+find_package(Boost COMPONENTS atomic context system fiber thread REQUIRED)
 
-include_directories(src)
-#src/core src/fiber src/mobility src/objects src/radio)
-include_directories(extern)
 
 add_executable(paresis
         extern/loguru/loguru.cpp
@@ -35,9 +31,8 @@ add_executable(paresis
         src/radio/MediumAccess.cpp
         src/radio/Microchannel.cpp
         src/radio/Radio.cpp
-        )
-
-
+)
+target_include_directories(paresis src extern)
 target_link_libraries(paresis
         Boost::boost
         Boost::context
@@ -46,6 +41,7 @@ target_link_libraries(paresis
         Boost::fiber
         ${CMAKE_DL_LIBS}
 )
+
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
 if (USE_JEMALLOC)
         find_package(jemalloc MODULE REQUIRED)
