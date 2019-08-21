@@ -30,7 +30,6 @@ public:
     virtual ObjectId getObjectId() { return mObjectId; }
 
 protected:
-    void finishConstruction();
     std::shared_ptr<Action> createSelfAction(SteadyClock::duration duration, SteadyClock::duration start);
 
 

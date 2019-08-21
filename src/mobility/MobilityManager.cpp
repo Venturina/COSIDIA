@@ -9,7 +9,7 @@ namespace paresis
 
 MobilityManager::MobilityManager(Core* c) : BaseObject(c), mFactory(c)
 {
-
+    mObjectName = "MobilityManager";
 }
 
 void MobilityManager::startExecution(std::shared_ptr<Action> action)

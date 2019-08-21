@@ -9,19 +9,15 @@ namespace paresis
 BaseObject::BaseObject(Core* c) : mCore(c)
 {
     mObjectId = mCore->getNextObjectId();
-
-}
-
-void BaseObject::finishConstruction()
-{
-    DLOG_F(INFO, "Constructed %s with id %d",mObjectName, mObjectId);
-    assert(mObjectName.compare(""));
-    assert(mObjectId != -1);
-    assert(mParent != -1);
+    DLOG_F(INFO, "Constructed object with ID %d", mObjectId);
 }
 
 void BaseObject::execute(std::shared_ptr<Action> action)
 {
+    assert(mObjectName.compare(""));
+    assert(mObjectId != -1);
+    assert(mParent != -1);
+
     switch (action->getKind()) {
         case Action::Kind::START:
             if(!mActionManager.startOrDelay(action)) {

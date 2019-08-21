@@ -16,8 +16,6 @@ SimulationManager::SimulationManager(Core* c) : BaseObject(c)
 
     startAndScheduleObject(std::make_shared<MobilityManager>(mCore));
     startAndScheduleObject(std::make_shared<Radio>(mCore));
-
-    finishConstruction();
 }
 void SimulationManager::startAndScheduleObject(std::shared_ptr<BaseObject> obj)
 {
