@@ -48,7 +48,7 @@ int Core::getNextActionId()
 
 void Core::scheduleAction(std::shared_ptr<Action> action)
 {
-    mActions.insertAction(action);
+    mActions.insertAction(std::move(action));
 }
 
 void Core::addObject(std::shared_ptr<BaseObject> obj)
