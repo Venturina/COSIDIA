@@ -27,7 +27,7 @@ private:
     ObjectContainer_ptr mWorkingCopy;
     ObjectContainer_ptr mCurrentCopy;
 
-    AtomicObjectId mCurrentObjectId{0};
+    AtomicObjectId mCurrentObjectId{1};
 };
 
 }
