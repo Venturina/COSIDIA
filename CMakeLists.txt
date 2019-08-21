@@ -46,3 +46,8 @@ target_link_libraries(paresis
         Boost::fiber
         ${CMAKE_DL_LIBS}
 )
+option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
+if (USE_JEMALLOC)
+        find_package(jemalloc MODULE REQUIRED)
+        target_link_libraries(paresis jemalloc::jemalloc)
+endif()
