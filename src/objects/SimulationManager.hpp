@@ -19,6 +19,8 @@ public:
     virtual ObjectContext copyContext() {};
 private:
 
+    void startAndScheduleObject(std::shared_ptr<BaseObject>);
+
 };
 
 
