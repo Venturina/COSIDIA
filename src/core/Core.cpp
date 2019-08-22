@@ -6,6 +6,7 @@
 #include <boost/fiber/operations.hpp>
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 #include <loguru/loguru.hpp>
 
@@ -16,8 +17,26 @@
 namespace paresis
 {
 
+thread_local Core* coreP;
+static std::thread::id theMainThread;
+
+void setCoreP(Core* p)
+{
+    assert(std::this_thread::get_id() == theMainThread);
+    coreP = p;
+}
+
+Core* getCoreP()
+{
+    assert(std::this_thread::get_id() == theMainThread);
+    return coreP;
+}
+
 Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), mDistribution(1, 1000)
 {
+    theMainThread = std::this_thread::get_id();
+    setCoreP(this);
+
     if(!clock) {
         mClock = std::make_shared<SteadyClock>(1);
     } else {

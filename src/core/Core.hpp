@@ -72,6 +72,9 @@ private:
     std::uniform_int_distribution<> mDistribution;
 };
 
+void setCoreP(Core*);
+Core* getCoreP();
+
 } // ns paresis
 
 
