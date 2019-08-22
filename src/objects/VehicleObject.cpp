@@ -8,7 +8,7 @@ namespace paresis
 
 VehicleObject::VehicleObject(Core* c) : BaseObject(c)
 {
-
+    mObjectName = "VehicleObject";
 }
 
 void VehicleObject::startExecution(std::shared_ptr<Action> action)
