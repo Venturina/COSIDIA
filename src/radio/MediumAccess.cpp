@@ -9,7 +9,7 @@ namespace paresis
 
 MediumAccess::MediumAccess(Core* c) : BaseObject(c)
 {
-
+    mObjectName = "MediumAccess";
 }
 
 void MediumAccess::startExecution(std::shared_ptr<Action>)
