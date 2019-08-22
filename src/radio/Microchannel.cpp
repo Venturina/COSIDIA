@@ -4,12 +4,12 @@
 namespace paresis
 {
 
-void Microchannel::startExecution(ObjectContext& context)
+void Microchannel::startExecution(std::shared_ptr<Action> action)
 {
 
 }
 
-void Microchannel::endExecution(ObjectContext& context)
+void Microchannel::endExecution(std::shared_ptr<Action> action)
 {
 
 }

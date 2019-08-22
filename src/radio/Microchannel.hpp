@@ -2,7 +2,6 @@
 #define _MICROCHANNEL_HPP_OSNSAO
 
 #include "objects/BaseObject.hpp"
-#include "radio/MicrochannelContext.hpp"
 
 
 namespace paresis
@@ -11,8 +10,10 @@ namespace paresis
 class Microchannel : public BaseObject
 {
 public:
-    void startExecution(ObjectContext&);
-    void endExecution(ObjectContext&);
+    void startExecution(std::shared_ptr<Action>) override;
+    void endExecution(std::shared_ptr<Action>) override;
+    void initObject(std::shared_ptr<Action>) override {};
+
 private:
     ObjectContext copyContext();
 };
