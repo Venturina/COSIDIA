@@ -7,7 +7,7 @@
 namespace paresis
 {
 
-MediumAccess::MediumAccess(Core* c) : BaseObject(c)
+MediumAccess::MediumAccess() : BaseObject()
 {
     mObjectName = "MediumAccess";
 }

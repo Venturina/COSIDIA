@@ -9,7 +9,7 @@ namespace paresis
 class Radio : public BaseObject
 {
 public:
-    Radio(Core* c);
+    Radio();
 
     void startExecution(std::shared_ptr<Action>) override;
     void endExecution(std::shared_ptr<Action>) override;

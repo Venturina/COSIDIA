@@ -8,10 +8,18 @@
 namespace paresis
 {
 
+struct VehicleElement
+{
+    std::shared_ptr<BaseObject> element;
+    std::shared_ptr<Action> action;
+};
+
+using Vehicle = std::vector<VehicleElement>;
+
 struct MobilityManagerData
 {
     std::list<std::shared_ptr<Action>> actionsToSchedule;
-    std::list<std::shared_ptr<BaseObject>> objectsToAdd;
+    std::list<Vehicle> vehiclesToAdd;
     std::list<int> objectsToDelete;
 };
 
@@ -25,7 +33,7 @@ struct MobilityManagerData
 class MobilityManager : public BaseObject
 {
 public:
-    MobilityManager(Core* c);
+    MobilityManager();
     virtual void startExecution(std::shared_ptr<Action>);
     virtual void endExecution(std::shared_ptr<Action>);
     virtual void initObject(std::shared_ptr<Action>);

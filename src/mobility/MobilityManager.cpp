@@ -7,7 +7,7 @@
 namespace paresis
 {
 
-MobilityManager::MobilityManager(Core* c) : BaseObject(c), mFactory(c)
+MobilityManager::MobilityManager() : BaseObject(), mFactory()
 {
     mObjectName = "MobilityManager";
 }
@@ -26,13 +26,16 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
     DLOG_F(INFO, "MobilityManager: in fiber");
 
     if(updateCount % 10 == 0 && updateCount < 100) {
-        data->objectsToAdd = mFactory.createObject("vehicle");
-        for(auto& obj : data->objectsToAdd) {
-            auto newAction = std::make_shared<Action>(std::chrono::milliseconds(0),
-                Action::Kind::INIT, action->getStartTime() + action->getDuration() + std::chrono::milliseconds(10),
-                obj->getObjectId());
-            data->actionsToSchedule.push_back(std::move(newAction));
+        auto vehicleFromFactory = mFactory.createObject("vehicle");
+        Vehicle v;
+        for(auto& vehicleElementObject : vehicleFromFactory) {
+            VehicleElement elem;
+            elem.action = std::make_shared<Action>(std::chrono::milliseconds(0),
+                Action::Kind::INIT, action->getStartTime() + action->getDuration() + std::chrono::milliseconds(10), -2);
+            elem.element = vehicleElementObject;
+            v.push_back(elem);
         }
+        data->vehiclesToAdd.push_back(v);
     }
     if(action->getStartTime() < std::chrono::seconds(20)) {
         auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
@@ -49,11 +52,25 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
 void MobilityManager::endExecution(std::shared_ptr<Action> action)
 {
     auto data = mFuture.get();
-    for(auto& obj : data->objectsToAdd) {
-        mCore->addObject(std::move(obj));
+    for(auto& vehicle : data->vehiclesToAdd) {
+        auto vehicleSize = vehicle.size();
+        for(int i=0; i < vehicleSize; i++) {
+            auto objId = getCoreP()->getNextObjectId();
+            vehicle[i].element->setObjectId(objId);
+            vehicle[i].action->addAffected(objId);
+
+            if(i==0) {
+                vehicle[i].element->setParent(mObjectId);
+            } else {
+                vehicle[i].element->setParent(vehicle[i-1].element->getObjectId());
+            }
+            getCoreP()->addObject(vehicle[i].element);
+            getCoreP()->scheduleAction(vehicle[i].action);
+        }
+
     }
     for(auto& a : data->actionsToSchedule) {
-        mCore->scheduleAction(std::move(a));
+        getCoreP()->scheduleAction(std::move(a));
     }
 }
 
@@ -65,7 +82,7 @@ void MobilityManager::initObject(std::shared_ptr<Action> action)
         Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
         mObjectId); // ugly as hell?
 
-    mCore->scheduleAction(newAction);
+    getCoreP()->scheduleAction(newAction);
 
 }
 

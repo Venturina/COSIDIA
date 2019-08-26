@@ -18,8 +18,8 @@ std::list<std::shared_ptr<BaseObject>> ObjectFactory::createObject(std::string o
 
 std::list<std::shared_ptr<BaseObject>> ObjectFactory::createVehicleObject()
 {
-    auto mediumAccess = std::make_shared<MediumAccess>(mCore);
-    auto vehicle = std::make_shared<VehicleObject>(mCore);
+    auto mediumAccess = std::make_shared<MediumAccess>();
+    auto vehicle = std::make_shared<VehicleObject>();
     mediumAccess->setParent(0);
     mediumAccess->addChild(vehicle->getObjectId());
     vehicle->setParent(mediumAccess->getObjectId());

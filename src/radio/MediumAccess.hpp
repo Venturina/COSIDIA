@@ -12,7 +12,7 @@ class Core;
 class MediumAccess : public BaseObject
 {
 public:
-    MediumAccess(Core* c);
+    MediumAccess();
     virtual void startExecution(std::shared_ptr<Action>) override;
     virtual void endExecution(std::shared_ptr<Action>) override;
     virtual void initObject(std::shared_ptr<Action>) {};

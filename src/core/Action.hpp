@@ -39,6 +39,8 @@ public:
     Kind getKind() { return mKind; }
     std::list<int>* getAffected() { return &mAffectedObjects; };
 
+    void addAffected(int id);
+
 
 protected:
     /**

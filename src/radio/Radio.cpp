@@ -4,7 +4,7 @@
 
 namespace paresis
 {
-Radio::Radio(Core* c) : BaseObject(c)
+Radio::Radio() : BaseObject()
 {
     mObjectName = "Radio";
 }

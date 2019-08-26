@@ -8,21 +8,24 @@
 namespace paresis
 {
 
-SimulationManager::SimulationManager(Core* c) : BaseObject(c)
+SimulationManager::SimulationManager() : BaseObject()
 {
     mObjectName = "SimulationManager";
     mParent = 0;
+    mObjectId = getCoreP()->getNextObjectId();
     DLOG_F(INFO, "Id of SimulationManager: %d", mObjectId);
 
-    startAndScheduleObject(std::make_shared<MobilityManager>(mCore));
-    startAndScheduleObject(std::make_shared<Radio>(mCore));
+    startAndScheduleObject(std::make_shared<MobilityManager>());
+    startAndScheduleObject(std::make_shared<Radio>());
 }
 void SimulationManager::startAndScheduleObject(std::shared_ptr<BaseObject> obj)
 {
-    mCore->addObject(obj);
     obj->setParent(mObjectId);
+    obj->setObjectId(getCoreP()->getNextObjectId());
+    getCoreP()->addObject(obj);
+
     auto action = std::make_shared<Action>(SteadyClock::duration{0}, Action::Kind::INIT, SteadyClock::duration{0}, obj->getObjectId());
-    mCore->scheduleAction(std::move(action));
+    getCoreP()->scheduleAction(std::move(action));
 }
 
 } // namespace paresis

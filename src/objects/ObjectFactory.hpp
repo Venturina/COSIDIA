@@ -12,14 +12,10 @@ namespace paresis
 class ObjectFactory
 {
 public:
-    ObjectFactory(Core* core) : mCore(core)
-    {}
-
     virtual std::list<std::shared_ptr<BaseObject>> createObject(std::string);
 
 
 private:
-    Core* mCore;
 
     std::list<std::shared_ptr<BaseObject>> createVehicleObject();
 

@@ -12,7 +12,7 @@ class Core;
 class SimulationManager : public BaseObject
 {
 public:
-    SimulationManager(Core* c);
+    SimulationManager();
     virtual void startExecution(std::shared_ptr<Action>){};
     virtual void endExecution(std::shared_ptr<Action>){};
     virtual void initObject(std::shared_ptr<Action>) {};

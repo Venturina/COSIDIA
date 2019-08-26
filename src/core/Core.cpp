@@ -72,6 +72,7 @@ void Core::scheduleAction(std::shared_ptr<Action> action)
 
 void Core::addObject(std::shared_ptr<BaseObject> obj)
 {
+    assert(obj->isInitialized());
     mObjectList.addToObjectContainer(obj->getObjectId(), obj);
 }
 
@@ -99,7 +100,7 @@ void Core::setup()
     //     mActions.insertAction(std::make_shared<Action>(a));
     // }
 
-    auto manager = std::make_shared<SimulationManager>(this);
+    auto manager = std::make_shared<SimulationManager>();
     mObjectList.addToObjectContainer(manager->getObjectId(), manager);
 }
 
@@ -144,6 +145,7 @@ void Core::executeActionOnFinishedTimer()
         auto l = mCurrentAction->getAffected();
         for(auto & elemId : *l)
         {
+            assert(elemId >= 0);
             auto obj = mObjectList.getCurrentObjectList();
             if (obj) {
                 (*obj)[elemId]->execute(mCurrentAction);
@@ -151,7 +153,12 @@ void Core::executeActionOnFinishedTimer()
         }
         //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());
         if(mCurrentAction->getKind() == Action::Kind::START && mCurrentAction->getDuration() > std::chrono::nanoseconds{0}) {
-            mActions.insertAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), std::move(*(mCurrentAction->getAffected()))));
+            // DLOG_F(ERROR, "object list size: %d", mCurrentAction->getAffected()->size());
+            // for(auto a : *(mCurrentAction->getAffected())) {
+            //     DLOG_F(ERROR, "id: %d", a);
+            // }
+            mActions.insertAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), *mCurrentAction->getAffected()));
+        //DLOG_F(ERROR, "inserted");
         }
         mActions.popNextAction();
         runSimulationLoop();

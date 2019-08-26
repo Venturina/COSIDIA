@@ -6,17 +6,13 @@
 namespace paresis
 {
 
-BaseObject::BaseObject(Core* c) : mCore(c)
+BaseObject::BaseObject()
 {
-    mObjectId = mCore->getNextObjectId();
-    DLOG_F(INFO, "Constructed object with ID %d", mObjectId);
 }
 
 void BaseObject::execute(std::shared_ptr<Action> action)
 {
-    assert(mObjectName.compare(""));
-    assert(mObjectId != -1);
-    assert(mParent != -1);
+    assert(isInitialized());
 
     switch (action->getKind()) {
         case Action::Kind::START:
@@ -36,6 +32,15 @@ void BaseObject::execute(std::shared_ptr<Action> action)
         default:
             break;
     }
+}
+
+bool BaseObject::isInitialized()
+{
+    assert(mObjectName.compare(""));
+    assert(mObjectId != -1);
+    assert(mParent != -1);
+    
+    return true;
 }
 
 std::shared_ptr<Action> BaseObject::createSelfAction(SteadyClock::duration duration, SteadyClock::duration start)

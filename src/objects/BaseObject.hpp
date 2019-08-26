@@ -17,7 +17,7 @@ class Core;
 class BaseObject
 {
 public:
-    BaseObject(Core* c);
+    BaseObject();
     virtual void execute(std::shared_ptr<Action>);
     virtual void startExecution(std::shared_ptr<Action>) = 0;
     virtual void endExecution(std::shared_ptr<Action>) = 0;
@@ -29,6 +29,8 @@ public:
 
     virtual ObjectId getObjectId() { return mObjectId; }
 
+    virtual bool isInitialized();
+
 protected:
     std::shared_ptr<Action> createSelfAction(SteadyClock::duration duration, SteadyClock::duration start);
 
@@ -38,8 +40,6 @@ protected:
     std::set<ObjectId> mChildIdList;
 
     ObjectActionManager mActionManager;
-
-    Core* mCore;
 
     std::string mObjectName = "";
 };
