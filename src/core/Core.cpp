@@ -152,14 +152,6 @@ void Core::executeActionOnFinishedTimer()
             }
         }
         //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());
-        if(mCurrentAction->getKind() == Action::Kind::START && mCurrentAction->getDuration() > std::chrono::nanoseconds{0}) {
-            // DLOG_F(ERROR, "object list size: %d", mCurrentAction->getAffected()->size());
-            // for(auto a : *(mCurrentAction->getAffected())) {
-            //     DLOG_F(ERROR, "id: %d", a);
-            // }
-            mActions.insertAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, mCurrentAction->getStartTime() + mCurrentAction->getDuration(), *mCurrentAction->getAffected()));
-        //DLOG_F(ERROR, "inserted");
-        }
         mActions.popNextAction();
         runSimulationLoop();
     }

@@ -32,5 +32,10 @@ void Action::addAffected(int id){
     mAffectedObjects.push_back(id);
 }
 
+void Action::setStartTime(SteadyClock::duration start)
+{
+    mStartTime = start;
+}
+
 
 }

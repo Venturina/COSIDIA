@@ -36,6 +36,7 @@ public:
     Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<int> ids);
     SteadyClock::duration getStartTime() const { return mStartTime; }
     SteadyClock::duration getDuration() const { return mDuration; }
+    void setStartTime(SteadyClock::duration start);
     Kind getKind() { return mKind; }
     std::list<int>* getAffected() { return &mAffectedObjects; };
 

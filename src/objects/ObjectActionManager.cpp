@@ -1,5 +1,7 @@
 #include "objects/ObjectActionManager.hpp"
 
+#include "loguru/loguru.hpp"
+
 namespace paresis
 {
 
@@ -16,15 +18,18 @@ void ObjectActionManager::setActiveAction(std::shared_ptr<Action> action)
 bool ObjectActionManager::startOrDelay(std::shared_ptr<Action> action)
 {
     if (mActiveAction.get() == nullptr) {
+        mActiveAction = action;
         return false;
     } else {
         mDelayedQueue.push(action);
+        LOG_F(INFO, "Action running, queue other action. If this happens often, think about your model");
         return true;
     }
 }
 
 bool ObjectActionManager::isActionAvailable()
 {
+    mActiveAction = nullptr;
     return mDelayedQueue.size() != 0;
 }
 
