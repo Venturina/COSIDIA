@@ -1,3 +1,6 @@
 [submodule "extern/loguru"]
 	path = extern/loguru
 	url = https://github.com/emilk/loguru.git
+[submodule "extern/hypodermic"]
+	path = extern/hypodermic
+	url = https://github.com/ybainier/Hypodermic.git
