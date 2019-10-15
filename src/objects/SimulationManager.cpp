@@ -1,4 +1,5 @@
 #include "core/Core.hpp"
+//#include "debug/DebugObject.hpp"
 #include "objects/SimulationManager.hpp"
 #include "mobility/MobilityManager.hpp"
 #include "radio/Radio.hpp"
@@ -17,7 +18,9 @@ SimulationManager::SimulationManager() : BaseObject()
 
     startAndScheduleObject(std::make_shared<MobilityManager>());
     startAndScheduleObject(std::make_shared<Radio>());
+    //startAndScheduleObject(std::make_shared<DebugObject>());
 }
+
 void SimulationManager::startAndScheduleObject(std::shared_ptr<BaseObject> obj)
 {
     obj->setParent(mObjectId);
