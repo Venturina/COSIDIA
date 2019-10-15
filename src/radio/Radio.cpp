@@ -24,4 +24,4 @@ void Radio::initObject(std::shared_ptr<Action>)
     DLOG_F(INFO, "init Radio");
 }
 
-}
+} // ns paresis
