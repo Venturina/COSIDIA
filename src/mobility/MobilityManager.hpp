@@ -14,12 +14,15 @@ struct VehicleElement
     std::shared_ptr<Action> action;
 };
 
-using Vehicle = std::vector<VehicleElement>;
+//using Vehicle = std::vector<VehicleElement>;
+
+
+
 
 struct MobilityManagerData
 {
     std::list<std::shared_ptr<Action>> actionsToSchedule;
-    std::list<Vehicle> vehiclesToAdd;
+    std::list<TemporaryObjectList> vehiclesToAdd;
     std::list<int> objectsToDelete;
 };
 
@@ -40,15 +43,13 @@ public:
 
 private:
 
-    std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action);
+    std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr);
     boost::fibers::future<std::shared_ptr<MobilityManagerData>> mFuture;
 
     // this has to go to object context possibly
     std::unordered_set<int> mVehicles;
 
     int updateCount = 0;
-
-    ObjectFactory mFactory;
 
 };
 

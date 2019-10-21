@@ -4,6 +4,12 @@
 namespace paresis
 {
 
+Microchannel::Microchannel() : BaseObject()
+{
+    mObjectName = "Microchannel";
+}
+
+
 void Microchannel::startExecution(std::shared_ptr<Action> action)
 {
 

@@ -7,7 +7,7 @@
 namespace paresis
 {
 
-MobilityManager::MobilityManager() : BaseObject(), mFactory()
+MobilityManager::MobilityManager() : BaseObject()
 {
     mObjectName = "MobilityManager";
 }
@@ -15,28 +15,22 @@ MobilityManager::MobilityManager() : BaseObject(), mFactory()
 void MobilityManager::startExecution(std::shared_ptr<Action> action)
 {
     DLOG_F(INFO, "MobilityManager update");
-    boost::fibers::packaged_task<std::shared_ptr<MobilityManagerData>(std::shared_ptr<Action>)> pt(std::bind(&MobilityManager::doVehicleUpdate, this, std::placeholders::_1));
+    auto objectList = getCoreP()->getCurrentObjectList();
+    boost::fibers::packaged_task<std::shared_ptr<MobilityManagerData>(std::shared_ptr<Action>, ObjectContainer_ptr)> pt(std::bind(&MobilityManager::doVehicleUpdate, this, std::placeholders::_1, std::placeholders::_2));
     mFuture = pt.get_future();
-    boost::fibers::fiber(std::move(pt),action).detach();
+    boost::fibers::fiber(std::move(pt), action, objectList).detach();
 }
 
-std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::shared_ptr<Action> action)
+std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
 {
     auto data = std::make_shared<MobilityManagerData>();
     DLOG_F(INFO, "MobilityManager: in fiber");
 
     if(updateCount % 10 == 0 && updateCount < 100) {
-        auto vehicleFromFactory = mFactory.createObject("vehicle");
-        Vehicle v;
-        for(auto& vehicleElementObject : vehicleFromFactory) {
-            VehicleElement elem;
-            elem.action = std::make_shared<Action>(std::chrono::milliseconds(0),
-                Action::Kind::INIT, action->getStartTime() + action->getDuration() + std::chrono::milliseconds(10), -2);
-            elem.element = vehicleElementObject;
-            v.push_back(elem);
-        }
-        data->vehiclesToAdd.push_back(v);
+        auto vehicle = ObjectFactory::getInstance().createObject("vehicle", objectList);
+        data->vehiclesToAdd.push_back(vehicle);
     }
+
     if(action->getStartTime() < std::chrono::seconds(20)) {
         auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
             Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
@@ -52,22 +46,9 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
 void MobilityManager::endExecution(std::shared_ptr<Action> action)
 {
     auto data = mFuture.get();
-    for(auto& vehicle : data->vehiclesToAdd) {
-        auto vehicleSize = vehicle.size();
-        for(int i=0; i < vehicleSize; i++) {
-            auto objId = getCoreP()->getNextObjectId();
-            vehicle[i].element->setObjectId(objId);
-            vehicle[i].action->addAffected(objId);
-
-            if(i==0) {
-                vehicle[i].element->setParent(mObjectId);
-            } else {
-                vehicle[i].element->setParent(vehicle[i-1].element->getObjectId());
-            }
-            getCoreP()->addObject(vehicle[i].element);
-            getCoreP()->scheduleAction(vehicle[i].action);
-        }
-
+    for (auto& vehicle : data->vehiclesToAdd) {
+        DLOG_F(ERROR, "Add vehicle");
+        vehicle.resolveAndStart(action->getStartTime());
     }
     for(auto& a : data->actionsToSchedule) {
         getCoreP()->scheduleAction(std::move(a));

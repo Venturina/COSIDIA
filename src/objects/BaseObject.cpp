@@ -42,7 +42,7 @@ bool BaseObject::isInitialized()
 {
     assert(mObjectName.compare(""));
     assert(mObjectId != -1);
-    assert(mParent != -1);
+    assert(!mParentList.empty());
 
     return true;
 }

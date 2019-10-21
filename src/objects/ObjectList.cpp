@@ -32,7 +32,7 @@ void ObjectContainer::insertUnique(std::shared_ptr<BaseObject> obj)
 std::shared_ptr<BaseObject> ObjectContainer::getUnique(std::string name)
 {
     assert(mUniqueObjects.find(name) != mUniqueObjects.end());
-    assert(data.find(mUniqueObjects[name]) == data.end());
+    assert(data.find(mUniqueObjects[name]) != data.end());
     return data[mUniqueObjects[name]];
 }
 

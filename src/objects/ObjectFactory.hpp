@@ -2,6 +2,7 @@
 #define OBJECT_FACTORY_HPP_
 
 #include "objects/ObjectList.hpp"
+#include "objects/TemporaryObject.hpp"
 
 class BaseObject;
 class Core;
@@ -12,12 +13,21 @@ namespace paresis
 class ObjectFactory
 {
 public:
-    virtual std::list<std::shared_ptr<BaseObject>> createObject(std::string);
+    public:
+    static ObjectFactory& getInstance();
 
+    ObjectFactory(ObjectFactory const&) = delete;
+    void operator=(ObjectFactory const&) = delete;
+
+    void registerType();
+
+
+    virtual TemporaryObjectList createObject(std::string, ObjectContainer_ptr objectList = nullptr);
 
 private:
+    ObjectFactory() {}
 
-    std::list<std::shared_ptr<BaseObject>> createVehicleObject();
+    TemporaryObjectList createVehicleObject(ObjectContainer_ptr objectList);
 
 };
 

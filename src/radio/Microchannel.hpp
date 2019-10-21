@@ -10,6 +10,7 @@ namespace paresis
 class Microchannel : public BaseObject
 {
 public:
+    Microchannel();
     void startExecution(std::shared_ptr<Action>) override;
     void endExecution(std::shared_ptr<Action>) override;
     void initObject(std::shared_ptr<Action>) override {};

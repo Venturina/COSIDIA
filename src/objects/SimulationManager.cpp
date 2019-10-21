@@ -12,7 +12,7 @@ namespace paresis
 SimulationManager::SimulationManager() : BaseObject()
 {
     mObjectName = "SimulationManager";
-    mParent = 0;
+    addParent(0);
     mObjectId = getCoreP()->getNextObjectId();
     DLOG_F(INFO, "Id of SimulationManager: %d", mObjectId);
 
@@ -23,7 +23,7 @@ SimulationManager::SimulationManager() : BaseObject()
 
 void SimulationManager::startAndScheduleObject(std::shared_ptr<BaseObject> obj)
 {
-    obj->setParent(mObjectId);
+    obj->addParent(mObjectId);
     obj->setObjectId(getCoreP()->getNextObjectId());
     getCoreP()->addUniqueObject(obj);
 
