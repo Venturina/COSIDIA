@@ -1,6 +1,8 @@
 #ifndef _TEMPORARY_OBJECT_HPP_
 #define _TEMPORARY_OBJECT_HPP_
 
+#include "core/SteadyClock.hpp"
+
 #include <set>
 #include <tuple>
 
