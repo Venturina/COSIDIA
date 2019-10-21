@@ -76,6 +76,12 @@ void Core::addObject(std::shared_ptr<BaseObject> obj)
     mObjectList.addToObjectContainer(obj->getObjectId(), obj);
 }
 
+void Core::addUniqueObject(std::shared_ptr<BaseObject> obj)
+{
+    assert(obj->isInitialized());
+    mObjectList.addUniqueToObjectContainer(obj);
+}
+
 void Core::setup()
 {
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
@@ -146,9 +152,9 @@ void Core::executeActionOnFinishedTimer()
         for(auto & elemId : *l)
         {
             assert(elemId >= 0);
-            auto obj = mObjectList.getCurrentObjectList();
+            auto obj = mObjectList.getObjectByIdFromCurrentContainer(elemId);
             if (obj) {
-                (*obj)[elemId]->execute(mCurrentAction);
+                obj->execute(mCurrentAction);
             }
         }
         //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());

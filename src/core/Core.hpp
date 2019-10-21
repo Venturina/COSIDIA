@@ -22,7 +22,7 @@ public:
      * Can be called from any Fiber!
      * @return: int ObjectId to use
      **/
-    ObjectId getNextObjectId();
+    int getNextObjectId();
 
     /** Fetch the current ActionId
      * Atomic fetch_add to increase the counter by one
@@ -41,8 +41,9 @@ public:
     /** only call from main thread
      **/
     void addObject(std::shared_ptr<BaseObject>);
+    void addUniqueObject(std::shared_ptr<BaseObject>);
 
-    ObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectList(); };
+    ObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectContainer(); };
 
     int getRandomNumber();
 

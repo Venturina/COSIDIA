@@ -1,26 +1,48 @@
 #ifndef _OBJECT_LIST_NVOS
 #define _OBJECT_LIST_NVOS
 
-#include "objects/BaseObject.hpp"
 #include <atomic>
 #include <unordered_map>
+#include <typeindex>
+#include <typeinfo>
 
 namespace paresis
 {
 
-using ObjectContainer = std::unordered_map<int, std::shared_ptr<BaseObject>>;
+class BaseObject;
+
+//using ObjectContainer = std::unordered_map<int, std::shared_ptr<BaseObject>>;
+
+class ObjectContainer
+{
+public:
+    void insert(std::shared_ptr<BaseObject>);
+    void remove(std::shared_ptr<BaseObject>);
+    void remove(int id);
+    std::shared_ptr<BaseObject> getObject(int id);
+
+    void insertUnique(std::shared_ptr<BaseObject>);
+    std::shared_ptr<BaseObject> getUnique(std::string);
+
+private:
+    std::map<int, std::shared_ptr<BaseObject>> data;
+    std::map<std::string, int32_t> mUniqueObjects;
+};
+
 using ObjectContainer_ptr = std::shared_ptr<ObjectContainer>;
 using AtomicObjectId = std::atomic<long int>;
-
-
 
 class ObjectList
 {
 public:
     ObjectList();
     void addToObjectContainer(int objectId, std::shared_ptr<BaseObject>);
+    void addUnique(std::shared_ptr<BaseObject>);
+
     void removeObjectById(int id);
-    ObjectContainer_ptr getCurrentObjectList();
+    std::shared_ptr<BaseObject>getUniqueObjectByName(std::string);
+    std::shared_ptr<BaseObject>getObjectByIdFromCurrentContainer(int id);
+    ObjectContainer_ptr getCurrentObjectContainer();
     AtomicObjectId& getCurrentObjectId() { return mCurrentObjectId; }
 
 private:
