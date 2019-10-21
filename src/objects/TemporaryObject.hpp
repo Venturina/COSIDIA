@@ -9,6 +9,7 @@
 namespace paresis
 {
 
+class Action;
 class BaseObject;
 
 class TemporaryObject
@@ -24,6 +25,11 @@ public:
 
     bool isInitialized() { return mIsInitialized; }
     int getRealId();
+    int getTempId() { return mTempId; }
+
+    void addToCore();
+
+    std::string getObjectName();
     std::set<int> getTemporaryChildren() { return mTempChildren; }
     std::set<int> getTemporaryParent() { return mTempParents; }
 
@@ -36,6 +42,7 @@ private:
     std::set<int> mTempChildren;
     std::pair<int, int> mTempMapping = {-1,-1};
 
+    std::shared_ptr<Action> mInitAction;
     std::shared_ptr<BaseObject> mBaseObject;
 };
 
@@ -43,7 +50,9 @@ class TemporaryObjectList
 {
 public:
     TemporaryObjectList(std::list<std::shared_ptr<TemporaryObject>> l) : mTempList(l) {};
+    TemporaryObjectList() = default;
 
+    void addToList(std::shared_ptr<TemporaryObject> obj) { mTempList.push_back(obj); }
     void resolveAndStart(SteadyClock::duration);
 
 private:

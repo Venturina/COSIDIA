@@ -27,6 +27,7 @@ add_executable(paresis
         src/objects/ObjectFactory.cpp
         src/objects/ObjectList.cpp
         src/objects/SimulationManager.cpp
+        src/objects/TemporaryObject.cpp
         src/objects/VehicleObject.cpp
         src/radio/MediumAccess.cpp
         src/radio/Microchannel.cpp

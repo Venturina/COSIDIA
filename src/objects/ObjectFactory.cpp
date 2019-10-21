@@ -1,34 +1,56 @@
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectFactory.hpp"
-
 #include "objects/VehicleObject.hpp"
-#include "radio/MediumAccess.hpp"
+#include "radio/Microchannel.hpp"
+
+#include "loguru/loguru.hpp"
 
 namespace paresis
 {
 
-std::list<std::shared_ptr<BaseObject>> ObjectFactory::createObject(std::string object)
+ObjectFactory& ObjectFactory::getInstance()
 {
+    static ObjectFactory instance; // Guaranteed to be destroyed.
+    return instance;
+}
+
+void ObjectFactory::registerType()
+{
+    DLOG_F(ERROR, "Object registered");
+}
+
+TemporaryObjectList ObjectFactory::createObject(std::string object, ObjectContainer_ptr objectList)
+{
+    DLOG_F(ERROR, "Create something");
     if(!object.compare("vehicle")) {
-        return createVehicleObject();
+        return createVehicleObject(objectList);
     } else {
         throw std::runtime_error("Unknown object requested");
     }
 }
 
-std::list<std::shared_ptr<BaseObject>> ObjectFactory::createVehicleObject()
+TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objectList)
 {
-    auto mediumAccess = std::make_shared<MediumAccess>();
+    auto microchannel = std::make_shared<Microchannel>();
     auto vehicle = std::make_shared<VehicleObject>();
-    mediumAccess->setParent(0);
-    mediumAccess->addChild(vehicle->getObjectId());
-    vehicle->setParent(mediumAccess->getObjectId());
 
-    std::list<std::shared_ptr<BaseObject>> list;
-    list.push_back(mediumAccess);
-    list.push_back(vehicle);
+    TemporaryObject tRadio(0, objectList->getUnique("Radio"), true);
+    TemporaryObject tChannel(1, microchannel);
+    TemporaryObject tVehicle(2, vehicle);
 
-    return list;
+    tRadio.setTempChild(tChannel.getTempId());
+    tChannel.setTempChild(tVehicle.getTempId());
+    tChannel.setTempParent(tRadio.getTempId());
+    tVehicle.setTempParent(tChannel.getTempId());
+
+    TemporaryObjectList l;
+    l.addToList(std::make_shared<TemporaryObject>(tRadio));
+    l.addToList(std::make_shared<TemporaryObject>(tChannel));
+    l.addToList(std::make_shared<TemporaryObject>(tVehicle));
+
+    DLOG_F(ERROR, "Create vehicle");
+    return l;
+    //return list;
 }
 
 }

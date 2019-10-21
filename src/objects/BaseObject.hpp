@@ -24,10 +24,11 @@ public:
     virtual void initObject(std::shared_ptr<Action>) = 0;
 
     virtual void setObjectId(int id) { mObjectId = id; }
-    virtual void setParent(ObjectId id) { mParent = id; }
+    virtual void addParent(ObjectId id) { mParentList.emplace(id); }
     virtual void addChild(ObjectId id) { mChildIdList.emplace(id); }
 
     virtual ObjectId getObjectId() { return mObjectId; }
+    virtual std::string getObjectName() { return mObjectName; }
 
     virtual bool isInitialized();
 
@@ -36,7 +37,7 @@ protected:
 
 
     ObjectId mObjectId = -1;
-    ObjectId mParent = -1;
+    std::set<ObjectId> mParentList;
     std::set<ObjectId> mChildIdList;
 
     ObjectActionManager mActionManager;
