@@ -79,7 +79,7 @@ void Core::addObject(std::shared_ptr<BaseObject> obj)
 void Core::addUniqueObject(std::shared_ptr<BaseObject> obj)
 {
     assert(obj->isInitialized());
-    mObjectList.addUniqueToObjectContainer(obj);
+    mObjectList.addUnique(obj);
 }
 
 void Core::setup()
