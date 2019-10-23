@@ -4,3 +4,6 @@
 [submodule "extern/hypodermic"]
 	path = extern/hypodermic
 	url = https://github.com/ybainier/Hypodermic.git
+[submodule "extern/vanetza"]
+	path = extern/vanetza
+	url = https://github.com/riebl/vanetza.git
