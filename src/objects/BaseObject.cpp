@@ -18,6 +18,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
         case Action::Kind::START:
             if(!mActionManager.startOrDelay(action)) {
                 getCoreP()->scheduleAction(makeEndAction(action));
+                startExecution(std::move(action));
             }
             break;
         case Action::Kind::END:
@@ -26,6 +27,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
                 auto next = mActionManager.popNextAction();
                 next->setStartTime(action->getStartTime() + action->getDuration());
                 getCoreP()->scheduleAction(makeEndAction(next));
+                startExecution(std::move(next));
             }
             break;
         case Action::Kind::INIT:
