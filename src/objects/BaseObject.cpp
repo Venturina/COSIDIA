@@ -17,8 +17,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
     switch (action->getKind()) {
         case Action::Kind::START:
             if(!mActionManager.startOrDelay(action)) {
-                getCoreP()->scheduleAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, action->getStartTime() + action->getDuration(), *action->getAffected()));
-                startExecution(std::move(action));
+                getCoreP()->scheduleAction(makeEndAction(action));
             }
             break;
         case Action::Kind::END:
@@ -26,8 +25,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
             if(mActionManager.isActionAvailable()) {
                 auto next = mActionManager.popNextAction();
                 next->setStartTime(action->getStartTime() + action->getDuration());
-                getCoreP()->scheduleAction(std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, next->getStartTime() + next->getDuration(), *next->getAffected()));
-                startExecution(std::move(next));
+                getCoreP()->scheduleAction(makeEndAction(next));
             }
             break;
         case Action::Kind::INIT:

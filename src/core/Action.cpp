@@ -37,5 +37,22 @@ void Action::setStartTime(SteadyClock::duration start)
     mStartTime = start;
 }
 
+void Action::setActionData(std::shared_ptr<ActionData> data)
+{
+    assert(mActionData == nullptr);
+    mActionData = std::move(data);
+}
+
+std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action> beginAction)
+{
+    if(beginAction->getActionData() == nullptr) {
+        return std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), *beginAction->getAffected());
+    } else {
+        auto a = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), *beginAction->getAffected());
+        a->setActionData(beginAction->getActionData());
+        return std::move(a);
+    }
+}
+
 
 }

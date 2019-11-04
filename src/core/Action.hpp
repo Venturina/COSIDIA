@@ -36,7 +36,12 @@ public:
     Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<int> ids);
     SteadyClock::duration getStartTime() const { return mStartTime; }
     SteadyClock::duration getDuration() const { return mDuration; }
+
+    std::shared_ptr<ActionData> getActionData() { return mActionData; }
+
     void setStartTime(SteadyClock::duration start);
+    void setActionData(std::shared_ptr<ActionData>);
+
     Kind getKind() { return mKind; }
     std::list<int>* getAffected() { return &mAffectedObjects; };
 
@@ -47,12 +52,12 @@ protected:
     /**
      * Action Data contains the needed data provided for action (like transmissions)
      */
-    ActionData mActionData;
+    std::shared_ptr<ActionData> mActionData = nullptr;
 
     /**
      * Contains all object related data
      */
-    ObjectContext mObjectContext;
+    std::shared_ptr<ObjectContext> mObjectContext;
 
     /**
      * Time after which the gathering action should be scheduled
@@ -80,6 +85,8 @@ private:
 
     std::string mType = "";
 };
+
+std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>);
 
 } // ns paresis
 
