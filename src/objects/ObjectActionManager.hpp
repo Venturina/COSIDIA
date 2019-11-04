@@ -19,7 +19,7 @@ public:
 
     /**
      * Checks if a Action can be started immediately
-     * In case no other action is running, false is returned and nothing else happens
+     * In case no other action is running, false is returned and action is stored as active action
      * In case an action is running, the passed action will be delayed and true is returned
      * @param: Action to be scheduled
      * @return: true if action is allready running, false if no action is running
