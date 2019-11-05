@@ -16,7 +16,11 @@ void MobilityManager::startExecution(std::shared_ptr<Action> action)
 {
     DLOG_F(INFO, "MobilityManager update");
     auto objectList = getCoreP()->getCurrentObjectList();
-    boost::fibers::packaged_task<std::shared_ptr<MobilityManagerData>(std::shared_ptr<Action>, ObjectContainer_ptr)> pt(std::bind(&MobilityManager::doVehicleUpdate, this, std::placeholders::_1, std::placeholders::_2));
+
+    boost::fibers::packaged_task<std::shared_ptr<MobilityManagerData>
+        (std::shared_ptr<Action>, ObjectContainer_ptr)> pt
+        (std::bind(&MobilityManager::doVehicleUpdate, this, std::placeholders::_1, std::placeholders::_2));
+
     mFuture = pt.get_future();
     boost::fibers::fiber(std::move(pt), action, objectList).detach();
 }
