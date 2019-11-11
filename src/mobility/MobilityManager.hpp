@@ -37,9 +37,9 @@ class MobilityManager : public BaseObject
 {
 public:
     MobilityManager();
-    virtual void startExecution(std::shared_ptr<Action>);
-    virtual void endExecution(std::shared_ptr<Action>);
-    virtual void initObject(std::shared_ptr<Action>);
+    virtual void startExecution(std::shared_ptr<Action>) override;
+    virtual void endExecution(std::shared_ptr<Action>) override;
+    virtual void initObject(std::shared_ptr<Action>) override;
 
 private:
 
