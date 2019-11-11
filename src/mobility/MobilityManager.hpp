@@ -43,7 +43,7 @@ public:
 
 private:
 
-    std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr);
+    virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr);
     boost::fibers::future<std::shared_ptr<MobilityManagerData>> mFuture;
 
     // this has to go to object context possibly
