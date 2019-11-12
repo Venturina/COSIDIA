@@ -21,6 +21,7 @@ add_executable(paresis
         src/core/SteadyClock.cpp
         src/fiber/customWorkStealing.cpp
         src/mobility/MobilityManager.cpp
+        src/mobility/SumoMobilityManager.cpp
         src/objects/BaseObject.cpp
         src/objects/ObjectActionManager.cpp
         src/objects/ObjectContext.cpp
@@ -32,8 +33,12 @@ add_executable(paresis
         src/radio/MediumAccess.cpp
         src/radio/Microchannel.cpp
         src/radio/Radio.cpp
+        src/utils/Geometry.cc
 )
-target_include_directories(paresis PUBLIC src extern)
+
+add_subdirectory(src/traci)
+
+target_include_directories(paresis PUBLIC src extern extern/hypodermic src/traci src/traci/sumo)
 target_link_libraries(paresis
         Boost::boost
         Boost::context
@@ -41,6 +46,7 @@ target_link_libraries(paresis
         Boost::thread
         Boost::fiber
         ${CMAKE_DL_LIBS}
+        traci
 )
 
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
