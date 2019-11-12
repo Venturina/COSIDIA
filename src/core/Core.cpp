@@ -129,7 +129,7 @@ void Core::startThreads(int thread_count, std::thread::id mainThread) {
 void Core::runSimulationLoop()
 {
     mCurrentAction = mActions.getNextAction();
-    if(!mCurrentAction || mCurrentAction->getStartTime() > std::chrono::seconds(20)) {
+    if(!mCurrentAction) {
         //sleep(5);
         finishSimulation();
     } else {
