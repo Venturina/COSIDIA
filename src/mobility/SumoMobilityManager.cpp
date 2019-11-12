@@ -23,14 +23,16 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
 std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
 {
     mTraci->simulationStep(mUpdateInterval.count()/1000);
-    auto newAction = std::make_shared<Action>(std::chrono::milliseconds(10),
-            Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
-            mObjectId);
+    auto data = std::make_shared<MobilityManagerData>();
+
+    if(mLite->simulation().getMinExpectedNumber() > 0) {
+        auto newAction = std::make_shared<Action>(std::chrono::milliseconds(10),
+                Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
+                mObjectId);
+        data->actionsToSchedule.push_back(newAction);
+    }
 
     DLOG_F(INFO, "SUMO Update");
-
-    auto data = std::make_shared<MobilityManagerData>();
-    data->actionsToSchedule.push_back(newAction);
 
     return data;
 }
