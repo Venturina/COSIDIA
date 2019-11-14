@@ -37,10 +37,11 @@ void SumoUpdater::updateSubscriptions()
     
 }
 
-void SumoUpdater::step(std::chrono::milliseconds currentSimTime)
+SumoUpdater::Results SumoUpdater::step(std::chrono::milliseconds currentSimTime)
 {
     const auto& simvars = mLiteApi.simulation().getSubscriptionResults("");
     //DLOG_F(ERROR, "Got %d simvars", simvars.size());
+    Results res;
 
     auto departed = simvars.find(libsumo::VAR_DEPARTED_VEHICLES_IDS);
     if(departed != simvars.end()) {
@@ -49,6 +50,7 @@ void SumoUpdater::step(std::chrono::milliseconds currentSimTime)
         for(auto& name : list.value) {
             DLOG_F(INFO, "vehicle with ID %s inserted", name.c_str());
             subscribeVehicle(name);
+            res.departedVehicles.push_back(name);
         }
     }
     auto currentSumoTime = simvars.find(libsumo::VAR_TIME);
@@ -62,7 +64,8 @@ void SumoUpdater::step(std::chrono::milliseconds currentSimTime)
         auto list = dynamic_cast<const libsumo::TraCIStringList&>(result);
         for(auto&name : list.value) {
             DLOG_F(INFO, "vehicle with ID %s removed", name.c_str());
-            //unsubscribe vehicle
+            res.arrivedVehicles.push_back(name);
+            mSubscribedVehicles.erase(name);
         }
     }
 
@@ -89,6 +92,8 @@ void SumoUpdater::step(std::chrono::milliseconds currentSimTime)
     //     const auto& vars = vehicles.getSubscriptionResults(vehicle);
     //     getVehicleCache(vehicle)->reset(vars);
     // }
+
+    return res;
 }
 
 void SumoUpdater::subscribeSimulationVariables(const std::set<int>& add_vars)

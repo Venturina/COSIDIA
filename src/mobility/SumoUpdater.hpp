@@ -23,7 +23,7 @@ public:
     void initSubscriptions();
     void updateSubscriptions();
 
-    void step(std::chrono::milliseconds);
+    Results step(std::chrono::milliseconds);
 
 private:
     void subscribeSimulationVariables(const std::set<int>&);

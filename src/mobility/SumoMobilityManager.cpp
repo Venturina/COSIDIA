@@ -25,7 +25,7 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
 std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
 {
     auto t = action->getStartTime();
-    mUpdater->step(std::chrono::duration_cast<std::chrono::milliseconds>(t));
+    auto res = mUpdater->step(std::chrono::duration_cast<std::chrono::milliseconds>(t));
     //executeUpdate(results);
     auto data = std::make_shared<MobilityManagerData>();
 
