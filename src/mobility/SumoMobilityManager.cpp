@@ -18,23 +18,34 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
     mLauncher.reset(new traci::PosixLauncher());
 
     mTraci->connect(mLauncher->launch());
+    mUpdater.reset(new SumoUpdater(*mLite));
+    mTraci->simulationStep(mUpdateInterval.count()/1000);
 }
 
 std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
 {
-    mTraci->simulationStep(mUpdateInterval.count()/1000);
+    auto t = action->getStartTime();
+    mUpdater->step(std::chrono::duration_cast<std::chrono::milliseconds>(t));
+    //executeUpdate(results);
     auto data = std::make_shared<MobilityManagerData>();
 
     if(mLite->simulation().getMinExpectedNumber() > 0) {
-        auto newAction = std::make_shared<Action>(std::chrono::milliseconds(10),
-                Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
-                mObjectId);
+        auto newAction = createSelfAction(std::chrono::milliseconds(10), action->getStartTime() + std::chrono::milliseconds(100));
         data->actionsToSchedule.push_back(newAction);
     }
 
     DLOG_F(INFO, "SUMO Update");
-
+    mTraci->simulationStep(mUpdateInterval.count()/1000);
     return data;
+}
+
+std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& r)
+{
+    // add vehicles
+
+    // remove vehicles
+
+    // update vehicles
 }
 
 }

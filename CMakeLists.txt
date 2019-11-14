@@ -22,6 +22,7 @@ add_executable(paresis
         src/fiber/customWorkStealing.cpp
         src/mobility/MobilityManager.cpp
         src/mobility/SumoMobilityManager.cpp
+        src/mobility/SumoUpdater.cpp
         src/objects/BaseObject.cpp
         src/objects/ObjectActionManager.cpp
         src/objects/ObjectContext.cpp

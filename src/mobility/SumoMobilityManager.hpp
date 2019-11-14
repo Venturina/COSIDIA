@@ -2,6 +2,7 @@
 #define _SUMO_MOBILITY_MANAGER_HPP_NOSDNF
 
 #include "mobility/MobilityManager.hpp"
+#include "mobility/SumoUpdater.hpp"
 #include "traci/API.h"
 #include "traci/Launcher.hpp"
 #include "traci/LiteAPI.h"
@@ -17,12 +18,16 @@ public:
 
 private:
     virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr) override;
+    std::shared_ptr<MobilityManagerData> executeUpdate(const SumoUpdater::Results&);
+
     std::chrono::milliseconds mUpdateInterval;
 
     // this has to go to the context if we are cross referencing
     std::unique_ptr<traci::Launcher> mLauncher;
     std::unique_ptr<traci::API> mTraci;
     std::unique_ptr<traci::LiteAPI> mLite;
+
+    std::unique_ptr<SumoUpdater> mUpdater;
 };
 
 } // ns paresis
