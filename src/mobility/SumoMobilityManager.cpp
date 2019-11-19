@@ -26,26 +26,35 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::s
 {
     auto t = action->getStartTime();
     auto res = mUpdater->step(std::chrono::duration_cast<std::chrono::milliseconds>(t));
-    //executeUpdate(results);
-    auto data = std::make_shared<MobilityManagerData>();
+    auto data = executeUpdate(res, objectList);
 
     if(mLite->simulation().getMinExpectedNumber() > 0) {
-        auto newAction = createSelfAction(std::chrono::milliseconds(10), action->getStartTime() + std::chrono::milliseconds(100));
+        auto newAction = createSelfAction(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100));
         data->actionsToSchedule.push_back(newAction);
     }
 
     DLOG_F(INFO, "SUMO Update");
     mTraci->simulationStep(mUpdateInterval.count()/1000);
-    return data;
+    return std::move(data);
 }
 
-std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& r)
+std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& r, ObjectContainer_ptr objectContainer)
 {
     // add vehicles
+
+    std::shared_ptr<MobilityManagerData> data = std::make_shared<MobilityManagerData>();
+    for(auto& vehicle : r.departedVehicles) {
+        auto vehicleObject = ObjectFactory::getInstance().createObject("vehicle", objectContainer);
+        data->vehiclesToAdd.push_back(vehicleObject);
+    }
+
+
 
     // remove vehicles
 
     // update vehicles
+
+    return std::move(data);
 }
 
 }
