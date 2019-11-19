@@ -62,8 +62,8 @@ PosixLauncher::~PosixLauncher()
 
 void PosixLauncher::initialize()
 {
-    m_executable = "sumo-gui";
-    m_command = "%SUMO% --remote-port %PORT% --seed %SEED% --configuration-file %SUMOCFG% --message-log sumo-%RUN%.log --no-step-log --quit-on-end";
+    m_executable = "sumo";
+    m_command = "%SUMO% --remote-port %PORT% --seed %SEED% --configuration-file %SUMOCFG% --message-log sumo-%RUN%.log --no-step-log --quit-on-end --start";
     m_sumocfg = "/home/obermaier/repo/code/artery/scenarios/testbed/ingolstadt-north.sumocfg";
     m_port = 0;
 

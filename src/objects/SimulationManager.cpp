@@ -1,7 +1,7 @@
 #include "core/Core.hpp"
 //#include "debug/DebugObject.hpp"
 #include "objects/SimulationManager.hpp"
-#include "mobility/MobilityManager.hpp"
+#include "mobility/SumoMobilityManager.hpp"
 #include "radio/Radio.hpp"
 
 #include <loguru/loguru.hpp>
@@ -16,7 +16,7 @@ SimulationManager::SimulationManager() : BaseObject()
     mObjectId = getCoreP()->getNextObjectId();
     DLOG_F(INFO, "Id of SimulationManager: %d", mObjectId);
 
-    startAndScheduleObject(std::make_shared<MobilityManager>());
+    startAndScheduleObject(std::make_shared<SumoMobilityManager>());
     startAndScheduleObject(std::make_shared<Radio>());
     //startAndScheduleObject(std::make_shared<DebugObject>());
 }
