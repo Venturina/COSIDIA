@@ -11,4 +11,4 @@ set(SOURCES
 
 add_library(traci SHARED ${SOURCES})
 
-target_include_directories(traci PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/traci/sumo ${PROJECT_SOURCE_DIR}/extern )
+target_include_directories(traci PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/traci/sumo ${PROJECT_SOURCE_DIR}/extern ${Boost_INCLUDE_DIRS})
