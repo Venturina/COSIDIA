@@ -31,6 +31,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
                     startExecution(std::move(next));
                 }
                 auto now = getCoreP()->getClock()->getSimTimeNow();
+                LOG_F(ERROR, "time: expected: %d now: %d value: %d", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000);
                 LOG_F(ERROR, "time: expected: %d, now: %d, value: %d", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000);
                 if(!((action->getStartTime() < std::chrono::seconds(3)) ||
                     (action->getStartTime() - now) > std::chrono::milliseconds(-5))) {
