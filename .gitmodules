@@ -7,3 +7,6 @@
 [submodule "extern/vanetza"]
 	path = extern/vanetza
 	url = https://github.com/riebl/vanetza.git
+[submodule "extern/CLI11"]
+	path = extern/CLI11
+	url = https://github.com/CLIUtils/CLI11

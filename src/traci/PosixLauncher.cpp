@@ -50,7 +50,8 @@ BlockSignal::~BlockSignal()
 }
 
 
-PosixLauncher::PosixLauncher() : m_pid(0)
+PosixLauncher::PosixLauncher(const YAML::Node& config) :
+    m_pid(0), m_config(config)
 {
     initialize();
 }
@@ -62,10 +63,15 @@ PosixLauncher::~PosixLauncher()
 
 void PosixLauncher::initialize()
 {
-    m_executable = "sumo";
-    m_command = "%SUMO% --remote-port %PORT% --seed %SEED% --configuration-file %SUMOCFG% --message-log sumo-%RUN%.log --no-step-log --quit-on-end --start";
-    m_sumocfg = "/home/obermaier/repo/code/artery/scenarios/testbed/ingolstadt-north.sumocfg";
-    m_port = 0;
+    m_executable = m_config["sumo"].as<std::string>("sumo");
+    m_command = m_config["command"].as<std::string>("%SUMO% --remote-port %PORT% --seed %SEED% "
+            "--configuration-file %SUMOCFG% --message-log sumo-%RUN%.log --no-step-log --quit-on-end --start");
+    if (m_config["sumocfg"]) {
+        m_sumocfg = m_config["sumocfg"].as<std::string>();
+    } else {
+        throw std::runtime_error("sumocfg option has not been set");
+    }
+    m_port = m_config["port"].as<int>(0);
 
     // m_executable = par("sumo").stringValue();
     // m_command = par("command").stringValue();

@@ -1,5 +1,6 @@
 #include "mobility/SumoMobilityManager.hpp"
 #include "traci/PosixLauncher.h"
+#include "core/Config.hpp"
 #include "core/Core.hpp"
 
 #include "loguru/loguru.hpp"
@@ -15,7 +16,7 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
     getCoreP()->scheduleAction(nextAction);
     mTraci.reset(new traci::API());
     mLite.reset(new traci::LiteAPI(*mTraci));
-    mLauncher.reset(new traci::PosixLauncher());
+    mLauncher.reset(new traci::PosixLauncher(getGlobalConfig()["launcher"]));
 
     mTraci->connect(mLauncher->launch());
     mUpdater.reset(new SumoUpdater(*mLite));

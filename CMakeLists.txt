@@ -7,7 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 find_package(Boost COMPONENTS atomic context system fiber thread REQUIRED)
-
+find_package(yaml-cpp CONFIG REQUIRED)
+add_subdirectory(extern/CLI11)
 
 add_executable(paresis
         extern/loguru/loguru.cpp
@@ -15,6 +16,7 @@ add_executable(paresis
         src/core/Action.cpp
         src/core/ActionList.cpp
         src/core/Clock.cpp
+        src/core/Config.cpp
         src/core/Core.cpp
         src/core/DebugClock.cpp
         src/core/main.cpp
@@ -46,8 +48,10 @@ target_link_libraries(paresis
         Boost::system
         Boost::thread
         Boost::fiber
+        CLI11::CLI11
         ${CMAKE_DL_LIBS}
         traci
+        yaml-cpp
 )
 
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
