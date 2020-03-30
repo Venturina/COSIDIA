@@ -39,7 +39,22 @@ add_executable(paresis
         src/utils/Geometry.cc
 )
 
+macro(add_catch_test NAME)
+        add_executable(test_${NAME} ${ARGN})
+        target_include_directories(test_${NAME} PUBLIC ${PROJECT_SOURCE_DIR}/extern)
+        set_target_properties(test_${NAME} PROPERTIES
+                RUNTIME_OUTPUT_NAME ${NAME}
+                RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/tests
+                COMPILE_DEFINITIONS CATCH_CONFIG_MAIN
+        )
+        add_test(NAME ${NAME}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                COMMAND test_${NAME})
+endmacro()
+enable_testing()
+
 add_subdirectory(src/traci)
+add_subdirectory(src/tests/unitTests)
 
 target_include_directories(paresis PUBLIC src extern extern/hypodermic src/traci src/traci/sumo)
 target_link_libraries(paresis
