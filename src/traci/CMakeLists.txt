@@ -1,14 +1,13 @@
 set(SOURCES
-    Angle.cc
-    API.cpp
-    LiteAPI.cc
-    Position.cc
-    PosixLauncher.cpp
-    sumo/foreign/tcpip/socket.cpp
-    sumo/foreign/tcpip/storage.cpp
-    sumo/utils/traci/TraCIAPI.cpp
+    src/traci/Angle.cc
+    src/traci/API.cpp
+    src/traci/LiteAPI.cc
+    src/traci/Position.cc
+    src/traci/PosixLauncher.cpp
+    src/traci/sumo/foreign/tcpip/socket.cpp
+    src/traci/sumo/foreign/tcpip/storage.cpp
+    src/traci/sumo/utils/traci/TraCIAPI.cpp
 )
 
-add_library(traci SHARED ${SOURCES})
-
-target_include_directories(traci PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/traci/sumo ${PROJECT_SOURCE_DIR}/extern ${Boost_INCLUDE_DIRS})
+set_property(TARGET libparesis APPEND PROPERTY SOURCES ${SOURCES})
+target_include_directories(libparesis PUBLIC sumo ${Boost_INCLUDE_DIRS})

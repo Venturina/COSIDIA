@@ -10,7 +10,7 @@ find_package(Boost COMPONENTS atomic context system fiber thread REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 add_subdirectory(extern/CLI11)
 
-add_executable(paresis
+add_library(libparesis STATIC
         extern/loguru/loguru.cpp
 
         src/core/Action.cpp
@@ -38,10 +38,23 @@ add_executable(paresis
         src/radio/Radio.cpp
         src/utils/Geometry.cc
 )
+target_include_directories(libparesis PUBLIC src extern extern/hypodermic)
+target_link_libraries(libparesis PUBLIC
+        Boost::boost
+        Boost::context
+        Boost::system
+        Boost::thread
+        Boost::fiber
+        CLI11::CLI11
+        ${CMAKE_DL_LIBS}
+        yaml-cpp
+)
+set_property(TARGET libparesis PROPERTY OUTPUT_NAME paresis)
 
 macro(add_catch_test NAME)
         add_executable(test_${NAME} ${ARGN})
-        target_include_directories(test_${NAME} PUBLIC ${PROJECT_SOURCE_DIR}/extern)
+        target_include_directories(test_${NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/extern)
+        target_link_libraries(test_${NAME} libparesis)
         set_target_properties(test_${NAME} PROPERTIES
                 RUNTIME_OUTPUT_NAME ${NAME}
                 RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/tests
@@ -56,21 +69,11 @@ enable_testing()
 add_subdirectory(src/traci)
 add_subdirectory(src/tests/unitTests)
 
-target_include_directories(paresis PUBLIC src extern extern/hypodermic src/traci src/traci/sumo)
-target_link_libraries(paresis
-        Boost::boost
-        Boost::context
-        Boost::system
-        Boost::thread
-        Boost::fiber
-        CLI11::CLI11
-        ${CMAKE_DL_LIBS}
-        traci
-        yaml-cpp
-)
+add_executable(paresis src/core/main.cpp)
+target_link_libraries(paresis libparesis)
 
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
 if (USE_JEMALLOC)
         find_package(jemalloc MODULE REQUIRED)
-        target_link_libraries(paresis jemalloc::jemalloc)
+        target_link_libraries(libparesis jemalloc::jemalloc)
 endif()
