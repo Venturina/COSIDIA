@@ -14,8 +14,7 @@ namespace paresis
 class ObjectActionManager
 {
 public:
-    bool isActionRunning();
-    void setActiveAction(std::shared_ptr<Action>);
+
 
     /**
      * Checks if a Action can be started immediately
@@ -26,11 +25,35 @@ public:
      **/
     bool startOrDelay(std::shared_ptr<Action>);
 
+    /**
+     * Checks if a Action is available on the action stack
+     * @return: true if a action is available, false if not
+     **/
     bool isActionAvailable();
 
-    std::shared_ptr<Action> popNextAction();
+    /**
+     * Fetches first action and allows to modify its content, action stays in the queue
+     * @return: Next action to be scheduled
+     **/
+    Action& fetchNextAction();
+
+    /**
+     * Removes action from queue and sets it to active
+     * @return: action which was set to active
+     * @return: nullpointer in case action could not be set active eg. because other action was active or no action in queue
+     **/
+    std::shared_ptr<Action> activateNextAvailableAction();
+
+    /**
+     * Ends the current active action and checks if there is a next one to schedule
+     * @return: true if a action is available, false if not
+     **/
+    bool endAndCheckAvailable();
 
 private:
+    bool isActionRunning();
+    void setActiveAction(std::shared_ptr<Action>);
+
     std::shared_ptr<Action> mActiveAction;
     std::queue<std::shared_ptr<Action>> mDelayedQueue;
 };

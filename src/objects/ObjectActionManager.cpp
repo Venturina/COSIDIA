@@ -17,7 +17,7 @@ void ObjectActionManager::setActiveAction(std::shared_ptr<Action> action)
 
 bool ObjectActionManager::startOrDelay(std::shared_ptr<Action> action)
 {
-    if (mActiveAction.get() == nullptr) {
+    if (mActiveAction.get() == nullptr && mDelayedQueue.size() == 0) {
         mActiveAction = action;
         return false;
     } else {
@@ -29,15 +29,32 @@ bool ObjectActionManager::startOrDelay(std::shared_ptr<Action> action)
 
 bool ObjectActionManager::isActionAvailable()
 {
-    mActiveAction = nullptr;
     return mDelayedQueue.size() != 0;
 }
 
-std::shared_ptr<Action> ObjectActionManager::popNextAction()
+bool ObjectActionManager::endAndCheckAvailable()
 {
-    auto action = mDelayedQueue.front();
-    mDelayedQueue.pop();
-    return action;
+    mActiveAction = nullptr;
+    return isActionAvailable();
 }
+
+Action& ObjectActionManager::fetchNextAction()
+{
+    assert(mDelayedQueue.size() > 0);
+    auto action = mDelayedQueue.front();
+    return *action;
+}
+
+std::shared_ptr<Action> ObjectActionManager::activateNextAvailableAction()
+{
+    assert(mDelayedQueue.size() > 0);
+    if(mActiveAction != nullptr) {
+        throw std::runtime_error("Tried to activate action, but other action already running");
+    }
+    mActiveAction = mDelayedQueue.front();
+    mDelayedQueue.pop();
+    return mActiveAction;
+}
+
 
 } // namespace paresis

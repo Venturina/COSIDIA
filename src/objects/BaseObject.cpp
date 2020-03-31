@@ -24,16 +24,18 @@ void BaseObject::execute(std::shared_ptr<Action> action)
         case Action::Kind::END:
             {
                 endExecution(action);
-                if(mActionManager.isActionAvailable()) {
-                    auto next = mActionManager.popNextAction();
-                    next->setStartTime(action->getStartTime() + action->getDuration());
+                if(mActionManager.endAndCheckAvailable()) {
+                    auto update = mActionManager.fetchNextAction();
+                    update.setStartTime(action->getStartTime() + action->getDuration());
+                    auto next = mActionManager.activateNextAvailableAction();
                     getCoreP()->scheduleAction(makeEndAction(next));
+
                     startExecution(std::move(next));
                 }
                 auto now = getCoreP()->getClock()->getSimTimeNow();
                 LOG_F(ERROR, "time: expected: %d now: %d value: %d", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000);
                 if(!((action->getStartTime() < std::chrono::seconds(3)) ||
-                    (action->getStartTime() - now) > std::chrono::milliseconds(-5))) {
+                    (action->getStartTime() - now) > std::chrono::milliseconds(-1))) {
                     throw std::runtime_error("Time Violation");
                 }
                 break;
