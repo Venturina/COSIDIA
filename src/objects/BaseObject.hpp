@@ -40,7 +40,7 @@ protected:
     std::set<ObjectId> mParentList;
     std::set<ObjectId> mChildIdList;
 
-    ObjectActionManager mActionManager;
+    std::unique_ptr<ObjectActionManager> mActionManager;
 
     std::string mObjectName = "";
 };

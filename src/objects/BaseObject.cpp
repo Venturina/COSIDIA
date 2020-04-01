@@ -6,7 +6,7 @@
 namespace paresis
 {
 
-BaseObject::BaseObject()
+BaseObject::BaseObject() : mActionManager(new ObjectActionManager())
 {
 }
 
@@ -16,7 +16,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
 
     switch (action->getKind()) {
         case Action::Kind::START:
-            if(!mActionManager.startOrDelay(action)) {
+            if(!mActionManager->startOrDelay(action)) {
                 getCoreP()->scheduleAction(makeEndAction(action));
                 startExecution(std::move(action));
             }
@@ -24,10 +24,10 @@ void BaseObject::execute(std::shared_ptr<Action> action)
         case Action::Kind::END:
             {
                 endExecution(action);
-                if(mActionManager.endAndCheckAvailable()) {
-                    auto update = mActionManager.fetchNextAction();
+                if(mActionManager->endAndCheckAvailable()) {
+                    auto update = mActionManager->fetchNextAction();
                     update.setStartTime(action->getStartTime() + action->getDuration());
-                    auto next = mActionManager.activateNextAvailableAction();
+                    auto next = mActionManager->activateNextAvailableAction();
                     getCoreP()->scheduleAction(makeEndAction(next));
 
                     startExecution(std::move(next));
@@ -53,8 +53,11 @@ bool BaseObject::isInitialized()
     assert(mObjectName.compare(""));
     assert(mObjectId != -1);
     assert(!mParentList.empty());
-
-    return true;
+    if(mObjectName.compare("") == 0 || mObjectId == -1 || mParentList.empty()) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 std::shared_ptr<Action> BaseObject::createSelfAction(SteadyClock::duration duration, SteadyClock::duration start)

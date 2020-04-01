@@ -15,7 +15,8 @@ namespace paresis
 class Core
 {
 public:
-    Core(std::shared_ptr<SteadyClock> = nullptr);
+    Core(std::shared_ptr<SteadyClock>);
+    Core() : mTimer(mIoService) {};
 
     /** Fetch the current ObjectId
      * Atomic fetch_add to increase the counter by one
@@ -36,7 +37,7 @@ public:
      * Only to be called from main Fiber!
      * @param: action Action to be scheduled
      **/
-    void scheduleAction(std::shared_ptr<Action>);
+    virtual void scheduleAction(std::shared_ptr<Action>);
 
     /** only call from main thread
      **/
@@ -49,7 +50,7 @@ public:
 
     int getRandomNumber();
 
-private:
+protected:
     void setup();
     void startThreads(int, std::thread::id);
     void runSimulationLoop();

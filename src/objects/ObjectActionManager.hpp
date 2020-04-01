@@ -23,7 +23,7 @@ public:
      * @param: Action to be scheduled
      * @return: true if action is allready running, false if no action is running
      **/
-    bool startOrDelay(std::shared_ptr<Action>);
+    virtual bool startOrDelay(std::shared_ptr<Action>);
 
     /**
      * Checks if a Action is available on the action stack

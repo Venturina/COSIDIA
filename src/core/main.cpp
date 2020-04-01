@@ -9,6 +9,7 @@
 #include "core/Config.hpp"
 #include "core/Core.hpp"
 #include "core/DebugClock.hpp"
+#include "core/SteadyClock.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
     loguru::add_file("error.log", loguru::FileMode::Truncate, loguru::Verbosity_ERROR);
     LOG_F(INFO, "Hello World");
     //paresis::Core test(std::make_shared<paresis::DebugClock>(1));
-    paresis::Core test;
+    paresis::Core test(std::make_shared<paresis::SteadyClock>(1));
     loguru::shutdown();
     return 0;
 }
