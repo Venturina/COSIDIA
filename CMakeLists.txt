@@ -52,7 +52,7 @@ target_link_libraries(libparesis PUBLIC
 set_property(TARGET libparesis PROPERTY OUTPUT_NAME paresis)
 
 macro(add_catch_test NAME)
-        add_executable(test_${NAME} ${ARGN})
+        add_executable(test_${NAME} ${ARGN} ${PROJECT_SOURCE_DIR}/src/debug/DebugObject.cpp)
         target_include_directories(test_${NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/extern)
         target_link_libraries(test_${NAME} libparesis)
         set_target_properties(test_${NAME} PROPERTIES

@@ -6,28 +6,45 @@ namespace paresis
 {
 DebugObject::DebugObject() : BaseObject()
 {
-    mObjectName = "DebugObject";
 }
 
 void DebugObject::startExecution(std::shared_ptr<Action>)
 {
-    DLOG_F(INFO, "Debug Event Start");
+    DLOG_F(INFO, "DebugParent Event Start");
 }
 
 void DebugObject::endExecution(std::shared_ptr<Action>)
 {
-    DLOG_F(INFO, "Debug Event End");
+    DLOG_F(INFO, "DebugParent Event End");
 }
 
-void DebugObject::initObject(std::shared_ptr<Action>)
+std::shared_ptr<Action> DebugObject::testCreateSelfAction(SteadyClock::duration duration, SteadyClock::duration start)
 {
-    auto action = std::make_shared<Action>(std::chrono::seconds{1}, Action::Kind::START, std::chrono::milliseconds{50}, mObjectId);
-    auto action2 = std::make_shared<Action>(std::chrono::seconds{1}, Action::Kind::START, std::chrono::milliseconds{50}, mObjectId);
-    auto action3 = std::make_shared<Action>(std::chrono::seconds{1}, Action::Kind::START, std::chrono::seconds{3}, mObjectId);
-
-    getCoreP()->scheduleAction(std::move(action));
-    getCoreP()->scheduleAction(std::move(action2));
-    getCoreP()->scheduleAction(std::move(action3));
+    return createSelfAction(duration, start);
 }
+
+DebugObjectParent::DebugObjectParent() : DebugObject()
+{
+}
+
+void DebugObjectParent::initObject(std::shared_ptr<Action>)
+{
+    mObjectName = "DebugParent Object";
+    mObjectId = 0;
+    mParentList.insert(0);
+}
+
+DebugObjectChild::DebugObjectChild() : DebugObject()
+{
+}
+
+void DebugObjectChild::initObject(std::shared_ptr<Action>)
+{
+    LOG_F(INFO, "Child Initialized");
+    mObjectName = "DebugObjectChild Object";
+    mObjectId = 1;
+    mParentList.insert(0);
+}
+
 
 } // ns paresis
