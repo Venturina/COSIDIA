@@ -51,6 +51,11 @@ target_link_libraries(libparesis PUBLIC
 )
 set_property(TARGET libparesis PROPERTY OUTPUT_NAME paresis)
 
+option(PARESIS_SAFE_MODE "foo" ON)
+if(PARESIS_SAFE_MODE)
+        target_compile_definitions(libparesis PUBLIC PARESIS_SAFE)
+endif()
+
 macro(add_catch_test NAME)
         add_executable(test_${NAME} ${ARGN} ${PROJECT_SOURCE_DIR}/src/debug/DebugObject.cpp)
         target_include_directories(test_${NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/extern)
@@ -58,8 +63,8 @@ macro(add_catch_test NAME)
         set_target_properties(test_${NAME} PROPERTIES
                 RUNTIME_OUTPUT_NAME ${NAME}
                 RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/tests
-                COMPILE_DEFINITIONS CATCH_CONFIG_MAIN
         )
+        target_compile_definitions(test_${NAME} PRIVATE CATCH_CONFIG_MAIN)
         add_test(NAME ${NAME}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 COMMAND test_${NAME})
@@ -71,11 +76,6 @@ add_subdirectory(src/tests/unitTests)
 
 add_executable(paresis src/core/main.cpp)
 target_link_libraries(paresis libparesis)
-
-option(PARSESIS_SAFE_MODE "foo" ON)
-if(PARESIS_SAFE_MODE)
-        set_property(TARGET libparesis APPEND PROPERTY COMPILE_DEFINTIONS PARESIS_SAFE)
-endif()
 
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
 if (USE_JEMALLOC)
