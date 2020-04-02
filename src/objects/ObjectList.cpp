@@ -17,6 +17,11 @@ void ObjectContainer::remove(int id)
     data.erase(id);
 }
 
+void ObjectContainer::remove(std::shared_ptr<BaseObject> obj)
+{
+    remove(obj->getObjectId());
+}
+
 std::shared_ptr<BaseObject> ObjectContainer::getObject(int id)
 {
     invariant(data.find(id) != data.end(), "requested objet not in container");
