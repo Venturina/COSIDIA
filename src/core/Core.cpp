@@ -36,7 +36,8 @@ Core* getCoreP()
 
 Core::Core() : mTimer(mIoService)
 {
-    theMainThread == std::this_thread::get_id();
+    theMainThread = std::this_thread::get_id();
+    setCoreP(this);
 }
 
 Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), mDistribution(1, 1000)
