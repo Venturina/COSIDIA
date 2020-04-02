@@ -16,7 +16,7 @@ class Core
 {
 public:
     Core(std::shared_ptr<SteadyClock>);
-    Core() : mTimer(mIoService) {};
+    Core();
 
     /** Fetch the current ObjectId
      * Atomic fetch_add to increase the counter by one
