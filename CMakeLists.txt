@@ -72,6 +72,11 @@ add_subdirectory(src/tests/unitTests)
 add_executable(paresis src/core/main.cpp)
 target_link_libraries(paresis libparesis)
 
+option(PARSESIS_SAFE_MODE "foo" ON)
+if(PARESIS_SAFE_MODE)
+        set_property(TARGET libparesis APPEND PROPERTY COMPILE_DEFINTIONS PARESIS_SAFE)
+endif()
+
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
 if (USE_JEMALLOC)
         find_package(jemalloc MODULE REQUIRED)
