@@ -76,7 +76,7 @@ TEST_CASE( "BaseObject Test: Init and SelfAction", "[BaseObject]" )
 
     #ifdef PARESIS_SAFE
     SECTION("Is Initialized") {
-            REQUIRE_THROWS(parent->execute(a1))
+            REQUIRE_THROWS(parent->execute(a1));
     }
     #endif
 }
@@ -85,7 +85,6 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
 {
     {
         MockCore* c = new MockCore();
-        setCoreP(c);
         std::shared_ptr<MockDebugObjectChild> child(new MockDebugObjectChild());
         auto mockClock = dynamic_cast<MockClock*>(c->getClock().get());
         auto mockActionManager = dynamic_cast<MockObjectActionManager*>(child->getMockedObjectManager());
@@ -114,5 +113,4 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
         REQUIRE_CALL(*child, initObject(a3));
         child->execute(a3);
     }
-
 }
