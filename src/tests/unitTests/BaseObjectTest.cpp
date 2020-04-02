@@ -6,6 +6,8 @@
 #include "core/Core.hpp"
 #include "objects/ObjectActionManager.hpp"
 
+
+
 using namespace paresis;
 
 class MockObjectActionManager : public ObjectActionManager
@@ -48,29 +50,35 @@ public:
 
 TEST_CASE( "BaseObject Test: Init and SelfAction", "[BaseObject]" )
 {
-    // MockCore c;
-    // setCoreP(&c);
     std::shared_ptr<MockDebugObjectChild> child(new MockDebugObjectChild());
     std::shared_ptr<DebugObject> parent(new DebugObjectParent());
 
     std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), 1));
     std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(1), 2));
 
-    REQUIRE_FALSE(child->isInitialized());
-    REQUIRE_FALSE(parent->isInitialized());
+    SECTION("Create self Action") {
+        REQUIRE_FALSE(child->isInitialized());
+        REQUIRE_FALSE(parent->isInitialized());
 
-    child->mockInit(a1);
-    parent->initObject(a2);
+        child->mockInit(a1);
+        parent->initObject(a2);
 
-    REQUIRE(child->isInitialized());
-    REQUIRE(parent->isInitialized());
+        REQUIRE(child->isInitialized());
+        REQUIRE(parent->isInitialized());
 
-    auto self = child->testCreateSelfAction(std::chrono::milliseconds(2), std::chrono::milliseconds(1));
-    REQUIRE(self->getAffected()->front() == child->getObjectId());
-    REQUIRE(self->getKind() == Action::Kind::START);
-    REQUIRE(self->getStartTime() == std::chrono::milliseconds(1));
-    REQUIRE(self->getDuration() == std::chrono::milliseconds(2));
-    REQUIRE(self->getActionData() == nullptr);
+        auto self = child->testCreateSelfAction(std::chrono::milliseconds(2), std::chrono::milliseconds(1));
+        REQUIRE(self->getAffected()->front() == child->getObjectId());
+        REQUIRE(self->getKind() == Action::Kind::START);
+        REQUIRE(self->getStartTime() == std::chrono::milliseconds(1));
+        REQUIRE(self->getDuration() == std::chrono::milliseconds(2));
+        REQUIRE(self->getActionData() == nullptr);
+    }
+
+    #ifdef PARESIS_SAFE
+    SECTION("Is Initialized") {
+            REQUIRE_THROWS(parent->execute(a1))
+    }
+    #endif
 }
 
 TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
