@@ -1,38 +1,39 @@
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectList.hpp"
+#include "utils/invariant.hpp"
 
 namespace paresis
 {
 
 void ObjectContainer::insert(std::shared_ptr<BaseObject> obj)
 {
-    assert(data.find(obj->getObjectId()) == data.end());
+    invariant(data.find(obj->getObjectId()) == data.end(), "object already in container");
     data[obj->getObjectId()] = obj;
 }
 
 void ObjectContainer::remove(int id)
 {
-    assert(data.find(id) != data.end());
+    invariant(data.find(id) != data.end(), "removed object not in container");
     data.erase(id);
 }
 
 std::shared_ptr<BaseObject> ObjectContainer::getObject(int id)
 {
-    assert(data.find(id) != data.end());
+    invariant(data.find(id) != data.end(), "requested objet not in container");
     return data[id];
 }
 
 void ObjectContainer::insertUnique(std::shared_ptr<BaseObject> obj)
 {
-    assert(mUniqueObjects.find(obj->getObjectName()) == mUniqueObjects.end());
+    invariant(mUniqueObjects.find(obj->getObjectName()) == mUniqueObjects.end(), "unique object already in container");
     mUniqueObjects[obj->getObjectName()] = obj->getObjectId();
     insert(std::move(obj));
 }
 
 std::shared_ptr<BaseObject> ObjectContainer::getUnique(std::string name)
 {
-    assert(mUniqueObjects.find(name) != mUniqueObjects.end());
-    assert(data.find(mUniqueObjects[name]) != data.end());
+    invariant(mUniqueObjects.find(name) != mUniqueObjects.end(), "requested unique object not in container");
+    invariant(data.find(mUniqueObjects[name]) != data.end(), "requested unique object in wrong container");
     return data[mUniqueObjects[name]];
 }
 

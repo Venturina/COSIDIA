@@ -1,5 +1,6 @@
 #include "core/Core.hpp"
 #include "objects/BaseObject.hpp"
+#include "utils/invariant.hpp"
 
 #include <loguru/loguru.hpp>
 
@@ -12,7 +13,7 @@ BaseObject::BaseObject() : mActionManager(new ObjectActionManager())
 
 void BaseObject::execute(std::shared_ptr<Action> action)
 {
-    assert(isInitialized());
+    invariant(isInitialized(), "Tried to execute a not initialized object");
 
     switch (action->getKind()) {
         case Action::Kind::START:
@@ -50,9 +51,6 @@ void BaseObject::execute(std::shared_ptr<Action> action)
 
 bool BaseObject::isInitialized()
 {
-    assert(mObjectName.compare(""));
-    assert(mObjectId != -1);
-    assert(!mParentList.empty());
     if(mObjectName.compare("") == 0 || mObjectId == -1 || mParentList.empty()) {
         return false;
     } else {

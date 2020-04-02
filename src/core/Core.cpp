@@ -13,6 +13,8 @@
 #include <radio/MediumAccess.hpp>
 #include <objects/SimulationManager.hpp>
 
+#include "utils/invariant.hpp"
+
 
 namespace paresis
 {
@@ -22,13 +24,13 @@ static std::thread::id theMainThread;
 
 void setCoreP(Core* p)
 {
-    assert(std::this_thread::get_id() == theMainThread);
+    invariant(std::this_thread::get_id() == theMainThread, "Core set on wrong thread");
     coreP = p;
 }
 
 Core* getCoreP()
 {
-    assert(std::this_thread::get_id() == theMainThread);
+    invariant(std::this_thread::get_id() == theMainThread, "Core get on wrong thread");
     return coreP;
 }
 
