@@ -4,3 +4,4 @@
 
 add_catch_test(ObjectManager ObjectActionManagerTest.cpp)
 add_catch_test(BaseObject BaseObjectTest.cpp)
+add_catch_test(ObjectList ObjectListTest.cpp)
