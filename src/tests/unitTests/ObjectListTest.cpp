@@ -56,3 +56,38 @@ TEST_CASE( "ObjectContainer", "[ObjectContainer]" ) {
     }
 
 }
+
+TEST_CASE("ObjectList", "[ObjectList]") {
+    ObjectList list;
+    std::shared_ptr<DebugObjectChild> child(new DebugObjectChild);
+    child->initObject();
+    std::shared_ptr<DebugObjectParent> parent(new DebugObjectParent);
+    parent->initObject();
+
+    #ifdef PARESIS_SAFE
+    SECTION("Insert") {
+        auto cur1 = list.getCurrentObjectContainer();
+        REQUIRE_THROWS(list.getObjectByIdFromCurrentContainer(child->getObjectId()));
+        REQUIRE_THROWS(cur1->getObject(child->getObjectId()));
+        list.addToObjectContainer(child->getObjectId(), child);
+        REQUIRE_THROWS(cur1->getObject(child->getObjectId()));
+        REQUIRE(list.getObjectByIdFromCurrentContainer(child->getObjectId()) == child);
+        auto cur2 = list.getCurrentObjectContainer();
+        REQUIRE(cur2->getObject(child->getObjectId()) == child);
+        REQUIRE(list.getObjectByIdFromCurrentContainer(child->getObjectId()) == child);
+    }
+
+    SECTION("InsertUnique") {
+        auto cur1 = list.getCurrentObjectContainer();
+        REQUIRE_THROWS(list.getObjectByIdFromCurrentContainer(child->getObjectId()));
+        REQUIRE_THROWS(cur1->getObject(child->getObjectId()));
+        list.addUnique(child);
+        REQUIRE_THROWS(cur1->getObject(child->getObjectId()));
+        REQUIRE(list.getUniqueObjectByName(child->getObjectName()) == child);
+        auto cur2 = list.getCurrentObjectContainer();
+        REQUIRE(cur2->getObject(child->getObjectId()) == child);
+        REQUIRE(list.getUniqueObjectByName(child->getObjectName()) == child);
+    }
+    #endif
+
+}
