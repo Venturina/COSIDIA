@@ -50,6 +50,7 @@ std::shared_ptr<BaseObject> ObjectContainer::getUnique(std::string name)
 ObjectList::ObjectList()
 {
     mWorkingCopy = std::make_shared<ObjectContainer>();
+    mCurrentCopy = std::make_shared<ObjectContainer>(*mWorkingCopy);
 }
 
 void ObjectList::addToObjectContainer(int objectId, std::shared_ptr<BaseObject> object)
