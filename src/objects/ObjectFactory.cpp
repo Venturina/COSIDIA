@@ -2,6 +2,7 @@
 #include "objects/ObjectFactory.hpp"
 #include "objects/VehicleObject.hpp"
 #include "radio/Microchannel.hpp"
+#include "utils/enforce.hpp"
 
 #include "loguru/loguru.hpp"
 
@@ -19,20 +20,22 @@ void ObjectFactory::registerType()
     DLOG_F(ERROR, "Object registered");
 }
 
-TemporaryObjectList ObjectFactory::createObject(std::string object, ObjectContainer_ptr objectList)
+TemporaryObjectList ObjectFactory::createObject(std::string object, ObjectContainer_ptr objectList, FactoryData* data)
 {
     DLOG_F(ERROR, "Create something");
     if(!object.compare("vehicle")) {
-        return createVehicleObject(objectList);
+        return createVehicleObject(objectList, data);
     } else {
         throw std::runtime_error("Unknown object requested");
     }
 }
 
-TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objectList)
+TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objectList, FactoryData* data)
 {
+    enforce(data != nullptr, "Need FactoryData to create Vehicle")
     auto microchannel = std::make_shared<Microchannel>();
     auto vehicle = std::make_shared<VehicleObject>();
+    vehicle->setExternalId(data->get<std::string>("id"));
 
     TemporaryObject tRadio(0, objectList->getUnique("Radio"), true);
     TemporaryObject tChannel(1, microchannel);

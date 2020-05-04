@@ -3,12 +3,16 @@
 
 #include "objects/ObjectList.hpp"
 #include "objects/TemporaryObject.hpp"
+#include "utils/AnyMap.hpp"
 
 class BaseObject;
 class Core;
 
 namespace paresis
 {
+
+using FactoryData = AnyMap;
+
 
 class ObjectFactory
 {
@@ -22,12 +26,12 @@ public:
     void registerType();
 
 
-    virtual TemporaryObjectList createObject(std::string, ObjectContainer_ptr objectList = nullptr);
+    virtual TemporaryObjectList createObject(std::string, ObjectContainer_ptr objectList = nullptr, FactoryData* = nullptr);
 
 private:
     ObjectFactory() {}
 
-    TemporaryObjectList createVehicleObject(ObjectContainer_ptr objectList);
+    TemporaryObjectList createVehicleObject(ObjectContainer_ptr objectList, FactoryData*);
 
 };
 
