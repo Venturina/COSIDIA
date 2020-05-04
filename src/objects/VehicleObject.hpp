@@ -14,10 +14,11 @@ public:
     virtual void endExecution(std::shared_ptr<Action>);
     virtual void initObject(std::shared_ptr<Action>);
     virtual ObjectContext copyContext() {};
-    virtual void setExternalId(int id) { externalId = id; }
+    virtual void setExternalId(std::string id) { externalId = id; }
+    virtual std::string getExternalId() { return externalId; }
 
 private:
-    int externalId = 0;
+    std::string externalId = "";
 };
 
 } // namespace paresis
