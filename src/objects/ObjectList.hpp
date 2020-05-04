@@ -3,6 +3,8 @@
 
 #include <atomic>
 #include <unordered_map>
+#include <map>
+#include <memory>
 #include <typeindex>
 #include <typeinfo>
 
@@ -23,6 +25,8 @@ public:
 
     void insertUnique(std::shared_ptr<BaseObject>);
     std::shared_ptr<BaseObject> getUnique(std::string);
+
+    const std::map<int, std::shared_ptr<BaseObject>> getAll() { return data; };
 
 private:
     std::map<int, std::shared_ptr<BaseObject>> data;

@@ -41,6 +41,10 @@ public:
     virtual void endExecution(std::shared_ptr<Action>) override;
     virtual void initObject(std::shared_ptr<Action>) override;
 
+protected:
+    std::map<std::string, int> idMapper;
+    virtual void fetchVehicleIds(ObjectContainer_ptr);
+
 private:
 
     virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr);

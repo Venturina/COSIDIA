@@ -1,5 +1,6 @@
 #include "core/Core.hpp"
 #include "mobility/MobilityManager.hpp"
+#include "objects/VehicleObject.hpp"
 #include <boost/fiber/future.hpp>
 #include <loguru/loguru.hpp>
 
@@ -23,6 +24,30 @@ void MobilityManager::startExecution(std::shared_ptr<Action> action)
 
     mFuture = pt.get_future();
     boost::fibers::fiber(std::move(pt), action, objectList).detach();
+}
+
+//TODO: iterate object list from newest to oldest object (reverse iteration)
+void MobilityManager::fetchVehicleIds(ObjectContainer_ptr objectList)
+{
+    auto data = objectList->getAll();
+    for(auto& vehicle : idMapper) {
+        if(vehicle.second == 0) {
+            DLOG_F(ERROR, "found unresolved vehicle");
+            for(auto& obj : data) {
+                if(obj.second->getObjectName() == "VehicleObject") {
+                    auto st = dynamic_cast<VehicleObject*>(obj.second.get())->getExternalId();
+                    if(st == vehicle.first) {
+                        idMapper[vehicle.first] = obj.second->getObjectId();
+                        std::string s = "fetched vehicle id: ";
+                        s.append(std::to_string(obj.second->getObjectId()));
+                        s.append(" for ");
+                        s.append(vehicle.first);
+                        DLOG_F(ERROR, s.c_str());
+                    }
+                }
+            }
+        }
+    }
 }
 
 std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
