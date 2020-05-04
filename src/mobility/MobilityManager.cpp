@@ -1,6 +1,7 @@
 #include "core/Core.hpp"
 #include "mobility/MobilityManager.hpp"
 #include "objects/VehicleObject.hpp"
+#include "utils/AnyMap.hpp"
 #include <boost/fiber/future.hpp>
 #include <loguru/loguru.hpp>
 
@@ -54,10 +55,16 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
 {
     auto data = std::make_shared<MobilityManagerData>();
     DLOG_F(INFO, "MobilityManager: in fiber");
+    fetchVehicleIds(objectList);
 
     if(updateCount % 10 == 0 && updateCount < 100) {
-        auto vehicle = ObjectFactory::getInstance().createObject("vehicle", objectList);
+        AnyMap map;
+        std::string id = "abc.";
+        id.append(std::to_string(updateCount));
+        map.add<std::string>("id", "abc.0");
+        auto vehicle = ObjectFactory::getInstance().createObject("vehicle", objectList, &map);
         data->vehiclesToAdd.push_back(vehicle);
+        idMapper[id] = 0;
     }
 
     if(action->getStartTime() < std::chrono::seconds(20)) {
