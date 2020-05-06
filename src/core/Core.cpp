@@ -90,6 +90,10 @@ void Core::addUniqueObject(std::shared_ptr<BaseObject> obj)
     mObjectList.addUnique(obj);
 }
 
+void Core::removeObjectFromSimulation(int id) {
+    mObjectList.removeFromSimulation(id);
+}
+
 void Core::setup()
 {
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();

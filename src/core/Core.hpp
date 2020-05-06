@@ -44,6 +44,8 @@ public:
     void addObject(std::shared_ptr<BaseObject>);
     void addUniqueObject(std::shared_ptr<BaseObject>);
 
+    void removeObjectFromSimulation(int);
+
     std::shared_ptr<SteadyClock> getClock() { return mClock; }
 
     ObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectContainer(); };
