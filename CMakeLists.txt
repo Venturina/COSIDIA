@@ -30,6 +30,7 @@ add_library(libparesis STATIC
         src/objects/ObjectContext.cpp
         src/objects/ObjectFactory.cpp
         src/objects/ObjectList.cpp
+        src/objects/ObjectRemover.cpp
         src/objects/SimulationManager.cpp
         src/objects/TemporaryObject.cpp
         src/objects/VehicleObject.cpp
