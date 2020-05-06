@@ -27,6 +27,9 @@ public:
     virtual void addParent(ObjectId id) { mParentList.emplace(id); }
     virtual void addChild(ObjectId id) { mChildIdList.emplace(id); }
 
+    virtual std::set<ObjectId> getParents() { return mParentList; }
+    virtual std::set<ObjectId> getChildren() { return mChildIdList; }
+
     virtual ObjectId getObjectId() { return mObjectId; }
     virtual std::string getObjectName() { return mObjectName; }
 
