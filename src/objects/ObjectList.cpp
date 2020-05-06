@@ -27,7 +27,11 @@ void ObjectContainer::remove(std::shared_ptr<BaseObject> obj)
 
 std::shared_ptr<BaseObject> ObjectContainer::getObject(int id)
 {
-    enforce(data.find(id) != data.end(), "requested objet not in container");
+    enforce(data.find(id) != data.end() || mRemovedObjects.find(id) != mRemovedObjects.end(), "ObjectContainer: requested objet not in container nor is it removed");
+    if(data.find(id) == data.end()) {
+        std::cout << "test" << std::endl;
+        return nullptr;
+    }
     return data[id];
 }
 
@@ -45,6 +49,10 @@ std::shared_ptr<BaseObject> ObjectContainer::getUnique(std::string name)
     enforce(mUniqueObjects.find(name) != mUniqueObjects.end(), "requested unique object not in container");
     enforce(data.find(mUniqueObjects[name]) != data.end(), "requested unique missing in object container");
     return data[mUniqueObjects[name]];
+}
+
+void ObjectContainer::removeFromSimulation(int id) {
+    mRemovedObjects[id] = mRemovedObjects[id]++;
 }
 
 ObjectList::ObjectList()
@@ -86,6 +94,13 @@ std::shared_ptr<BaseObject> ObjectList::getObjectByIdFromCurrentContainer(int id
 ObjectContainer_ptr ObjectList::getCurrentObjectContainer()
 {
     return mCurrentCopy;
+}
+
+void ObjectList::removeFromSimulation(int id)
+{
+    mWorkingCopy->remove(id);
+    mWorkingCopy->removeFromSimulation(id);
+    mCurrentCopy = std::make_shared<ObjectContainer>(*mWorkingCopy);
 }
 
 }

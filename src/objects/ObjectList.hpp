@@ -26,11 +26,14 @@ public:
     void insertUnique(std::shared_ptr<BaseObject>);
     std::shared_ptr<BaseObject> getUnique(std::string);
 
+    void removeFromSimulation(int);
+
     const std::map<int, std::shared_ptr<BaseObject>> getAll() { return data; };
 
 private:
     std::map<int, std::shared_ptr<BaseObject>> data;
     std::map<std::string, int32_t> mUniqueObjects;
+    std::map<int, int> mRemovedObjects;
 };
 
 using ObjectContainer_ptr = std::shared_ptr<ObjectContainer>;
@@ -44,6 +47,8 @@ public:
     void addUnique(std::shared_ptr<BaseObject>);
 
     void removeObjectById(int id);
+
+    void removeFromSimulation(int);
     std::shared_ptr<BaseObject>getUniqueObjectByName(std::string);
     std::shared_ptr<BaseObject>getObjectByIdFromCurrentContainer(int id);
     ObjectContainer_ptr getCurrentObjectContainer();
