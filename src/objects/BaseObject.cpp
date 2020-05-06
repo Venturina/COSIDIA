@@ -11,6 +11,11 @@ BaseObject::BaseObject() : mActionManager(new ObjectActionManager())
 {
 }
 
+BaseObject::~BaseObject()
+{
+    DLOG_F(ERROR, "Called Destructor of %d, %s", mObjectId, mObjectName);
+}
+
 void BaseObject::execute(std::shared_ptr<Action> action)
 {
     invariant(isInitialized(), "Tried to execute a not initialized object");
