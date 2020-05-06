@@ -3,6 +3,7 @@
 
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectFactory.hpp"
+#include "objects/ObjectRemover.hpp"
 #include <unordered_set>
 
 namespace paresis
@@ -23,7 +24,7 @@ struct MobilityManagerData
 {
     std::list<std::shared_ptr<Action>> actionsToSchedule;
     std::list<TemporaryObjectList> vehiclesToAdd;
-    std::list<int> objectsToDelete;
+    std::vector<int> objectsToDelete;
 };
 
 
@@ -42,7 +43,7 @@ public:
     virtual void initObject(std::shared_ptr<Action>) override;
 
 protected:
-    std::map<std::string, int> idMapper;
+    std::map<std::string, int> mIdMapper;
     virtual void fetchVehicleIds(ObjectContainer_ptr);
 
 private:

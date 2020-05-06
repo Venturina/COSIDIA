@@ -1,5 +1,6 @@
 #include "core/Core.hpp"
 #include "mobility/MobilityManager.hpp"
+#include "objects/ObjectRemover.hpp"
 #include "objects/VehicleObject.hpp"
 #include "utils/AnyMap.hpp"
 #include <boost/fiber/future.hpp>
@@ -31,14 +32,14 @@ void MobilityManager::startExecution(std::shared_ptr<Action> action)
 void MobilityManager::fetchVehicleIds(ObjectContainer_ptr objectList)
 {
     auto data = objectList->getAll();
-    for(auto& vehicle : idMapper) {
+    for(auto& vehicle : mIdMapper) {
         if(vehicle.second == 0) {
             DLOG_F(ERROR, "found unresolved vehicle");
             for(auto& obj : data) {
                 if(obj.second->getObjectName() == "VehicleObject") {
                     auto st = dynamic_cast<VehicleObject*>(obj.second.get())->getExternalId();
                     if(st == vehicle.first) {
-                        idMapper[vehicle.first] = obj.second->getObjectId();
+                        mIdMapper[vehicle.first] = obj.second->getObjectId();
                         std::string s = "fetched vehicle id: ";
                         s.append(std::to_string(obj.second->getObjectId()));
                         s.append(" for ");
@@ -64,7 +65,7 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
         map.add<std::string>("id", "abc.0");
         auto vehicle = ObjectFactory::getInstance().createObject("vehicle", objectList, &map);
         data->vehiclesToAdd.push_back(vehicle);
-        idMapper[id] = 0;
+        mIdMapper[id] = 0;
     }
 
     if(action->getStartTime() < std::chrono::seconds(20)) {
@@ -73,6 +74,21 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
             mObjectId); // ugly as hell?
 
         data->actionsToSchedule.push_back(newAction);
+    }
+
+    std::list<std::string> deletedKeys;
+    if(updateCount % 5 == 0 && updateCount < 105 && updateCount > 10) {
+        for(auto& v : mIdMapper) {
+            if(v.second != 0) {
+                auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", v.second, objectList);
+                data->objectsToDelete = deleter;
+                deletedKeys.push_back(v.first);
+            }
+        }
+    }
+
+    for(auto& k : deletedKeys) {
+        mIdMapper.erase(k);
     }
 
     updateCount++;
@@ -88,6 +104,10 @@ void MobilityManager::endExecution(std::shared_ptr<Action> action)
     }
     for(auto& a : data->actionsToSchedule) {
         getCoreP()->scheduleAction(std::move(a));
+    }
+    for (auto& vehicle : data->objectsToDelete) {
+        DLOG_F(ERROR, "Remove Vehicle");
+        getCoreP()->removeObjectFromSimulation(vehicle);
     }
 }
 
