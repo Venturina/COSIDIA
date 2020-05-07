@@ -28,10 +28,10 @@ public:
 
     void removeFromSimulation(int);
 
-    const std::map<int, std::shared_ptr<BaseObject>> getAll() { return data; };
+    const std::map<int, std::shared_ptr<BaseObject>> getAll() { return mActiveObjects; };
 
 private:
-    std::map<int, std::shared_ptr<BaseObject>> data;
+    std::map<int, std::shared_ptr<BaseObject>> mActiveObjects;
     std::map<std::string, int32_t> mUniqueObjects;
     std::map<int, int> mRemovedObjects;
 };
