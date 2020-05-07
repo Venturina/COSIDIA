@@ -25,6 +25,8 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
 
 std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
 {
+    fetchVehicleIds(objectList);
+
     auto t = action->getStartTime();
     auto res = mUpdater->step(std::chrono::duration_cast<std::chrono::milliseconds>(t));
     auto data = executeUpdate(res, objectList);
@@ -42,13 +44,14 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::s
 std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& r, ObjectContainer_ptr objectContainer)
 {
     // add vehicles
-
     std::shared_ptr<MobilityManagerData> data = std::make_shared<MobilityManagerData>();
     for(auto& vehicle : r.departedVehicles) {
-        auto vehicleObject = ObjectFactory::getInstance().createObject("vehicle", objectContainer);
+        mIdMapper[vehicle] = 0;
+        AnyMap a;
+        a.add<std::string>("id", vehicle);
+        auto vehicleObject = ObjectFactory::getInstance().createObject("vehicle", objectContainer, &a);
         data->vehiclesToAdd.push_back(vehicleObject);
     }
-
 
 
     // remove vehicles
