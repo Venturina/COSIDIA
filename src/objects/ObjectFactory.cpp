@@ -26,13 +26,13 @@ TemporaryObjectList ObjectFactory::createObject(std::string object, ObjectContai
     if(!object.compare("vehicle")) {
         return createVehicleObject(objectList, data);
     } else {
-        throw std::runtime_error("Unknown object requested");
+        throw std::runtime_error("ObjectFactory: Unknown object requested");
     }
 }
 
 TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objectList, FactoryData* data)
 {
-    enforce(data != nullptr, "Need FactoryData to create Vehicle")
+    enforce(data != nullptr, "ObjectFachtory: Need FactoryData to create Vehicle")
     auto microchannel = std::make_shared<Microchannel>();
     auto vehicle = std::make_shared<VehicleObject>();
     vehicle->setExternalId(data->get<std::string>("id"));
