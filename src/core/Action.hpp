@@ -89,6 +89,7 @@ private:
 };
 
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>);
+std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>, std::list<int> endActionList);
 
 } // ns paresis
 

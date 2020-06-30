@@ -16,17 +16,17 @@ BaseObject::~BaseObject()
     DLOG_F(ERROR, "Called Destructor of %d, %s", mObjectId, mObjectName.c_str());
 }
 
-void BaseObject::execute(std::shared_ptr<Action> action)
+int BaseObject::execute(std::shared_ptr<Action> action)
 {
     invariant(isInitialized(), "Tried to execute a not initialized object");
 
     switch (action->getKind()) {
         case Action::Kind::START:
             if(!mActionManager->startOrDelay(action)) {
-                getCoreP()->scheduleAction(makeEndAction(action));
+                //getCoreP()->scheduleAction(makeEndAction(action));
                 startExecution(std::move(action));
             }
-            break;
+            return mObjectId;
         case Action::Kind::END:
             {
                 endExecution(action);
@@ -41,17 +41,16 @@ void BaseObject::execute(std::shared_ptr<Action> action)
                     update.setStartTime(action->getStartTime() + action->getDuration());
                     auto next = mActionManager->activateNextAvailableAction();
                     getCoreP()->scheduleAction(makeEndAction(next));
-
+                    LOG_F(INFO, "Schedule Queued Action");
                     startExecution(std::move(next));
                 }
-
-                break;
+                return 0;
             }
         case Action::Kind::INIT:
             initObject(action);
-            break;
+            return 0;
         default:
-            break;
+            return 0;
     }
 }
 

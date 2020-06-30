@@ -19,7 +19,7 @@ class BaseObject
 public:
     BaseObject();
     ~BaseObject();
-    virtual void execute(std::shared_ptr<Action>);
+    virtual int execute(std::shared_ptr<Action>);
     virtual void startExecution(std::shared_ptr<Action>) = 0;
     virtual void endExecution(std::shared_ptr<Action>) = 0;
     virtual void initObject(std::shared_ptr<Action>) = 0;

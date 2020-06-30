@@ -1,5 +1,6 @@
 #include "core/Core.hpp"
 #include "fiber/customWorkStealing.hpp"
+#include "utils/enforce.hpp"
 #include <boost/bind.hpp>
 #include <boost/fiber/algo/work_stealing.hpp>
 #include <boost/fiber/fiber.hpp>
@@ -80,13 +81,13 @@ void Core::scheduleAction(std::shared_ptr<Action> action)
 
 void Core::addObject(std::shared_ptr<BaseObject> obj)
 {
-    assert(obj->isInitialized());
+    enforce(obj->isInitialized(), "Core: Object to add not initialized");
     mObjectList.addToObjectContainer(obj->getObjectId(), obj);
 }
 
 void Core::addUniqueObject(std::shared_ptr<BaseObject> obj)
 {
-    assert(obj->isInitialized());
+    enforce(obj->isInitialized(), "Core: Object to add not initialized");
     mObjectList.addUnique(obj);
 }
 
@@ -161,15 +162,21 @@ void Core::executeActionOnFinishedTimer()
         throw std::runtime_error("messed up with upcoming tasks");
     } else {
         auto l = mCurrentAction->getAffected();
+        std::list<int> endActionList;
         for(auto & elemId : *l)
         {
-            assert(elemId >= 0);
+            enforce(elemId >= 0, "Core: tried to execute object with id 0");
             auto obj = mObjectList.getObjectByIdFromCurrentContainer(elemId);
             if (obj) {
-                obj->execute(mCurrentAction);
+                if(obj->execute(mCurrentAction) != 0) {
+                    endActionList.push_back(elemId);
+                }
             } else {
                 std::cout << "test" << std::endl;
             }
+        }
+        if(!endActionList.empty()) {
+            scheduleAction(makeEndAction(mCurrentAction, endActionList));
         }
         //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());
         mActions.popNextAction();
