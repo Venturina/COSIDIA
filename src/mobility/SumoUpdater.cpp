@@ -69,10 +69,28 @@ SumoUpdater::Results SumoUpdater::step(std::chrono::milliseconds currentSimTime)
         }
     }
 
+    std::shared_ptr<VehicleUpdateActionData> actionData(new VehicleUpdateActionData());
     for(auto& vehicle : mSubscribedVehicles) {
-        const auto& vehicleVars = mLiteApi.vehicle().getSubscriptionResults(vehicle);
-        //DLOG_F(ERROR, "Got %d vehicleVars", vehicleVars.size());
+        const auto vehicleVars = mLiteApi.vehicle().getSubscriptionResults(vehicle);
+        VehicleUpdate update;
+        update.setVehicle(vehicle);
+        res.updateVehicles.push_back(vehicle);
+
+        for(auto& vehicleVar : vehicleVars) {
+            if(vehicleVar.first == libsumo::VAR_SPEED) {
+                auto i = dynamic_cast<const libsumo::TraCIDouble*>(vehicleVar.second.get());
+                enforce(i, "SumoUpdater: Could not cast TraCI Variable");
+                update.setSpeed(i->value);
+            }
+        }
+        actionData->addData(vehicle, update);
+        //res.updateResults[vehicle] = vehicleVars;
+        // DLOG_F(ERROR, "Got variable %d vehicleVars", vehicleVars.size());
+        // for(auto& elem : vehicleVars) {
+        //     DLOG_F(ERROR, "Got variable %d ", elem.first);
+        // }
     }
+    res.updateData = std::move(actionData);
 
     // m_sim_cache->reset(simvars);
     // ASSERT(checkTimeSync(*m_sim_cache, omnetpp::simTime()));

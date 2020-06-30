@@ -167,6 +167,8 @@ void Core::executeActionOnFinishedTimer()
             auto obj = mObjectList.getObjectByIdFromCurrentContainer(elemId);
             if (obj) {
                 obj->execute(mCurrentAction);
+            } else {
+                std::cout << "test" << std::endl;
             }
         }
         //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());

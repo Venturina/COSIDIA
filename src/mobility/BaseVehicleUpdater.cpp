@@ -4,17 +4,17 @@
 namespace paresis
 {
 
-BaseVehicleUpdater::BaseVehicleUpdater(traci::LiteAPI* api) : mLiteAPI(api)
-{
-}
+// BaseVehicleUpdater::BaseVehicleUpdater(traci::LiteAPI* api) : mLiteAPI(api)
+// {
+// }
 
-BaseVehicleUpdater::~BaseVehicleUpdater()
-{
-}
+// BaseVehicleUpdater::~BaseVehicleUpdater()
+// {
+// }
 
-VehicleDataUpdate BaseVehicleUpdater::updateAllVehicles()
-{
+// VehicleDataUpdate BaseVehicleUpdater::updateAllVehicles()
+// {
     
-}
+// }
 
 }

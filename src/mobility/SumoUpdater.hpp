@@ -1,6 +1,7 @@
 #ifndef _SUMO_VEHICLE_UPDATER_HPP_SDFN
 #define _SUMO_VEHICLE_UPDATER_HPP_SDFN
 
+#include "actionData/VehicleUpdateActionData.hpp"
 #include "mobility/BaseVehicleUpdater.hpp"
 #include "traci/LiteAPI.h"
 
@@ -15,7 +16,9 @@ public:
     {
         std::list<std::string> departedVehicles;
         std::list<std::string> arrivedVehicles;
-        // TODO vehicleUpdates
+
+        std::list<std::string> updateVehicles;
+        std::shared_ptr<VehicleUpdateActionData> updateData;
     };
 
     SumoUpdater(traci::LiteAPI&);

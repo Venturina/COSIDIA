@@ -1,7 +1,10 @@
 #ifndef _VEHICLE_OBJECT_HPP_SDNFOA
 #define _VEHICLE_OBJECT_HPP_SDNFOA
 
+#include "actionData/ActionData.hpp"
 #include "objects/BaseObject.hpp"
+#include <boost/optional.hpp>
+
 
 namespace paresis
 {
@@ -14,11 +17,17 @@ public:
     virtual void endExecution(std::shared_ptr<Action>);
     virtual void initObject(std::shared_ptr<Action>);
     virtual ObjectContext copyContext() {};
-    virtual void setExternalId(std::string id) { externalId = id; }
-    virtual std::string getExternalId() { return externalId; }
+
+    /**
+     * This getter is allowed as externalId won't be changed during the simulation run
+     */
+    virtual std::string getExternalId() { return mExternalId; }
+    virtual void setExternalId(std::string id);
+
+    virtual bool isInitialized() override;
 
 private:
-    std::string externalId = "";
+    std::string mExternalId = "";
 };
 
 } // namespace paresis

@@ -13,7 +13,7 @@ BaseObject::BaseObject() : mActionManager(new ObjectActionManager())
 
 BaseObject::~BaseObject()
 {
-    DLOG_F(ERROR, "Called Destructor of %d, %s", mObjectId, mObjectName);
+    DLOG_F(ERROR, "Called Destructor of %d, %s", mObjectId, mObjectName.c_str());
 }
 
 void BaseObject::execute(std::shared_ptr<Action> action)
@@ -30,6 +30,12 @@ void BaseObject::execute(std::shared_ptr<Action> action)
         case Action::Kind::END:
             {
                 endExecution(action);
+                auto now = getCoreP()->getClock()->getSimTimeNow();
+                LOG_F(ERROR, "time: expected: %d now: %d value: %d, type %s", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000, mObjectName.c_str());
+                if(!((action->getStartTime() < std::chrono::seconds(3)) ||
+                    (action->getStartTime() - now) > std::chrono::milliseconds(-1))) {
+                    throw std::runtime_error("Time Violation");
+                }
                 if(mActionManager->endAndCheckAvailable()) {
                     auto update = mActionManager->fetchNextAction();
                     update.setStartTime(action->getStartTime() + action->getDuration());
@@ -38,12 +44,7 @@ void BaseObject::execute(std::shared_ptr<Action> action)
 
                     startExecution(std::move(next));
                 }
-                auto now = getCoreP()->getClock()->getSimTimeNow();
-                LOG_F(ERROR, "time: expected: %d now: %d value: %d", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000);
-                if(!((action->getStartTime() < std::chrono::seconds(3)) ||
-                    (action->getStartTime() - now) > std::chrono::milliseconds(-1))) {
-                    throw std::runtime_error("Time Violation");
-                }
+
                 break;
             }
         case Action::Kind::INIT:

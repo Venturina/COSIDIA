@@ -12,28 +12,28 @@ namespace traci
 namespace paresis
 {
 
-struct VehicleUpdate
-{
-    int externalId; // eg. SumoId
-    int speed; // example for for all respective vehicle informations
-};
+// struct VehicleUpdate
+// {
+//     int externalId; // eg. SumoId
+//     int speed; // example for for all respective vehicle informations
+// };
 
-class VehicleDataUpdate : public ActionData
-{
+// class VehicleDataUpdate : public ActionData
+// {
     
-};
+// };
 
-class BaseVehicleUpdater
-{
+// class BaseVehicleUpdater
+// {
 
-public:
-    BaseVehicleUpdater(traci::LiteAPI*);
-    ~BaseVehicleUpdater();
+// public:
+//     BaseVehicleUpdater(traci::LiteAPI*);
+//     ~BaseVehicleUpdater();
 
-    virtual VehicleDataUpdate updateAllVehicles();
-private:
-    traci::LiteAPI* mLiteAPI;
-};
+//     virtual VehicleDataUpdate updateAllVehicles();
+// private:
+//     traci::LiteAPI* mLiteAPI;
+// };
 
 
 } // ns paresis

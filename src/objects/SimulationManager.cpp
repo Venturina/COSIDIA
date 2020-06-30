@@ -17,6 +17,7 @@ SimulationManager::SimulationManager() : BaseObject()
     DLOG_F(INFO, "Id of SimulationManager: %d", mObjectId);
 
     startAndScheduleObject(std::make_shared<SumoMobilityManager>());
+    //startAndScheduleObject(std::make_shared<MobilityManager>());
     startAndScheduleObject(std::make_shared<Radio>());
     //startAndScheduleObject(std::make_shared<DebugObject>());
 }

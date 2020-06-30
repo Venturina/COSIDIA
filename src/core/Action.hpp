@@ -5,7 +5,7 @@
 #include <chrono>
 #include <list>
 #include <memory>
-#include "core/ActionData.hpp"
+#include "actionData/ActionData.hpp"
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectContext.hpp"
 
@@ -45,6 +45,13 @@ public:
     Kind getKind() { return mKind; }
     std::list<int>* getAffected() { return &mAffectedObjects; };
 
+    /**
+     * Set type of Action: for more specific processing
+     */
+    void setType(std::string type) { mType = type; }
+    std::string getType() { return mType; }
+
+
     void addAffected(int id);
 
 
@@ -74,11 +81,6 @@ protected:
      * All objects which are affected by this action
      */
     std::list<int> mAffectedObjects;
-
-    /**
-     * Set type of Action: for more specific processing
-     */
-    void setType(std::string type) { mType = type; }
 
 private:
     Kind mKind;

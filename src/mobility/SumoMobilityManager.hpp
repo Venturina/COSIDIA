@@ -18,7 +18,8 @@ public:
 
 private:
     virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr) override;
-    std::shared_ptr<MobilityManagerData> executeUpdate(const SumoUpdater::Results&, ObjectContainer_ptr);
+    std::shared_ptr<MobilityManagerData> executeUpdate(const SumoUpdater::Results&, ObjectContainer_ptr, std::shared_ptr<Action>);
+    void addVehicle(const std::string&, MobilityManagerData*, ObjectContainer_ptr);
 
     std::chrono::milliseconds mUpdateInterval;
 
