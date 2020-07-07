@@ -23,6 +23,7 @@ void SumoUpdater::initSubscriptions()
     };
 
     mVehicleVars.push_back(VAR_SPEED);
+    mVehicleVars.push_back(VAR_POSITION);
 
     subscribeSimulationVariables(vars);
 
@@ -73,45 +74,41 @@ SumoUpdater::Results SumoUpdater::step(std::chrono::milliseconds currentSimTime)
     for(auto& vehicle : mSubscribedVehicles) {
         const auto vehicleVars = mLiteApi.vehicle().getSubscriptionResults(vehicle);
         VehicleUpdate update;
-        update.setVehicle(vehicle);
+        update.mVehicle = vehicle;
         res.updateVehicles.push_back(vehicle);
-
-        for(auto& vehicleVar : vehicleVars) {
-            if(vehicleVar.first == libsumo::VAR_SPEED) {
-                auto i = dynamic_cast<const libsumo::TraCIDouble*>(vehicleVar.second.get());
-                enforce(i, "SumoUpdater: Could not cast TraCI Variable");
-                update.setSpeed(i->value);
-            }
-        }
+        getVehicleUpdate(vehicleVars, update);
         actionData->addData(vehicle, update);
-        //res.updateResults[vehicle] = vehicleVars;
-        // DLOG_F(ERROR, "Got variable %d vehicleVars", vehicleVars.size());
-        // for(auto& elem : vehicleVars) {
-        //     DLOG_F(ERROR, "Got variable %d ", elem.first);
-        // }
     }
     res.updateData = std::move(actionData);
 
-    // m_sim_cache->reset(simvars);
-    // ASSERT(checkTimeSync(*m_sim_cache, omnetpp::simTime()));
-
-    // const auto& arrivedVehicles = m_sim_cache->get<libsumo::VAR_ARRIVED_VEHICLES_IDS>();
-    // for (const auto& id : arrivedVehicles) {
-    //     unsubscribeVehicle(id, false);
-    // }
-
-    // const auto& departedVehicles = m_sim_cache->get<libsumo::VAR_DEPARTED_VEHICLES_IDS>();
-    // for (const auto& id : departedVehicles) {
-    //     subscribeVehicle(id);
-    // }
-
-    // const auto& vehicles = mLiteApi->vehicle();
-    // for (const std::string& vehicle : mSubscribedVehicles) {
-    //     const auto& vars = vehicles.getSubscriptionResults(vehicle);
-    //     getVehicleCache(vehicle)->reset(vars);
-    // }
-
     return res;
+}
+
+void SumoUpdater::getVehicleUpdate(const libsumo::TraCIResults& vehicleVars, VehicleUpdate& update)
+{
+    for(auto& vehicleVar : vehicleVars) {
+        switch (vehicleVar.first) {
+            case libsumo::VAR_SPEED: {
+                auto i = dynamic_cast<const libsumo::TraCIDouble*>(vehicleVar.second.get());
+                enforce(i, "SumoUpdater: Could not cast TraCI Variable");
+                update.mSpeed = i->value;
+                break;
+            }
+            case libsumo::VAR_POSITION: {
+                auto pos = dynamic_cast<const libsumo::TraCIPosition*>(vehicleVar.second.get());
+                enforce(pos, "SumoUpdater: Could not cast TraCIPosition");
+                auto geoPos = mLiteApi.convertGeo(*pos);
+
+                update.mLatitude = geoPos.latitude;
+                update.mLongitude = geoPos.longitude;
+
+                break;
+            }
+            default:
+                enforce(false, "SumoUpdater: Traci Subscription not available in VehicleUpdate");
+                break;
+        }
+    }
 }
 
 void SumoUpdater::subscribeSimulationVariables(const std::set<int>& add_vars)

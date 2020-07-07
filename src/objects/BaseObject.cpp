@@ -32,10 +32,10 @@ int BaseObject::execute(std::shared_ptr<Action> action)
                 endExecution(action);
                 auto now = getCoreP()->getClock()->getSimTimeNow();
                 LOG_F(ERROR, "time: expected: %d now: %d value: %d, type %s", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000, mObjectName.c_str());
-                if(!((action->getStartTime() < std::chrono::seconds(3)) ||
-                    (action->getStartTime() - now) > std::chrono::milliseconds(-1))) {
-                    throw std::runtime_error("Time Violation");
-                }
+                // if(!((action->getStartTime() < std::chrono::seconds(3)) ||
+                //     (action->getStartTime() - now) > std::chrono::milliseconds(-1))) {
+                //     throw std::runtime_error("Time Violation");
+                // }
                 if(mActionManager->endAndCheckAvailable()) {
                     auto update = mActionManager->fetchNextAction();
                     update.setStartTime(action->getStartTime() + action->getDuration());

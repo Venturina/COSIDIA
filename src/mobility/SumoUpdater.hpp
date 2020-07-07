@@ -32,6 +32,7 @@ private:
     void subscribeSimulationVariables(const std::set<int>&);
     void subscribeVehicle(const std::string);
     void updateVehicleSubscription(const std::string&, const std::vector<int>&);
+    void getVehicleUpdate(const libsumo::TraCIResults&, VehicleUpdate&);
 
     traci::LiteAPI& mLiteApi;
     std::vector<int> mVehicleVars;

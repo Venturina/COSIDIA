@@ -42,16 +42,16 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::s
     return std::move(data);
 }
 
-std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& r, ObjectContainer_ptr objectContainer, std::shared_ptr<Action> action)
+std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& updaterResult, ObjectContainer_ptr objectContainer, std::shared_ptr<Action> action)
 {
     // add vehicles
     std::shared_ptr<MobilityManagerData> data = std::make_shared<MobilityManagerData>();
-    for(auto& vehicle : r.departedVehicles) {
+    for(auto& vehicle : updaterResult.departedVehicles) {
         addVehicle(vehicle, data.get(), objectContainer);
     }
 
     // remove vehicles
-    for(auto& vehicle: r.arrivedVehicles) {
+    for(auto& vehicle: updaterResult.arrivedVehicles) {
         auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", mIdMapper[vehicle], objectContainer);
         for(int obj : deleter) {
             data->objectsToDelete.push_back(obj);
@@ -60,15 +60,16 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const Su
 
     // update vehicles
     std::list<int> updateList;
-    for(auto& update: r.updateVehicles) {
+    for(auto& update: updaterResult.updateVehicles) {
         int id = mIdMapper[update];
         if (id != 0) {
+            updaterResult.updateData->getUpdateForVehicle(update).mObjectId = id;
             updateList.push_back(mIdMapper[update]);
         }
     }
 
     ActionP updateAction(new Action(std::chrono::milliseconds(10), Action::Kind::START, action->getStartTime()+action->getDuration(), updateList));
-    updateAction->setActionData(r.updateData);
+    updateAction->setActionData(updaterResult.updateData);
     updateAction->setType("SUMO");
     data->actionsToSchedule.push_back(updateAction);
 
