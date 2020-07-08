@@ -1,5 +1,6 @@
 #include "core/Action.hpp"
 #include "objects/BaseObject.hpp"
+#include "utils/enforce.hpp"
 
 #include <loguru/loguru.hpp>
 
@@ -37,6 +38,11 @@ void Action::setStartTime(SteadyClock::duration start)
     mStartTime = start;
 }
 
+void Action::setBeginId(int id)
+{
+    mBeginActionId = id;
+}
+
 void Action::setActionData(std::shared_ptr<ActionData> data)
 {
     assert(mActionData == nullptr);
@@ -45,25 +51,34 @@ void Action::setActionData(std::shared_ptr<ActionData> data)
 
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action> beginAction)
 {
+    enforce(beginAction->getActionId() != 0, "Action: ActionId is 0");
+    enforce(beginAction->getBeginId() == 0, "Action: Tried to make endAction with already set beginActionId");
     if(beginAction->getActionData() == nullptr) {
-        return std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), *beginAction->getAffected());
+        auto endAction = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), *beginAction->getAffected());
+        endAction->setBeginId(beginAction->getActionId());
+        return endAction;
     } else {
         auto a = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), *beginAction->getAffected());
         a->setActionData(beginAction->getActionData());
+        a->setBeginId(beginAction->getActionId());
         return std::move(a);
     }
 }
 
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action> beginAction, std::list<int> affected)
 {
+    enforce(beginAction->getActionId() != 0, "Action: ActionId is 0");
+    enforce(beginAction->getBeginId() == 0, "Action: Tried to make endAction with already set beginActionId");
     if(beginAction->getActionData() == nullptr) {
         auto action = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), affected);
         action->setType(beginAction->getType());
+        action->setBeginId(beginAction->getActionId());
         return action;
     } else {
         auto a = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), affected);
         a->setActionData(beginAction->getActionData());
         a->setType(beginAction->getType());
+        a->setBeginId(beginAction->getActionId());
         return std::move(a);
     }
 }

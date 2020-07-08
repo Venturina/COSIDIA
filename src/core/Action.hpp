@@ -51,6 +51,11 @@ public:
     void setType(std::string type) { mType = type; }
     std::string getType() { return mType; }
 
+    void setActionId(int id) { mActionId = id; }
+    int getActionId() { return mActionId; }
+
+    void setBeginId(int id);
+    int getBeginId() { return mBeginActionId; };
 
     void addAffected(int id);
 
@@ -84,6 +89,9 @@ protected:
 
 private:
     Kind mKind;
+
+    int mActionId = 0;
+    int mBeginActionId = 0;
 
     std::string mType = "";
 };

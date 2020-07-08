@@ -71,11 +71,13 @@ int Core::getNextObjectId()
 
 int Core::getNextActionId()
 {
-    return mCurrentActionId.fetch_add(1, std::memory_order::memory_order_relaxed);
+    return ++mCurrentActionId;
 }
 
 void Core::scheduleAction(std::shared_ptr<Action> action)
 {
+    enforce(action->getActionId() == 0, "Core: tried to schedule Action with Id already set");
+    action->setActionId(getNextActionId());
     mActions.insertAction(std::move(action));
 }
 
@@ -161,6 +163,7 @@ void Core::executeActionOnFinishedTimer()
     if(!(mCurrentAction == mActions.getNextAction())) {
         throw std::runtime_error("messed up with upcoming tasks");
     } else {
+        enforce(mCurrentAction->getActionId()!=0, "Core: tried to execute Action without Action Id");
         auto l = mCurrentAction->getAffected();
         std::list<int> endActionList;
         for(auto & elemId : *l)
