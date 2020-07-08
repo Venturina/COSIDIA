@@ -25,8 +25,9 @@ int BaseObject::execute(std::shared_ptr<Action> action)
             if(!mActionManager->startOrDelay(action)) {
                 //getCoreP()->scheduleAction(makeEndAction(action));
                 startExecution(std::move(action));
+                return mObjectId;
             }
-            return mObjectId;
+            return 0;
         case Action::Kind::END:
             {
                 enforce(action->getBeginId() != 0, "BaseObject: EndAction does not correspond to a begin action");
