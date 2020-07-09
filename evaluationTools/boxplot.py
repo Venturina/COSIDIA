@@ -22,7 +22,9 @@ with open(filepath) as fp:
             #print(l)
             curTime = int(l[11])
             if curTime > 3005000:
-                df = df.append({'Time':curTime, 'loss':int(l[15]) * -1}, ignore_index=True)
+                loss = l[15].replace(',','')
+                if int(loss) *-1 < 1000:
+                    df = df.append({'Time':curTime, 'loss':int(loss) * -1}, ignore_index=True)
         line = fp.readline()
         cnt += 1
 
