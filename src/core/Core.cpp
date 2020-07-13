@@ -23,6 +23,9 @@ namespace paresis
 thread_local Core* coreP;
 static std::thread::id theMainThread;
 
+int timingBuffer[64ULL*1024ULL*1024ULL];
+unsigned long long currId = 0;
+
 void setCoreP(Core* p)
 {
     invariant(std::this_thread::get_id() == theMainThread, "Core set on wrong thread");
@@ -193,6 +196,12 @@ void Core::finishSimulation()
     {
         std::unique_lock<boost::fibers::mutex>lk(mFiberMutex);
         mIsFinished = true;
+    }
+
+//     unsigned long long timingBuffer[64ULL*1024ULL*1024ULL];
+// unsigned long long currId = 0;
+    for(unsigned long long id = 0; id < currId; id ++) {
+        std::cout << timingBuffer[id] <<  std::endl;
     }
     mIoService.stop();
     mConditionClose.notify_all();

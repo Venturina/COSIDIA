@@ -12,6 +12,9 @@
 namespace paresis
 {
 
+extern int timingBuffer[64ULL*1024ULL*1024ULL];
+extern unsigned long long currId;
+
 class Core
 {
 public:
