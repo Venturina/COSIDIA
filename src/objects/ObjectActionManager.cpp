@@ -22,7 +22,7 @@ bool ObjectActionManager::startOrDelay(std::shared_ptr<Action> action)
         return false;
     } else {
         mDelayedQueue.push(action);
-        LOG_F(INFO, "Action running, queue other action. If this happens often, think about your model");
+        DLOG_F(INFO, "Action running, queue other action. If this happens often, think about your model");
         return true;
     }
 }
