@@ -68,7 +68,7 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const Su
         }
     }
 
-    ActionP updateAction(new Action(std::chrono::milliseconds(10), Action::Kind::START, action->getStartTime()+action->getDuration(), updateList));
+    ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), updateList));
     updateAction->setActionData(updaterResult.updateData);
     updateAction->setType("SUMO");
     data->actionsToSchedule.push_back(updateAction);
