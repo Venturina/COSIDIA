@@ -1,6 +1,7 @@
 #include "core/Core.hpp"
 #include "objects/BaseObject.hpp"
 #include "utils/invariant.hpp"
+#include "utils/enforce.hpp"
 
 #include <loguru/loguru.hpp>
 
@@ -33,7 +34,8 @@ int BaseObject::execute(std::shared_ptr<Action> action)
                 enforce(action->getBeginId() != 0, "BaseObject: EndAction does not correspond to a begin action");
                 endExecution(action);
                 auto now = getCoreP()->getClock()->getSimTimeNow();
-                LOG_F(ERROR, "time: expected: %d now: %d value: %d, type %s", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000, mObjectName.c_str());
+                timingBuffer[currId++] = (action->getStartTime().count() - now.count()) / 1000;
+                //DLOG_F(ERROR, "time: expected: %d now: %d value: %d, type %s", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000, mObjectName.c_str());
                 // if(!((action->getStartTime() < std::chrono::seconds(3)) ||
                 //     (action->getStartTime() - now) > std::chrono::milliseconds(-1))) {
                 //     throw std::runtime_error("Time Violation");
@@ -43,7 +45,6 @@ int BaseObject::execute(std::shared_ptr<Action> action)
                     update.setStartTime(action->getStartTime() + action->getDuration());
                     auto next = mActionManager->activateNextAvailableAction();
                     getCoreP()->scheduleAction(makeEndAction(next));
-                    LOG_F(INFO, "Schedule Queued Action");
                     startExecution(std::move(next));
                 }
                 return 0;
