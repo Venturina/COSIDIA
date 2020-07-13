@@ -49,6 +49,7 @@ target_link_libraries(libparesis PUBLIC
         CLI11::CLI11
         ${CMAKE_DL_LIBS}
         yaml-cpp
+	pthread
 )
 set_property(TARGET libparesis PROPERTY OUTPUT_NAME paresis)
 
