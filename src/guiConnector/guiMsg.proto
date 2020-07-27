@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+message GuiMsg {
+    int64 emitterId = 1;
+}
+
+message Pos {
+    int32 x = 1;
+    int32 y = 2;
+}
+
+message Rect {
+    Pos corner1 = 1;
+    Pos corner2 = 2;
+    Pos corner3 = 3;
+    Pos corner4 = 4;
+}
+
+message Circle {
+    Pos middle = 1;
+    int32 radius = 2;
+}
