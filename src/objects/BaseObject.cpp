@@ -1,6 +1,5 @@
 #include "core/Core.hpp"
 #include "objects/BaseObject.hpp"
-#include "utils/invariant.hpp"
 #include "utils/enforce.hpp"
 
 #include <loguru/loguru.hpp>
@@ -19,7 +18,7 @@ BaseObject::~BaseObject()
 
 int BaseObject::execute(std::shared_ptr<Action> action)
 {
-    invariant(isInitialized(), "Tried to execute a not initialized object");
+    enforce(isInitialized(), "Tried to execute a not initialized object");
 
     switch (action->getKind()) {
         case Action::Kind::START:
