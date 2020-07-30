@@ -1,4 +1,5 @@
 #include "core/Core.hpp"
+#include "guiConnector/gui.hpp"
 #include "fiber/customWorkStealing.hpp"
 #include "utils/enforce.hpp"
 #include <boost/bind.hpp>
@@ -48,6 +49,8 @@ Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), 
 {
     theMainThread = std::this_thread::get_id();
     setCoreP(this);
+
+    setupGuiConnector(mIoService);
 
     if(!clock) {
         mClock = std::make_shared<SteadyClock>(1);

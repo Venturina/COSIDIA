@@ -39,6 +39,21 @@ add_library(libparesis STATIC
         src/radio/Radio.cpp
         src/utils/Geometry.cc
 )
+
+option(GUI_MODE "foo" ON)
+if(GUI_MODE)
+        find_package(Protobuf REQUIRED)
+        include_directories(${PROTOBUF_INCLUDE_DIR})
+        target_sources(libparesis PRIVATE
+                src/guiConnector/GuiConnector.cpp
+                src/guiConnector/gen/guiMsg.pb.cc
+        )
+        target_compile_definitions(libparesis PUBLIC WITH_GUI)
+        target_link_libraries(libparesis PUBLIC
+                ${PROTOBUF_LIBRARY}
+        )
+endif()
+
 target_include_directories(libparesis PUBLIC src extern extern/hypodermic)
 target_link_libraries(libparesis PUBLIC
         Boost::boost

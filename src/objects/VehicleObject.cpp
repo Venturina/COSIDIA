@@ -1,5 +1,6 @@
 #include "actionData/VehicleUpdateActionData.hpp"
 #include "core/Core.hpp"
+#include "guiConnector/gui.hpp"
 #include "objects/VehicleObject.hpp"
 #include "utils/enforce.hpp"
 
@@ -66,6 +67,7 @@ void VehicleObject::endExecution(std::shared_ptr<Action> action)
         auto data = mFuture.get();
         mContext.swap(data.updatedContext);
     }
+    guiUpdateObject(mObjectId, *mContext);
 
 }
 

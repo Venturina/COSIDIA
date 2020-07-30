@@ -1,12 +1,8 @@
 syntax = "proto3";
 
-message GuiMsg {
-    int64 emitterId = 1;
-}
-
 message Pos {
-    int32 x = 1;
-    int32 y = 2;
+    double latitude = 1;
+    double longitude = 2;
 }
 
 message Rect {
@@ -18,5 +14,22 @@ message Rect {
 
 message Circle {
     Pos middle = 1;
-    int32 radius = 2;
+    double radius = 2;
+}
+
+message Line {
+    Pos begin = 1;
+    Pos end = 2;
+}
+
+message GuiMsg {
+    int64 emitterId = 1;
+    oneof toDraw {
+        Pos dot = 2;
+        Rect rectangle = 3;
+        Circle circle = 4;
+        Line line = 5;
+    }
+
+    optional bool del = 6;
 }
