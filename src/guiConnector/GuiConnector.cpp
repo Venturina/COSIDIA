@@ -18,7 +18,7 @@ void GuiConnector::setup(boost::asio::io_service& service)
     assert(mIsSetup == false);
     mIsSetup = true;
     mUdpEndpoint.reset(new udp::endpoint(make_address("127.0.0.1"),15999));
-    mUdpSocket.reset(new udp::socket(service, *mUdpEndpoint));
+    mUdpSocket.reset(new udp::socket(service, udp::endpoint(make_address("127.0.0.1"),16000)));
 }
 
 void GuiConnector::updateObject(int vehicleId, VehicleObjectContext context)
@@ -29,12 +29,12 @@ void GuiConnector::updateObject(int vehicleId, VehicleObjectContext context)
     Pos* position = msg.mutable_dot();
     position->set_latitude(context.latitude);
     position->set_longitude(context.longitude);
-    std::cout << msg.SerializeAsString().size() << std::endl;
+    //std::cout << msg.SerializeAsString().size() << std::endl;
 
-    mUdpSocket->async_send(
-        boost::asio::buffer(msg.SerializeAsString()),
+    mUdpSocket->async_send_to(
+        boost::asio::buffer(msg.SerializeAsString()), *mUdpEndpoint,
         [](const boost::system::error_code& error, std::size_t bytes_transferred)
-            { std::cout << "Transferred vehicle position to GUI. Bytes: " << bytes_transferred << std::endl; }
+            { std::cout << error.message() << " | " << "Transferred vehicle position to GUI. Bytes: " << bytes_transferred << std::endl; }
         );
 }
 

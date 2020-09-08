@@ -26,7 +26,7 @@ VehicleObject::VehicleObject() : BaseObject()
 
 void VehicleObject::startExecution(std::shared_ptr<Action> action)
 {
-    DLOG_F(WARNING, "VehicleObject %s, executed at %d", mExternalId.c_str() ,std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
+    //DLOG_F(WARNING, "VehicleObject %s with id %d, executed at %d", mExternalId.c_str(), mObjectId ,std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
     if(action->getType() == "SUMO") {
         boost::fibers::packaged_task<VehicleObjectData
             (std::shared_ptr<Action>, std::shared_ptr<VehicleObjectContext>)> pt
@@ -55,7 +55,7 @@ VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> actio
     newContext->longitude = currentUpdate.mLongitude;
     newContext->latitude = currentUpdate.mLatitude;
 
-    DLOG_F(WARNING, "vehicle object %s with speed %f and position: %f / %f", mExternalId.c_str(), mContext->speed, mContext->longitude, mContext->latitude);
+    DLOG_F(WARNING, "vehicle object %s id %d with speed %f and position: %f / %f", mExternalId.c_str(), mObjectId, mContext->speed, mContext->longitude, mContext->latitude);
     VehicleObjectData data;
     data.updatedContext = newContext;
     return data;
