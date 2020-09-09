@@ -17,7 +17,7 @@
 #define guiUpdateObject(objectId, update) \
     GuiConnector::getInstance().updateObject(objectId, update);
 #else
-#define GuiUpdateObject(objectId, update)
+#define guiUpdateObject(objectId, update)
 #endif
 
 
