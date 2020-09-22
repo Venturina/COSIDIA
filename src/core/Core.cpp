@@ -27,6 +27,11 @@ static std::thread::id theMainThread;
 int timingBuffer[64ULL*1024ULL*1024ULL];
 unsigned long long currId = 0;
 
+std::thread::id getCoreThreadId()
+{
+    return theMainThread;
+}
+
 void setCoreP(Core* p)
 {
     invariant(std::this_thread::get_id() == theMainThread, "Core set on wrong thread");

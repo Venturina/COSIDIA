@@ -84,6 +84,8 @@ protected:
 void setCoreP(Core*);
 Core* getCoreP();
 
+std::thread::id getCoreThreadId();
+
 } // ns paresis
 
 
