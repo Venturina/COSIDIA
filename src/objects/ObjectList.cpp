@@ -96,6 +96,12 @@ ObjectContainer_ptr ObjectList::getCurrentObjectContainer()
     return mCurrentCopy;
 }
 
+int ObjectList::getNextObjectId()
+{
+    mCurrentObjectId++;
+    return mCurrentObjectId;
+}
+
 void ObjectList::removeFromSimulation(int id)
 {
     mWorkingCopy->remove(id);

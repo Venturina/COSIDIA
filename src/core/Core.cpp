@@ -72,7 +72,7 @@ int Core::getRandomNumber()
 // is this ok?
 int Core::getNextObjectId()
 {
-    return mObjectList.getCurrentObjectId().fetch_add(1, std::memory_order::memory_order_relaxed);
+    return mObjectList.getNextObjectId();
 }
 
 int Core::getNextActionId()

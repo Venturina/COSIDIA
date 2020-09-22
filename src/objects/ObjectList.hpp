@@ -37,7 +37,7 @@ private:
 };
 
 using ObjectContainer_ptr = std::shared_ptr<ObjectContainer>;
-using AtomicObjectId = std::atomic<long int>;
+using AtomicObjectId = int;
 
 class ObjectList
 {
@@ -52,7 +52,8 @@ public:
     std::shared_ptr<BaseObject>getUniqueObjectByName(std::string);
     std::shared_ptr<BaseObject>getObjectByIdFromCurrentContainer(int id);
     ObjectContainer_ptr getCurrentObjectContainer();
-    AtomicObjectId& getCurrentObjectId() { return mCurrentObjectId; }
+    int getNextObjectId();
+    //int getCurrentObjectId() { return mCurrentObjectId; }
 
 private:
     ObjectContainer_ptr mWorkingCopy;
