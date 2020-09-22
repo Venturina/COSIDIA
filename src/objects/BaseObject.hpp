@@ -28,11 +28,11 @@ public:
     virtual void addParent(ObjectId id) { mParentList.emplace(id); }
     virtual void addChild(ObjectId id) { mChildIdList.emplace(id); }
 
-    virtual std::set<ObjectId> getParents() { return mParentList; }
-    virtual std::set<ObjectId> getChildren() { return mChildIdList; }
+    virtual std::set<ObjectId> getParents() const { return mParentList; }
+    virtual std::set<ObjectId> getChildren() const { return mChildIdList; }
 
-    virtual ObjectId getObjectId() { return mObjectId; }
-    virtual std::string getObjectName() { return mObjectName; }
+    virtual ObjectId getObjectId() const { return mObjectId; }
+    virtual std::string getObjectName() const { return mObjectName; }
 
     virtual bool isInitialized();
 
@@ -48,6 +48,13 @@ protected:
 
     std::string mObjectName = "";
 };
+
+
+std::weak_ptr<BaseObject> getSiblingByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
+int getParentByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
+int getChildByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
+int getRelatedObjectByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
+
 
 } // ns paresis
 

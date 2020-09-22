@@ -70,4 +70,42 @@ std::shared_ptr<Action> BaseObject::createSelfAction(SteadyClock::duration durat
     return std::move(std::make_shared<Action>(duration, Action::Kind::START, start, mObjectId));
 }
 
+std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+{
+    for(auto parentId : obj->getParents()) {
+        const auto parent = objects->getObject(parentId);
+        for(const auto siblingId : parent->getChildren()) {
+            const auto sibling = objects->getObject(siblingId);
+            if(sibling->getObjectName() == name) {
+                return std::weak_ptr(sibling);
+            }
+        }
+    }
+    return std::weak_ptr<BaseObject>();
+}
+
+int getParentByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+{
+    for(const auto parentId : obj->getParents) {
+        std::set<int> visitedObjects;
+        const auto parent = objects->getObject(parentId);
+        auto nextUpperParent = -1;
+        while(nextUpperParent != 0) {
+
+        }
+    }
+    return 0;
+}
+
+int getChildByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+{
+    return 0;
+}
+
+int getRelatedObjectByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+{
+   return 0;
+}
+
+
 }
