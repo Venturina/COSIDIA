@@ -44,6 +44,7 @@ public:
     MAKE_MOCK1(initObject, void(std::shared_ptr<Action>), override);
 
     void mockInit(std::shared_ptr<Action> a) {DebugObjectChild::initObject(a);}
+    void mockInit() {DebugObjectChild::initObject();}
 
     ObjectActionManager* getMockedObjectManager() { return mActionManager.get(); }
 };
@@ -91,19 +92,24 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
 
         std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), 1));
         std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::END, std::chrono::milliseconds(1), 2));
+        a1->setActionId(5);
+        a2->setBeginId(a1->getActionId());
         std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::INIT, std::chrono::milliseconds(1), 2));
 
 
-        REQUIRE_CALL(*mockActionManager, startOrDelay(a1))
+        REQUIRE_CALL(*mockActionManager, startOrDelay(a1))      // call_1
                     .RETURN(false);
 
-        REQUIRE_CALL(*c, scheduleAction(trompeloeil::_))
+        /** just for refference
+        REQUIRE_CALL(*c, scheduleAction(trompeloeil::_))        // call_2
                     .WITH(std::shared_ptr<Action>(_1)->getKind() == Action::Kind::END)
                     .WITH(std::shared_ptr<Action>(_1)->getStartTime() == (a1->getStartTime() + a1->getDuration()));
-        REQUIRE_CALL(*child, startExecution(a1));
 
-        child->mockInit(a1);
-        child->execute(a1);
+        **/
+        REQUIRE_CALL(*child, startExecution(a1));               // call_3
+
+        child->mockInit();                                      // initializes object properly
+        REQUIRE(child->execute(a1)== child->getObjectId());     // enforces call_1
 
         REQUIRE_CALL(*child, endExecution(a2));
         ALLOW_CALL(*mockClock, getSimTimeNow())
