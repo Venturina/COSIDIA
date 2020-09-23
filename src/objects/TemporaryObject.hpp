@@ -46,6 +46,11 @@ private:
     std::shared_ptr<BaseObject> mBaseObject;
 };
 
+
+/**
+ * A list of TemporaryObject with relation informaiton.
+ *
+ */
 class TemporaryObjectList
 {
 public:
@@ -53,6 +58,12 @@ public:
     TemporaryObjectList() = default;
 
     void addToList(std::shared_ptr<TemporaryObject> obj) { mTempList.push_back(obj); }
+
+    /**
+     * Resolves the relation information and adds new objects to Core
+     *
+     * @param time when init Actions should be scheduled
+     */
     void resolveAndStart(SteadyClock::duration);
 
 private:

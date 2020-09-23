@@ -73,14 +73,14 @@ void TemporaryObject::initialize(SteadyClock::duration d)
 void TemporaryObjectList::resolveAndStart(SteadyClock::duration d)
 {
     DLOG_F(ERROR, "Try Resolve");
-    for(auto obj : mTempList) {
+    for(auto& obj : mTempList) {
         obj->initialize(d);
         mResolvedIds[obj->getTempId()] = obj;
     }
 
     DLOG_F(ERROR, "Added Ids");
 
-    for(auto obj : mTempList) {
+    for(auto& obj : mTempList) {
         for(auto children : obj->getTemporaryChildren()) {
             obj->setRealChildren(mResolvedIds[children]->getRealId());
             DLOG_F(ERROR, "           %s", mResolvedIds[children]->getObjectName().c_str());
