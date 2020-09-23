@@ -25,8 +25,16 @@ public:
 
     void registerType();
 
-
-    virtual TemporaryObjectList createObject(std::string, ObjectContainer_ptr objectList = nullptr, FactoryData* = nullptr);
+    /**
+     * Creates a TemporaryObjectList containing all information and objects for the core to start and resolve objects contained in this list.
+     * This includes additional data as well as relations between objects.
+     *
+     * @param identifier Identifies the object type which should be created
+     * @param objectList Current copy of the ObjectContainer, usually available in all executing actions
+     * @param data FactoryData which contains additional information needed to generate an Object. See AnyMap for more information.
+     *
+     */
+    virtual TemporaryObjectList createObject(std::string identifier, ObjectContainer_ptr objectList = nullptr, FactoryData* data = nullptr);
 
 private:
     ObjectFactory() {}

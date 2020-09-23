@@ -1,3 +1,4 @@
+#include "networking/ParesisRouter.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectFactory.hpp"
 #include "objects/VehicleObject.hpp"
@@ -20,10 +21,10 @@ void ObjectFactory::registerType()
     DLOG_F(ERROR, "Object registered");
 }
 
-TemporaryObjectList ObjectFactory::createObject(std::string object, ObjectContainer_ptr objectList, FactoryData* data)
+TemporaryObjectList ObjectFactory::createObject(std::string identifier, ObjectContainer_ptr objectList, FactoryData* data)
 {
     DLOG_F(ERROR, "Create something");
-    if(!object.compare("vehicle")) {
+    if(!identifier.compare("vehicle")) {
         return createVehicleObject(objectList, data);
     } else {
         throw std::runtime_error("ObjectFactory: Unknown object requested");
