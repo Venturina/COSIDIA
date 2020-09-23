@@ -29,11 +29,11 @@ void VehicleObject::startExecution(std::shared_ptr<Action> action)
     //DLOG_F(WARNING, "VehicleObject %s with id %d, executed at %d", mExternalId.c_str(), mObjectId ,std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
     if(action->getType() == "SUMO") {
         boost::fibers::packaged_task<VehicleObjectData
-            (std::shared_ptr<Action>, std::shared_ptr<VehicleObjectContext>)> pt
+            (std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>)> pt
             (std::bind(&VehicleObject::executeSumoUpdate, this, std::placeholders::_1, std::placeholders::_2));
 
             mFuture = pt.get_future();
-            boost::fibers::fiber(std::move(pt), action, mContext).detach();
+            boost::fibers::fiber(std::move(pt), action, mContext.getElement()).detach();
 
     } else {
         auto newAction = createSelfAction(std::chrono::milliseconds(10), action->getStartTime() + std::chrono::milliseconds(100));
@@ -42,7 +42,7 @@ void VehicleObject::startExecution(std::shared_ptr<Action> action)
 
 }
 
-VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> action, std::shared_ptr<VehicleObjectContext> context)
+VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context)
 {
     auto newContext = std::make_shared<VehicleObjectContext>();
     auto actionData = std::dynamic_pointer_cast<VehicleUpdateActionData>(action->getActionData());
@@ -55,7 +55,7 @@ VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> actio
     newContext->longitude = currentUpdate.mLongitude;
     newContext->latitude = currentUpdate.mLatitude;
 
-    DLOG_F(WARNING, "vehicle object %s id %d with speed %f and position: %f / %f", mExternalId.c_str(), mObjectId, mContext->speed, mContext->longitude, mContext->latitude);
+    DLOG_F(WARNING, "vehicle object %s id %d with speed %f and position: %f / %f", mExternalId.c_str(), mObjectId, context->speed, context->longitude, context->latitude);
     VehicleObjectData data;
     data.updatedContext = newContext;
     return data;
@@ -67,7 +67,7 @@ void VehicleObject::endExecution(std::shared_ptr<Action> action)
         auto data = mFuture.get();
         mContext.swap(data.updatedContext);
     }
-    guiUpdateObject(mObjectId, *mContext);
+    guiUpdateObject(mObjectId, *mContext.getElement());
 
 }
 
@@ -78,7 +78,7 @@ void VehicleObject::initObject(std::shared_ptr<Action> action)
     DLOG_F(WARNING, "VehicleObject Init with rnd: %d", number);
     // random number to avoid vehicle synchronisation
     auto newAction = createSelfAction(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(number % 1000));
-    mContext.reset(new VehicleObjectContext());
+    mContext.swap(std::make_shared<VehicleObjectContext>());
     getCoreP()->scheduleAction(std::move(newAction));
 }
 

@@ -4,6 +4,7 @@
 #include "actionData/ActionData.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectContext.hpp"
+#include "utils/ContextContainer.hpp"
 #include <boost/optional.hpp>
 
 
@@ -46,9 +47,9 @@ private:
     std::string mExternalId = "";
     boost::fibers::future<VehicleObjectData> mFuture;
 
-    VehicleObjectData executeSumoUpdate(std::shared_ptr<Action>, std::shared_ptr<VehicleObjectContext>);
+    VehicleObjectData executeSumoUpdate(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>);
 
-    std::shared_ptr<VehicleObjectContext> mContext;
+    ContextContainer<VehicleObjectContext> mContext;
 };
 
 } // namespace paresis
