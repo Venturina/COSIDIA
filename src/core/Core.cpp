@@ -200,7 +200,7 @@ void Core::executeActionOnFinishedTimer()
 
 void Core::finishSimulation()
 {
-    LOG_F(INFO, "simulaton finished");
+    LOG_F(INFO, "simulation finished");
     {
         std::unique_lock<boost::fibers::mutex>lk(mFiberMutex);
         mIsFinished = true;

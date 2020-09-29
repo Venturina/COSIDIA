@@ -33,7 +33,7 @@ TemporaryObjectList ObjectFactory::createObject(std::string identifier, ObjectCo
 
 TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objectList, FactoryData* data)
 {
-    enforce(data != nullptr, "ObjectFachtory: Need FactoryData to create Vehicle")
+    enforce(data != nullptr, "ObjectFactory: Need FactoryData to create Vehicle")
     auto microchannel = std::make_shared<Microchannel>();
     auto vehicle = std::make_shared<VehicleObject>();
     vehicle->setExternalId(data->get<std::string>("id"));
