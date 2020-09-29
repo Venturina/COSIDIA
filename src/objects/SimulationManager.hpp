@@ -15,7 +15,6 @@ public:
     virtual void startExecution(std::shared_ptr<Action>){};
     virtual void endExecution(std::shared_ptr<Action>){};
     virtual void initObject(std::shared_ptr<Action>) {};
-    virtual ObjectContext copyContext() {};
 
 private:
     void startAndScheduleObject(std::shared_ptr<BaseObject>);
