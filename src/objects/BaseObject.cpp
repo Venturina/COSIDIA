@@ -81,25 +81,32 @@ std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, Ob
             }
         }
     }
+    enforce(false, "getSiblingByName failed")
     return std::weak_ptr<BaseObject>();
 }
 
-int getParentByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
 {
-    for(const auto parentId : obj->getParents) {
-        std::set<int> visitedObjects;
-        const auto parent = objects->getObject(parentId);
-        auto nextUpperParent = -1;
-        while(nextUpperParent != 0) {
-
+    for(const auto parentId : obj->getParents()) {
+        auto parent = objects->getObject(parentId);
+        if(parent->getObjectName() == name) {
+            return std::weak_ptr(parent);
         }
     }
-    return 0;
+    enforce(false, "getParentByName failed")
+    return std::weak_ptr<BaseObject>();
 }
 
-int getChildByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
 {
-    return 0;
+    for(const auto childId : obj->getChildren()) {
+        auto child = objects->getObject(childId);
+        if(child->getObjectName() == name) {
+            return std::weak_ptr(child);
+        }
+    }
+    enforce(false, "getChildByName failed")
+    return std::weak_ptr<BaseObject>();
 }
 
 int getRelatedObjectByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)

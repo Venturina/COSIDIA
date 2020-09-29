@@ -4,6 +4,7 @@
 #include "core/Action.hpp"
 #include "objects/ObjectActionManager.hpp"
 #include "objects/ObjectContext.hpp"
+#include "objects/ObjectList.hpp"
 #include <boost/fiber/all.hpp>
 #include <set>
 
@@ -50,10 +51,10 @@ protected:
 };
 
 
-std::weak_ptr<BaseObject> getSiblingByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
-int getParentByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
-int getChildByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
-int getRelatedObjectByName(std::shared_ptr<BaseObject> obj, std::string name, ObjectContainer_ptr objects);
+std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, std::shared_ptr<ObjectContainer> objects);
+std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, std::shared_ptr<ObjectContainer> objects);
+std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, std::shared_ptr<ObjectContainer> objects);
+int getRelatedObjectByName(std::shared_ptr<BaseObject> obj, std::string name, std::shared_ptr<ObjectContainer> objects);
 
 
 } // ns paresis
