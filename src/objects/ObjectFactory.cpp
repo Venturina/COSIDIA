@@ -34,6 +34,7 @@ TemporaryObjectList ObjectFactory::createObject(std::string identifier, ObjectCo
 TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objectList, FactoryData* data)
 {
     enforce(data != nullptr, "ObjectFactory: Need FactoryData to create Vehicle")
+    auto router = std::make_shared<ParesisRouter>();
     auto microchannel = std::make_shared<Microchannel>();
     auto vehicle = std::make_shared<VehicleObject>();
     vehicle->setExternalId(data->get<std::string>("id"));
@@ -41,16 +42,22 @@ TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objec
     TemporaryObject tRadio(0, objectList->getUnique("Radio"), true);
     TemporaryObject tChannel(1, microchannel);
     TemporaryObject tVehicle(2, vehicle);
+    TemporaryObject tRouter(3, router);
 
     tRadio.setTempChild(tChannel);
-    tChannel.setTempChild(tVehicle);
     tChannel.setTempParent(tRadio);
+
+    tChannel.setTempChild(tVehicle);
     tVehicle.setTempParent(tChannel);
+
+    tChannel.setTempChild(tRouter);
+    tRouter.setTempParent(tChannel);
 
     TemporaryObjectList l;
     l.addToList(std::make_shared<TemporaryObject>(tRadio));
     l.addToList(std::make_shared<TemporaryObject>(tChannel));
     l.addToList(std::make_shared<TemporaryObject>(tVehicle));
+    l.addToList(std::make_shared<TemporaryObject>(tRouter));
 
     DLOG_F(ERROR, "Create vehicle");
     return l;

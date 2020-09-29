@@ -1,7 +1,7 @@
-#ifndef PARESIS_ROUTER_HPP_SDOFN
-#define PARESIS_ROUTER_HPP_SDOFN
+#pragma once
 
 #include "objects/BaseObject.hpp"
+#include "objects/VehicleObject.hpp"
 
 namespace paresis
 {
@@ -9,12 +9,16 @@ namespace paresis
 class ParesisRouter : public BaseObject
 {
 public:
+    ParesisRouter();
     virtual void startExecution(std::shared_ptr<Action>) {};
     virtual void endExecution(std::shared_ptr<Action>) {};
     virtual void initObject(std::shared_ptr<Action>);
 
 
 private:
+
+    /* do not touch this variables from other thread than main */
+    std::weak_ptr<VehicleObject> mVehicleObject;
 
     //runtime
     //postion provider
@@ -23,7 +27,3 @@ private:
 };
 
 } // namespace paresis
-
-
-
-#endif /* PARESIS_ROUTER_HPP_SDOFN */

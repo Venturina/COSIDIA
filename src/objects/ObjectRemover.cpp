@@ -16,6 +16,7 @@ std::vector<int> ObjectRemover::getObjectsToDelete(std::string objectIdentifier,
     if(!objectIdentifier.compare("vehicle")) {
         return getVehicleRelatedObjects(id, objectList);
     }
+    return std::vector<int>();
 }
 
 std::vector<int> ObjectRemover::getVehicleRelatedObjects(int id, ObjectContainer_ptr objectList)
@@ -24,11 +25,12 @@ std::vector<int> ObjectRemover::getVehicleRelatedObjects(int id, ObjectContainer
     auto obj = objectList->getObject(id);
     enforce(obj->getObjectName() == "VehicleObject", "Object to remove must be VehicleObject");
     removeList.push_back(id);
-    auto parents = obj->getParents();
-    for(auto p : parents) {
-        enforce(objectList->getObject(p)->getObjectName() == "Microchannel", "Vehicle object must have Microchannel as parent");
-        removeList.push_back(p);
-    }
+
+    auto microchannel = getParentByName(obj.get(), "Microchannel", objectList);
+    removeList.push_back(microchannel.lock()->getObjectId());
+
+    auto router = getSiblingByName(obj.get(), "ParesisRouter", objectList);
+    removeList.push_back(router.lock()->getObjectId());
 
     return removeList;
 }

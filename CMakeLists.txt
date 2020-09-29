@@ -25,6 +25,7 @@ add_library(libparesis STATIC
         src/mobility/MobilityManager.cpp
         src/mobility/SumoMobilityManager.cpp
         src/mobility/SumoUpdater.cpp
+        src/networking/ParesisRouter.cpp
         src/objects/BaseObject.cpp
         src/objects/ObjectActionManager.cpp
         src/objects/ObjectContext.cpp
