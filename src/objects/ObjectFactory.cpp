@@ -42,10 +42,10 @@ TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objec
     TemporaryObject tChannel(1, microchannel);
     TemporaryObject tVehicle(2, vehicle);
 
-    tRadio.setTempChild(tChannel.getTempId());
-    tChannel.setTempChild(tVehicle.getTempId());
-    tChannel.setTempParent(tRadio.getTempId());
-    tVehicle.setTempParent(tChannel.getTempId());
+    tRadio.setTempChild(tChannel);
+    tChannel.setTempChild(tVehicle);
+    tChannel.setTempParent(tRadio);
+    tVehicle.setTempParent(tChannel);
 
     TemporaryObjectList l;
     l.addToList(std::make_shared<TemporaryObject>(tRadio));
