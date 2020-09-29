@@ -12,14 +12,14 @@ TemporaryObject::TemporaryObject(int id, std::shared_ptr<BaseObject> obj, bool i
 {
 }
 
-void TemporaryObject::setTempChild(int child)
+void TemporaryObject::setTempChild(const TemporaryObject& child)
 {
-    mTempChildren.emplace(child);
+    mTempChildren.emplace(child.getTempId());
 }
 
-void TemporaryObject::setTempParent(int parent)
+void TemporaryObject::setTempParent(const TemporaryObject& parent)
 {
-    mTempParents.emplace(parent);
+    mTempParents.emplace(parent.getTempId());
 }
 
 void TemporaryObject::setTempMapping(int realId)

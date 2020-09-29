@@ -16,8 +16,8 @@ class TemporaryObject
 {
 public:
     TemporaryObject(int, std::shared_ptr<BaseObject>, bool initialized = false);
-    void setTempParent(int);
-    void setTempChild(int);
+    void setTempParent(const TemporaryObject&);
+    void setTempChild(const TemporaryObject&);
     void setTempMapping(int);
 
     void setRealParent(int);
@@ -25,7 +25,7 @@ public:
 
     bool isInitialized() { return mIsInitialized; }
     int getRealId();
-    int getTempId() { return mTempId; }
+    int getTempId() const { return mTempId; }
 
     void addToCore();
 
