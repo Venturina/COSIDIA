@@ -14,8 +14,6 @@ using ActionP = std::shared_ptr<Action>;
 using ConstActionP = std::shared_ptr<const Action>;
 using ActionMap = std::multimap<std::chrono::nanoseconds, ActionP, bool(*)(std::chrono::nanoseconds, std::chrono::nanoseconds)>;
 
-bool compareFunction(uint64_t lhs, uint64_t rhs);
-
 class ActionList
 {
 public:
