@@ -31,7 +31,7 @@ ActionP ActionList::popNextAction()
     }
 }
 
-ActionP ActionList::getNextAction()
+ActionP ActionList::getNextAction() const
 {
     if(!mActionMap->empty()) {
         return mActionMap->begin()->second;

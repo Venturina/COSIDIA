@@ -22,7 +22,7 @@ public:
     ActionList();
     void insertAction(ActionP);
     ActionP popNextAction();
-    ActionP getNextAction();
+    ActionP getNextAction() const;
 
 
 private:
