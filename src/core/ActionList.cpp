@@ -1,5 +1,6 @@
 #include "core/ActionList.hpp"
-
+#include "core/Core.hpp"
+#include "utils/enforce.hpp"
 
 namespace paresis
 {
@@ -16,11 +17,13 @@ ActionList::ActionList()
 
 void ActionList::insertAction(ActionP action)
 {
+    enforce(onCoreThread(), "Inserted Action from wrong thread!");
     mActionMap->insert(std::pair<std::chrono::nanoseconds, ActionP>(action->getStartTime(), action));
 }
 
 ActionP ActionList::popNextAction()
 {
+    enforce(onCoreThread(), "Pop Action from wrong thread!");
     if(!mActionMap->empty()) {
         auto nextActionIt = mActionMap->begin();
         auto nextAction = nextActionIt->second;
@@ -33,6 +36,7 @@ ActionP ActionList::popNextAction()
 
 ActionP ActionList::getNextAction() const
 {
+    enforce(onCoreThread(), "Get Action from wrong thread!");
     if(!mActionMap->empty()) {
         return mActionMap->begin()->second;
     } else {
