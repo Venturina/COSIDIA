@@ -27,6 +27,11 @@ static std::thread::id theMainThread;
 int timingBuffer[64ULL*1024ULL*1024ULL];
 unsigned long long currId = 0;
 
+bool onCoreThread()
+{
+    return std::this_thread::get_id() == theMainThread;
+}
+
 std::thread::id getCoreThreadId()
 {
     return theMainThread;
