@@ -1,3 +1,4 @@
+#include "core/Core.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectList.hpp"
 #include "utils/enforce.hpp"
@@ -7,6 +8,7 @@ namespace paresis
 
 void ObjectContainer::insert(std::shared_ptr<BaseObject> obj)
 {
+    enforce(onCoreThread() == true, "ObjectContainer: insert on wrong core");
     enforce(obj->isInitialized(), "object not initialized")
     enforce(mActiveObjects.find(obj->getObjectId()) == mActiveObjects.end(), "object already in container");
     mActiveObjects[obj->getObjectId()] = obj;
@@ -14,12 +16,14 @@ void ObjectContainer::insert(std::shared_ptr<BaseObject> obj)
 
 void ObjectContainer::remove(int id)
 {
+    enforce(onCoreThread() == true, "ObjectContainer: remove on wrong core");
     enforce(mActiveObjects.find(id) != mActiveObjects.end(), "removed object not in container");
     mActiveObjects.erase(id);
 }
 
 void ObjectContainer::remove(std::shared_ptr<BaseObject> obj)
 {
+    enforce(onCoreThread() == true, "ObjectContainer: remove on wrong core");
     enforce(obj->isInitialized(), "object not initialized")
     enforce(mActiveObjects.find(obj->getObjectId()) != mActiveObjects.end(), "removed object not in container");
     remove(obj->getObjectId());
