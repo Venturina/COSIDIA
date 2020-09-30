@@ -66,7 +66,7 @@ protected:
     boost::asio::io_service mIoService;
     boost::asio::steady_timer mTimer;
     ActionList mActions;
-    ActionP mCurrentAction;
+    ConstActionP mCurrentAction;
 
     ObjectList mObjectList;
 

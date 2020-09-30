@@ -181,13 +181,15 @@ void Core::executeActionOnFinishedTimer()
     } else {
         enforce(mCurrentAction->getActionId()!=0, "Core: tried to execute Action without Action Id");
         auto l = mCurrentAction->getAffected();
+        auto action = mActions.popNextAction();
+        enforce(mCurrentAction->getActionId() == action->getActionId(), "Core: Current Action != Popped Action");
         std::list<int> endActionList;
-        for(auto & elemId : *l)
+        for(auto & elemId : l)
         {
             enforce(elemId >= 0, "Core: tried to execute object with id 0");
             auto obj = mObjectList.getObjectByIdFromCurrentContainer(elemId);
             if (obj) {
-                if(obj->execute(mCurrentAction) != 0) {
+                if(obj->execute(action) != 0) {
                     endActionList.push_back(elemId);
                 }
             } else {
@@ -195,10 +197,9 @@ void Core::executeActionOnFinishedTimer()
             }
         }
         if(!endActionList.empty()) {
-            scheduleAction(makeEndAction(mCurrentAction, endActionList));
+            scheduleAction(makeEndAction(action, endActionList));
         }
         //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());
-        mActions.popNextAction();
         runSimulationLoop();
     }
 }

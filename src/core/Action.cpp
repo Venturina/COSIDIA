@@ -54,11 +54,11 @@ std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action> beginAction)
     enforce(beginAction->getActionId() != 0, "Action: ActionId is 0");
     enforce(beginAction->getBeginId() == 0, "Action: Tried to make endAction with already set beginActionId");
     if(beginAction->getActionData() == nullptr) {
-        auto endAction = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), *beginAction->getAffected());
+        auto endAction = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), beginAction->getAffected());
         endAction->setBeginId(beginAction->getActionId());
         return endAction;
     } else {
-        auto a = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), *beginAction->getAffected());
+        auto a = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), beginAction->getAffected());
         a->setActionData(beginAction->getActionData());
         a->setBeginId(beginAction->getActionId());
         return std::move(a);

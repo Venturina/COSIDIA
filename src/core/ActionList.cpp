@@ -34,7 +34,7 @@ ActionP ActionList::popNextAction()
     }
 }
 
-ActionP ActionList::getNextAction() const
+ConstActionP ActionList::getNextAction() const
 {
     enforce(onCoreThread(), "Get Action from wrong thread!");
     if(!mActionMap->empty()) {

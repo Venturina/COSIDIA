@@ -81,14 +81,14 @@ public:
     /**
      * Get Kind of Action
      */
-    Kind getKind() { return mKind; }
+    Kind getKind() const { return mKind; }
 
     /**
      * Get all affected Objects
      *
-     * @return Pointer to List of all Affected Objects
+     * @return const reference to List of all Affected Objects
      */
-    std::list<int>* getAffected() { return &mAffectedObjects; };
+    const std::list<int>& getAffected() const { return mAffectedObjects; }
 
     /**
      * Set type string of Action: for more specific processing
@@ -110,7 +110,7 @@ public:
     /**
      * Get id of Action
      */
-    int getActionId() { return mActionId; }
+    int getActionId() const { return mActionId; }
 
     /**
      * Required for Actions with Kind=END

@@ -20,8 +20,12 @@ public:
     ActionList();
     void insertAction(ActionP);
     ActionP popNextAction();
-    ActionP getNextAction() const;
 
+    /**
+     * Returns next Action without removing it.
+     * @return next Action
+     */
+    ConstActionP getNextAction() const;
 
 private:
     std::unique_ptr<ActionMap> mActionMap;
