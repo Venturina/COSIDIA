@@ -1,5 +1,6 @@
 
 #include <catch2/catch.hpp>
+#include "core/Core.hpp"
 #include "debug/DebugObject.hpp"
 #include "core/Action.hpp"
 #include "objects/ObjectList.hpp"
@@ -7,6 +8,7 @@
 using namespace paresis;
 
 TEST_CASE( "ObjectContainer", "[ObjectContainer]" ) {
+    Core c;
 
     ObjectContainer_ptr o(new ObjectContainer);
     std::shared_ptr<DebugObjectChild> child(new DebugObjectChild);
