@@ -21,14 +21,14 @@ public:
     void insert(std::shared_ptr<BaseObject>);
     void remove(std::shared_ptr<BaseObject>);
     void remove(int id);
-    std::shared_ptr<BaseObject> getObject(int id);
+    std::shared_ptr<BaseObject> getObject(int id) const;
 
     void insertUnique(std::shared_ptr<BaseObject>);
-    std::shared_ptr<BaseObject> getUnique(std::string);
+    std::shared_ptr<BaseObject> getUnique(std::string) const;
 
     void removeFromSimulation(int);
 
-    const std::map<int, std::shared_ptr<BaseObject>> getAll() { return mActiveObjects; };
+    const std::map<int, std::shared_ptr<BaseObject>> getAll() const { return mActiveObjects; };
 
 private:
     std::map<int, std::shared_ptr<BaseObject>> mActiveObjects;
@@ -37,6 +37,7 @@ private:
 };
 
 using ObjectContainer_ptr = std::shared_ptr<ObjectContainer>;
+using ConstObjectContainer_ptr = std::shared_ptr<const ObjectContainer>;
 using AtomicObjectId = int;
 
 class ObjectList
@@ -51,13 +52,13 @@ public:
     void removeFromSimulation(int);
     std::shared_ptr<BaseObject>getUniqueObjectByName(std::string);
     std::shared_ptr<BaseObject>getObjectByIdFromCurrentContainer(int id);
-    ObjectContainer_ptr getCurrentObjectContainer();
+    ConstObjectContainer_ptr getCurrentObjectContainer() const;
     int getNextObjectId();
     //int getCurrentObjectId() { return mCurrentObjectId; }
 
 private:
     ObjectContainer_ptr mWorkingCopy;
-    ObjectContainer_ptr mCurrentCopy;
+    ConstObjectContainer_ptr mCurrentCopy;
 
     AtomicObjectId mCurrentObjectId{1};
 };

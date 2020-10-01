@@ -29,14 +29,14 @@ void ObjectContainer::remove(std::shared_ptr<BaseObject> obj)
     remove(obj->getObjectId());
 }
 
-std::shared_ptr<BaseObject> ObjectContainer::getObject(int id)
+std::shared_ptr<BaseObject> ObjectContainer::getObject(int id) const
 {
     enforce(mActiveObjects.find(id) != mActiveObjects.end() || mRemovedObjects.find(id) != mRemovedObjects.end(), "ObjectContainer: requested objet not in container nor is it removed");
     if(mActiveObjects.find(id) == mActiveObjects.end()) {
         std::cout << "test" << std::endl;
         return nullptr;
     }
-    return mActiveObjects[id];
+    return mActiveObjects.find(id)->second;
 }
 
 void ObjectContainer::insertUnique(std::shared_ptr<BaseObject> obj)
@@ -48,11 +48,11 @@ void ObjectContainer::insertUnique(std::shared_ptr<BaseObject> obj)
     insert(std::move(obj));
 }
 
-std::shared_ptr<BaseObject> ObjectContainer::getUnique(std::string name)
+std::shared_ptr<BaseObject> ObjectContainer::getUnique(std::string name) const
 {
     enforce(mUniqueObjects.find(name) != mUniqueObjects.end(), "requested unique object not in container");
-    enforce(mActiveObjects.find(mUniqueObjects[name]) != mActiveObjects.end(), "requested unique missing in object container");
-    return mActiveObjects[mUniqueObjects[name]];
+    enforce(mActiveObjects.find(mUniqueObjects.find(name)->second) != mActiveObjects.end(), "requested unique missing in object container");
+    return mActiveObjects.find(mUniqueObjects.find(name)->second)->second;
 }
 
 void ObjectContainer::removeFromSimulation(int id) {
@@ -95,7 +95,7 @@ std::shared_ptr<BaseObject> ObjectList::getObjectByIdFromCurrentContainer(int id
     return mCurrentCopy->getObject(id);
 }
 
-ObjectContainer_ptr ObjectList::getCurrentObjectContainer()
+ConstObjectContainer_ptr ObjectList::getCurrentObjectContainer() const
 {
     return mCurrentCopy;
 }

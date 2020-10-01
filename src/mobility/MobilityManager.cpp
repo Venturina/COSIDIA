@@ -21,7 +21,7 @@ void MobilityManager::startExecution(std::shared_ptr<Action> action)
     auto objectList = getCoreP()->getCurrentObjectList();
 
     boost::fibers::packaged_task<std::shared_ptr<MobilityManagerData>
-        (std::shared_ptr<Action>, ObjectContainer_ptr)> pt
+        (std::shared_ptr<Action>, ConstObjectContainer_ptr)> pt
         (std::bind(&MobilityManager::doVehicleUpdate, this, std::placeholders::_1, std::placeholders::_2));
 
     mFuture = pt.get_future();
@@ -29,7 +29,7 @@ void MobilityManager::startExecution(std::shared_ptr<Action> action)
 }
 
 //TODO: iterate object list from newest to oldest object (reverse iteration)
-void MobilityManager::fetchVehicleIds(ObjectContainer_ptr objectList)
+void MobilityManager::fetchVehicleIds(ConstObjectContainer_ptr objectList)
 {
     auto data = objectList->getAll();
     for(auto& vehicle : mIdMapper) {
@@ -52,7 +52,7 @@ void MobilityManager::fetchVehicleIds(ObjectContainer_ptr objectList)
     }
 }
 
-std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
+std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr objectList)
 {
     auto data = std::make_shared<MobilityManagerData>();
     DLOG_F(INFO, "MobilityManager: in fiber");

@@ -51,7 +51,7 @@ public:
 
     std::shared_ptr<SteadyClock> getClock() { return mClock; }
 
-    const ObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectContainer(); };
+    const ConstObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectContainer(); };
 
     int getRandomNumber();
 

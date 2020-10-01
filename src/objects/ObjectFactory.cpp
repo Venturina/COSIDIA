@@ -21,7 +21,7 @@ void ObjectFactory::registerType()
     DLOG_F(ERROR, "Object registered");
 }
 
-TemporaryObjectList ObjectFactory::createObject(std::string identifier, ObjectContainer_ptr objectList, FactoryData* data)
+TemporaryObjectList ObjectFactory::createObject(std::string identifier, ConstObjectContainer_ptr objectList, FactoryData* data)
 {
     DLOG_F(ERROR, "Create something");
     if(!identifier.compare("vehicle")) {
@@ -31,7 +31,7 @@ TemporaryObjectList ObjectFactory::createObject(std::string identifier, ObjectCo
     }
 }
 
-TemporaryObjectList ObjectFactory::createVehicleObject(ObjectContainer_ptr objectList, FactoryData* data)
+TemporaryObjectList ObjectFactory::createVehicleObject(ConstObjectContainer_ptr objectList, FactoryData* data)
 {
     enforce(data != nullptr, "ObjectFactory: Need FactoryData to create Vehicle")
     auto router = std::make_shared<ParesisRouter>();

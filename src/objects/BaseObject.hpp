@@ -51,10 +51,10 @@ protected:
 };
 
 
-std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, std::shared_ptr<ObjectContainer> objects);
-std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, std::shared_ptr<ObjectContainer> objects);
-std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, std::shared_ptr<ObjectContainer> objects);
-int getRelatedObjectByName(std::shared_ptr<BaseObject> obj, std::string name, std::shared_ptr<ObjectContainer> objects);
+std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects);
+std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects);
+std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects);
+int getRelatedObjectByName(std::shared_ptr<BaseObject> obj, std::string name, ConstObjectContainer_ptr objects);
 
 
 } // ns paresis

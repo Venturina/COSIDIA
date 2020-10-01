@@ -44,11 +44,11 @@ public:
 
 protected:
     std::map<std::string, int> mIdMapper;
-    virtual void fetchVehicleIds(ObjectContainer_ptr);
+    virtual void fetchVehicleIds(ConstObjectContainer_ptr);
 
 private:
 
-    virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr);
+    virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr);
     boost::fibers::future<std::shared_ptr<MobilityManagerData>> mFuture;
 
     // this has to go to object context possibly

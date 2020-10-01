@@ -70,7 +70,7 @@ std::shared_ptr<Action> BaseObject::createSelfAction(SteadyClock::duration durat
     return std::move(std::make_shared<Action>(duration, Action::Kind::START, start, mObjectId));
 }
 
-std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects)
 {
     for(auto parentId : obj->getParents()) {
         const auto parent = objects->getObject(parentId);
@@ -85,7 +85,7 @@ std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, Ob
     return std::weak_ptr<BaseObject>();
 }
 
-std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects)
 {
     for(const auto parentId : obj->getParents()) {
         auto parent = objects->getObject(parentId);
@@ -97,7 +97,7 @@ std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, Obj
     return std::weak_ptr<BaseObject>();
 }
 
-std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects)
 {
     for(const auto childId : obj->getChildren()) {
         auto child = objects->getObject(childId);
@@ -109,7 +109,7 @@ std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, Obje
     return std::weak_ptr<BaseObject>();
 }
 
-int getRelatedObjectByName(BaseObject* obj, std::string name, ObjectContainer_ptr objects)
+int getRelatedObjectByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects)
 {
    return 0;
 }

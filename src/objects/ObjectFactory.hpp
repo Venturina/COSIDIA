@@ -34,12 +34,12 @@ public:
      * @param data FactoryData which contains additional information needed to generate an Object. See AnyMap for more information.
      *
      */
-    virtual TemporaryObjectList createObject(std::string identifier, ObjectContainer_ptr objectList = nullptr, FactoryData* data = nullptr);
+    virtual TemporaryObjectList createObject(std::string identifier, ConstObjectContainer_ptr objectList = nullptr, FactoryData* data = nullptr);
 
 private:
     ObjectFactory() {}
 
-    TemporaryObjectList createVehicleObject(ObjectContainer_ptr objectList, FactoryData*);
+    TemporaryObjectList createVehicleObject(ConstObjectContainer_ptr objectList, FactoryData*);
 
 };
 

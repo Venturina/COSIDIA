@@ -24,7 +24,7 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
     mTraci->simulationStep(mUpdateInterval.count()/1000);
 }
 
-std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ObjectContainer_ptr objectList)
+std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr objectList)
 {
     fetchVehicleIds(objectList);
 
@@ -42,7 +42,7 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::s
     return std::move(data);
 }
 
-std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& updaterResult, ObjectContainer_ptr objectContainer, std::shared_ptr<Action> action)
+std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& updaterResult, ConstObjectContainer_ptr objectContainer, std::shared_ptr<Action> action)
 {
     // add vehicles
     std::shared_ptr<MobilityManagerData> data = std::make_shared<MobilityManagerData>();
@@ -76,7 +76,7 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const Su
     return std::move(data);
 }
 
-void SumoMobilityManager::addVehicle(const std::string& vehicle, MobilityManagerData* data, ObjectContainer_ptr objectContainer)
+void SumoMobilityManager::addVehicle(const std::string& vehicle, MobilityManagerData* data, ConstObjectContainer_ptr objectContainer)
 {
     mIdMapper[vehicle] = 0;
     AnyMap a;
