@@ -79,14 +79,15 @@ int Core::getRandomNumber()
     return mDistribution(mRnd);
 }
 
-// is this ok?
 int Core::getNextObjectId()
 {
+    enforce(onCoreThread() == true, "Core: Object ID's must be fetched from core!");
     return mObjectList.getNextObjectId();
 }
 
 int Core::getNextActionId()
 {
+    enforce(onCoreThread() == true, "Core: Action ID's must be fetched from core!");
     return ++mCurrentActionId;
 }
 
@@ -99,17 +100,20 @@ void Core::scheduleAction(std::shared_ptr<Action> action)
 
 void Core::addObject(std::shared_ptr<BaseObject> obj)
 {
+    enforce(onCoreThread() == true, "Core: Objects must be added from core!");
     enforce(obj->isInitialized(), "Core: Object to add not initialized");
     mObjectList.addToObjectContainer(obj->getObjectId(), obj);
 }
 
 void Core::addUniqueObject(std::shared_ptr<BaseObject> obj)
 {
+    enforce(onCoreThread() == true, "Core: Objects must be added from core!");
     enforce(obj->isInitialized(), "Core: Object to add not initialized");
     mObjectList.addUnique(obj);
 }
 
 void Core::removeObjectFromSimulation(int id) {
+    enforce(onCoreThread() == true, "Core: Objects must be removed from core!");
     mObjectList.removeFromSimulation(id);
 }
 
