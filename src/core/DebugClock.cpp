@@ -8,7 +8,7 @@ std::chrono::time_point<std::chrono::steady_clock> DebugClock::getRealTimeForCur
     return std::chrono::steady_clock::now();
 }
 
-std::chrono::nanoseconds DebugClock::getSimTimeNow()
+std::chrono::nanoseconds DebugClock::getSimTimeNow() const
 {
     return mSimTime;
 }

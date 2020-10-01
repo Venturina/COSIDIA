@@ -17,7 +17,7 @@ std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getRealTimeForCu
     return mStartTime + std::chrono::duration_cast<std::chrono::nanoseconds>(mSimTime * mSimSpeed);
 }
 
-std::chrono::nanoseconds SteadyClock::getSimTimeNow()
+std::chrono::nanoseconds SteadyClock::getSimTimeNow() const
 {
     std::chrono::nanoseconds elapsedRealTime = std::chrono::steady_clock::now() - mStartTime;
     std::chrono::nanoseconds elapsedSimTime = std::chrono::duration_cast<std::chrono::nanoseconds>(elapsedRealTime * mSimSpeed);

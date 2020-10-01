@@ -20,7 +20,7 @@ class MockClock : public SteadyClock
 {
 public:
     MockClock() : SteadyClock(1) {};
-    MAKE_MOCK0(getSimTimeNow, std::chrono::nanoseconds(), override);
+    MAKE_CONST_MOCK0(getSimTimeNow, std::chrono::nanoseconds(), override);
 };
 
 class MockCore : public Core
@@ -87,7 +87,7 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
     {
         MockCore* c = new MockCore();
         std::shared_ptr<MockDebugObjectChild> child(new MockDebugObjectChild());
-        auto mockClock = dynamic_cast<MockClock*>(c->getClock().get());
+        auto mockClock = dynamic_cast<const MockClock*>(&(c->getClock()));
         auto mockActionManager = dynamic_cast<MockObjectActionManager*>(child->getMockedObjectManager());
 
         std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), 1));

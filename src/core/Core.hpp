@@ -21,16 +21,16 @@ public:
     Core(std::shared_ptr<SteadyClock>);
     Core();
 
-    /** Fetch the current ObjectId
-     * Atomic fetch_add to increase the counter by one
-     * Can be called from any Fiber!
+    /**
+     *  Fetch the current ObjectId
+     * Must be called from main thread.
      * @return: int ObjectId to use
      **/
     int getNextObjectId();
 
-    /** Fetch the current ActionId
-     * Atomic fetch_add to increase the counter by one
-     * Can be called from any Fiber!
+    /**
+     * Fetch the current ActionId
+     * Must be called from main thread.
      * @return: int ActionId to use
      **/
     ActionId getNextActionId();
@@ -42,14 +42,29 @@ public:
      **/
     virtual void scheduleAction(std::shared_ptr<Action>);
 
-    /** only call from main thread
+    /**
+     * Adds an Object to the global ObjectList
+     *
+     * @param Object to add is not allowed to be a unique object
      **/
     void addObject(std::shared_ptr<BaseObject>);
+
+    /**
+     * Adds an Unique Object to the global ObjectList
+     *
+     * @param Object to add must be a unique object
+     **/
     void addUniqueObject(std::shared_ptr<BaseObject>);
 
+    /**
+     * Deletes an Object from the global Object list
+     *
+     *  @param ObjectId from the object which should be deleted.
+     **/
     void removeObjectFromSimulation(int);
 
-    std::shared_ptr<SteadyClock> getClock() { return mClock; }
+
+    const SteadyClock& getClock() { return *mClock; }
 
     const ConstObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectContainer(); };
 

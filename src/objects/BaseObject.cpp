@@ -32,7 +32,7 @@ int BaseObject::execute(std::shared_ptr<Action> action)
             {
                 enforce(action->getBeginId() != 0, "BaseObject: EndAction does not correspond to a begin action");
                 endExecution(action);
-                auto now = getCoreP()->getClock()->getSimTimeNow();
+                auto now = getCoreP()->getClock().getSimTimeNow();
                 timingBuffer[currId++] = (action->getStartTime().count() - now.count()) / 1000;
                 //DLOG_F(ERROR, "time: expected: %d now: %d value: %d, type %s", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000, mObjectName.c_str());
                 // if(!((action->getStartTime() < std::chrono::seconds(3)) ||
