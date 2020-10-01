@@ -76,6 +76,7 @@ Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), 
 
 int Core::getRandomNumber()
 {
+    enforce(onCoreThread() == true, "Core: getRandomNumber only allowed to be called from core");
     return mDistribution(mRnd);
 }
 

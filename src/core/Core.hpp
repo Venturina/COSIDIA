@@ -63,11 +63,25 @@ public:
      **/
     void removeObjectFromSimulation(int);
 
-
+    /**
+     * Allows to retrive clock information.
+     *
+     * @return Simulation Clock
+     **/
     const SteadyClock& getClock() { return *mClock; }
 
+    /**
+     * Gives CurrentObjectList to be read from Objects
+     *
+     * @return Constant copy of CurrentObjectList. Can be handed to objects, is guaranteed to never change.
+     **/
     const ConstObjectContainer_ptr getCurrentObjectList() { return mObjectList.getCurrentObjectContainer(); };
 
+    /**
+     * Gives a random number, is deterministic.
+     *
+     * @return random number
+     **/
     int getRandomNumber();
 
 protected:
