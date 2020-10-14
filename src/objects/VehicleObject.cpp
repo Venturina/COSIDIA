@@ -47,15 +47,15 @@ VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> actio
     auto newContext = std::make_shared<VehicleObjectContext>();
     auto actionData = std::dynamic_pointer_cast<VehicleUpdateActionData>(action->getActionData());
     enforce(actionData, "VehicleObject: Could not cast ActionData to VehicleUpdateActionData");
-    enforce(actionData->getUpdateForVehicle(mExternalId).mObjectId == mObjectId, "VehicleObject: ExternalId and ObjectId are not corresponding for VehicleUpdate");
+    enforce(actionData->getUpdateForVehicle(mExternalId.get()).mObjectId == mObjectId, "VehicleObject: ExternalId and ObjectId are not corresponding for VehicleUpdate");
 
-    auto currentUpdate = actionData->getUpdateForVehicle(mExternalId);
+    auto currentUpdate = actionData->getUpdateForVehicle(mExternalId.get());
 
     newContext->speed = currentUpdate.mSpeed;
     newContext->longitude = currentUpdate.mLongitude;
     newContext->latitude = currentUpdate.mLatitude;
 
-    DLOG_F(WARNING, "vehicle object %s id %d with speed %f and position: %f / %f", mExternalId.c_str(), mObjectId, context->speed, context->longitude, context->latitude);
+    DLOG_F(WARNING, "vehicle object %s id %d with speed %f and position: %f / %f", mExternalId.get().c_str(), mObjectId, context->speed, context->longitude, context->latitude);
     VehicleObjectData data;
     data.updatedContext = newContext;
     return data;
@@ -84,13 +84,13 @@ void VehicleObject::initObject(std::shared_ptr<Action> action)
 
 bool VehicleObject::isInitialized()
 {
-    return BaseObject::isInitialized() && mExternalId != "";
+    return BaseObject::isInitialized() && mExternalId.get() != "";
 }
 
 void VehicleObject::setExternalId(std::string id)
 {
     enforce(!isInitialized(), "VehicleObject: it is not allowed to set ExternalId when initialized");
-    mExternalId = id;
+    mExternalId.setElement(id);
 }
 
 

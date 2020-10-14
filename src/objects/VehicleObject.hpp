@@ -5,6 +5,7 @@
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectContext.hpp"
 #include "utils/ContextContainer.hpp"
+#include "utils/ReadOnly.hpp"
 #include <boost/optional.hpp>
 
 
@@ -38,13 +39,13 @@ public:
     /**
      * This getter is allowed as externalId won't be changed during the simulation run
      */
-    virtual std::string getExternalId() { return mExternalId; }
+    virtual std::string getExternalId() { return mExternalId.get(); }
     virtual void setExternalId(std::string id);
 
     virtual bool isInitialized() override;
 
 private:
-    std::string mExternalId = "";
+    ReadOnly<std::string> mExternalId;
     boost::fibers::future<VehicleObjectData> mFuture;
 
     VehicleObjectData executeSumoUpdate(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>);
