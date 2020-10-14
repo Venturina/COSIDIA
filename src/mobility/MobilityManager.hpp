@@ -4,6 +4,7 @@
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectFactory.hpp"
 #include "objects/ObjectRemover.hpp"
+#include "utils/PureLocal.hpp"
 #include <unordered_set>
 
 namespace paresis
@@ -43,7 +44,7 @@ public:
     virtual void initObject(std::shared_ptr<Action>) override;
 
 protected:
-    std::map<std::string, int> mIdMapper;
+    PureLocal<std::map<std::string, int>> mIdMapper;
     virtual void fetchVehicleIds(ConstObjectContainer_ptr);
 
 private:
@@ -52,7 +53,7 @@ private:
     boost::fibers::future<std::shared_ptr<MobilityManagerData>> mFuture;
 
     // this has to go to object context possibly
-    std::unordered_set<int> mVehicles;
+
 
     int updateCount = 0;
 

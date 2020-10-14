@@ -10,7 +10,7 @@
 namespace paresis
 {
 
-MobilityManager::MobilityManager() : BaseObject()
+MobilityManager::MobilityManager() : mIdMapper(this), BaseObject()
 {
     mObjectName = "MobilityManager";
 }
@@ -32,14 +32,14 @@ void MobilityManager::startExecution(std::shared_ptr<Action> action)
 void MobilityManager::fetchVehicleIds(ConstObjectContainer_ptr objectList)
 {
     auto data = objectList->getAll();
-    for(auto& vehicle : mIdMapper) {
+    for(auto& vehicle : mIdMapper(this)) {
         if(vehicle.second == 0) {
             DLOG_F(ERROR, "found unresolved vehicle");
             for(auto& obj : data) {
                 if(obj.second->getObjectName() == "VehicleObject") {
                     auto st = dynamic_cast<VehicleObject*>(obj.second.get())->getExternalId();
                     if(st == vehicle.first) {
-                        mIdMapper[vehicle.first] = obj.second->getObjectId();
+                        mIdMapper(this)[vehicle.first] = obj.second->getObjectId();
                         std::string s = "fetched vehicle id: ";
                         s.append(std::to_string(obj.second->getObjectId()));
                         s.append(" for ");
@@ -65,7 +65,7 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
         map.add<std::string>("id", "abc.0");
         auto vehicle = ObjectFactory::getInstance().createObject("vehicle", objectList, &map);
         data->vehiclesToAdd.push_back(vehicle);
-        mIdMapper[id] = 0;
+        mIdMapper(this)[id] = 0;
     }
 
     if(action->getStartTime() < std::chrono::seconds(20)) {
@@ -78,7 +78,7 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
 
     std::list<std::string> deletedKeys;
     if(updateCount % 5 == 0 && updateCount < 105 && updateCount > 10) {
-        for(auto& v : mIdMapper) {
+        for(auto& v : mIdMapper(this)) {
             if(v.second != 0) {
                 auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", v.second, objectList);
                 data->objectsToDelete = deleter;
@@ -88,7 +88,7 @@ std::shared_ptr<MobilityManagerData> MobilityManager::doVehicleUpdate(std::share
     }
 
     for(auto& k : deletedKeys) {
-        mIdMapper.erase(k);
+        mIdMapper(this).erase(k);
     }
 
     updateCount++;
