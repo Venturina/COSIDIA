@@ -61,6 +61,12 @@ public:
      */
     SteadyClock::duration getDuration() const { return mDuration; }
 
+
+    /**
+     * Get End time
+     */
+    const SteadyClock::duration getEndTime() const { return mDuration + mStartTime; }
+
     /**
      * Get attached ActionData, nullptr if no ActionData is attached
      */
