@@ -6,6 +6,7 @@
 #include "traci/API.h"
 #include "traci/Launcher.hpp"
 #include "traci/LiteAPI.h"
+#include <memory>
 
 namespace paresis
 {
@@ -17,9 +18,13 @@ public:
     virtual void initObject(std::shared_ptr<Action>) override;
 
 private:
-    virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr) override;
-    std::shared_ptr<MobilityManagerData> executeUpdate(const SumoUpdater::Results&, ConstObjectContainer_ptr, std::shared_ptr<Action>);
-    void addVehicle(const std::string&, MobilityManagerData*, ConstObjectContainer_ptr);
+    /**
+     * Called from MobilityManager, fiber entry Method
+     */
+    virtual std::shared_ptr<MobilityManagerTasks> doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr) override;
+
+    std::shared_ptr<MobilityManagerTasks> executeUpdate(const SumoUpdater::Results&, ConstObjectContainer_ptr, std::shared_ptr<Action>);
+    void addVehicle(const std::string&, MobilityManagerTasks*, ConstObjectContainer_ptr);
 
     std::chrono::milliseconds mUpdateInterval;
 

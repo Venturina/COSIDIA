@@ -24,7 +24,7 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
     mTraci->simulationStep(mUpdateInterval.count()/1000);
 }
 
-std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr objectList)
+std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr objectList)
 {
     fetchVehicleIds(objectList);
 
@@ -42,47 +42,47 @@ std::shared_ptr<MobilityManagerData> SumoMobilityManager::doVehicleUpdate(std::s
     return std::move(data);
 }
 
-std::shared_ptr<MobilityManagerData> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& updaterResult, ConstObjectContainer_ptr objectContainer, std::shared_ptr<Action> action)
+std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const SumoUpdater::Results& updaterResult, ConstObjectContainer_ptr objectContainer, std::shared_ptr<Action> action)
 {
     // add vehicles
-    std::shared_ptr<MobilityManagerData> data = std::make_shared<MobilityManagerData>();
+    std::shared_ptr<MobilityManagerTasks> coreTasks = std::make_shared<MobilityManagerTasks>();
     for(auto& vehicle : updaterResult.departedVehicles) {
-        addVehicle(vehicle, data.get(), objectContainer);
+        addVehicle(vehicle, coreTasks.get(), objectContainer);
     }
 
     // remove vehicles
-    for(auto& vehicle: updaterResult.arrivedVehicles) {
-        auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", mIdMapper(this)[vehicle], objectContainer);
+    for(auto& sumoIdOfArrived: updaterResult.arrivedVehicles) {
+        auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", mIdMapper(this)[sumoIdOfArrived], objectContainer);
         for(int obj : deleter) {
-            data->objectsToDelete.push_back(obj);
+            coreTasks->objectsToDelete.push_back(obj);
         }
     }
 
     // update vehicles
     std::list<int> updateList;
-    for(auto& update: updaterResult.updateVehicles) {
-        int id = mIdMapper(this)[update];
+    for(auto& sumoIdToUpdate: updaterResult.updateVehicles) {
+        int id = mIdMapper(this)[sumoIdToUpdate];
         if (id != 0) {
-            updaterResult.updateData->getUpdateForVehicle(update).mObjectId = id;
-            updateList.push_back(mIdMapper(this)[update]);
+            updaterResult.updateData->getUpdateForVehicle(sumoIdToUpdate).mObjectId = id;
+            updateList.push_back(mIdMapper(this)[sumoIdToUpdate]);
         }
     }
 
     ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), updateList));
     updateAction->setActionData(updaterResult.updateData);
     updateAction->setType("SUMO");
-    data->actionsToSchedule.push_back(updateAction);
+    coreTasks->actionsToSchedule.push_back(updateAction);
 
-    return std::move(data);
+    return std::move(coreTasks);
 }
 
-void SumoMobilityManager::addVehicle(const std::string& vehicle, MobilityManagerData* data, ConstObjectContainer_ptr objectContainer)
+void SumoMobilityManager::addVehicle(const std::string& vehicle, MobilityManagerTasks* tasks, ConstObjectContainer_ptr objectContainer)
 {
     mIdMapper(this)[vehicle] = 0;
     AnyMap a;
     a.add<std::string>("id", vehicle);
     auto vehicleObject = ObjectFactory::getInstance().createObject("vehicle", objectContainer, &a);
-    data->vehiclesToAdd.push_back(vehicleObject);
+    tasks->vehiclesToAdd.push_back(vehicleObject);
 }
 
 }

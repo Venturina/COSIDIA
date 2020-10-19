@@ -10,18 +10,11 @@
 namespace paresis
 {
 
-struct VehicleElement
-{
-    std::shared_ptr<BaseObject> element;
-    std::shared_ptr<Action> action;
-};
-
-//using Vehicle = std::vector<VehicleElement>;
-
-
-
-
-struct MobilityManagerData
+/**
+ * Returned by fiber entry method.
+ * Contains tasks for core
+ */
+struct MobilityManagerTasks
 {
     std::list<std::shared_ptr<Action>> actionsToSchedule;
     std::list<TemporaryObjectList> vehiclesToAdd;
@@ -45,12 +38,18 @@ public:
 
 protected:
     PureLocal<std::map<std::string, int>> mIdMapper;
+
+    /**
+     * Checks if vehicles in IdMapper are still unresolved
+     * If unresolved vehicle was found, ObjectList is searched for Vehicle with unresolved SUMO id
+     * When vehicle is found, IdMapper is filled with the corresponding paresis id
+     */
     virtual void fetchVehicleIds(ConstObjectContainer_ptr);
 
 private:
 
-    virtual std::shared_ptr<MobilityManagerData> doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr);
-    boost::fibers::future<std::shared_ptr<MobilityManagerData>> mFuture;
+    virtual std::shared_ptr<MobilityManagerTasks> doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr);
+    boost::fibers::future<std::shared_ptr<MobilityManagerTasks>> mFuture;
 
     // this has to go to object context possibly
 

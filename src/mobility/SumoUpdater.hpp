@@ -26,6 +26,12 @@ public:
     void initSubscriptions();
     void updateSubscriptions();
 
+    /**
+     * Performs a SUMO step.
+     *
+     * @param duration of SUMO step to be executed (usually 100ms)
+     * @return Corresponding result of the requested step.
+     */
     Results step(std::chrono::milliseconds);
 
 private:
