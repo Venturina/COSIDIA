@@ -178,7 +178,7 @@ private:
      */
     int mBeginActionId = 0;
 
-    std::string mType = "";
+    std::string mType = "default";
 };
 
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>);
