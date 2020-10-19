@@ -19,6 +19,8 @@ public:
     double mLongitude;
     double mLatitude;
 
+    double mSumoHeading;
+
     std::string mVehicle;
     int mObjectId;
 };

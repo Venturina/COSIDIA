@@ -20,6 +20,8 @@ struct VehicleObjectContext
     double longitude = 0;
     double latitude = 0;
 
+    double heading = 0;
+
     VehicleObjectContext& operator=(VehicleObjectContext* other);
 };
 

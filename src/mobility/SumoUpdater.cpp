@@ -24,6 +24,7 @@ void SumoUpdater::initSubscriptions()
 
     mVehicleVars.push_back(VAR_SPEED);
     mVehicleVars.push_back(VAR_POSITION);
+    mVehicleVars.push_back(VAR_ANGLE);
 
     subscribeSimulationVariables(vars);
 
@@ -104,7 +105,16 @@ void SumoUpdater::getVehicleUpdate(const libsumo::TraCIResults& vehicleVars, Veh
 
                 break;
             }
+            case libsumo::VAR_ANGLE: {
+                auto heading = dynamic_cast<const libsumo::TraCIDouble*>(vehicleVar.second.get());
+                enforce(heading, "SumoUpdater: could not cast TraCI Heading variable");
+
+                update.mSumoHeading = heading->value;
+
+                break;
+            }
             default:
+                std::cout << vehicleVar.first << std::endl;
                 enforce(false, "SumoUpdater: Traci Subscription not available in VehicleUpdate");
                 break;
         }
