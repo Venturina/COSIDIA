@@ -15,14 +15,14 @@ namespace paresis
 
 struct VehicleObjectContext
 {
-    double speed = 0;
+    double speed = 0;  /* meter per second */
 
-    double longitude = 0;
-    double latitude = 0;
+    double longitude = 0; /* plane angle (-180 - 180)  */
+    double latitude = 0;  /* plane angle (-180 - 180)  */
 
-    double heading = 0;
+    double heading = 0; /* plane angle (-180 - 180)  */
 
-    std::chrono::system_clock::time_point lastUpdate;
+    std::chrono::system_clock::time_point lastUpdate; /* UTC time */
 
     VehicleObjectContext& operator=(VehicleObjectContext* other);
 };
