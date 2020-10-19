@@ -22,6 +22,8 @@ struct VehicleObjectContext
 
     double heading = 0;
 
+    std::chrono::system_clock::time_point lastUpdate;
+
     VehicleObjectContext& operator=(VehicleObjectContext* other);
 };
 
