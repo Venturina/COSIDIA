@@ -27,6 +27,23 @@ static std::thread::id theMainThread;
 int timingBuffer[64ULL*1024ULL*1024ULL];
 unsigned long long currId = 0;
 
+std::chrono::time_point<std::chrono::system_clock> utcStartTime;
+bool timeIsSet;
+
+std::chrono::time_point<std::chrono::system_clock> getUtcStartTime()
+{
+    enforce(timeIsSet, "Core: UTC Start time not valid");
+    return utcStartTime;
+}
+
+void setUtcStartTime()
+{
+    enforce(!timeIsSet, "Core: tried to set start time twice");
+    enforce(onCoreThread(), "Core: required to be on core for setting time")
+    utcStartTime = std::chrono::system_clock::now();
+    timeIsSet = true;
+}
+
 bool onCoreThread()
 {
     return std::this_thread::get_id() == theMainThread;
@@ -67,6 +84,9 @@ Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), 
     } else {
         mClock = clock;
     }
+
+    setUtcStartTime();
+
     setup();
     // https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution
     boost::asio::io_service::work work(mIoService);

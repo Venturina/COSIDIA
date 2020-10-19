@@ -113,6 +113,8 @@ protected:
 void setCoreP(Core*);
 Core* getCoreP();
 
+std::chrono::time_point<std::chrono::system_clock> getUtcStartTime();
+
 std::thread::id getCoreThreadId();
 bool onCoreThread();
 
