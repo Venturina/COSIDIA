@@ -44,6 +44,8 @@ public:
     virtual std::string getExternalId() { return mExternalId.get(); }
     virtual void setExternalId(std::string id);
 
+    virtual std::shared_ptr<const VehicleObjectContext> getContext() { return mContext.getElement(); }
+
     virtual bool isInitialized() override;
 
 private:
