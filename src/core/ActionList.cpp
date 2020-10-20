@@ -44,4 +44,17 @@ ConstActionP ActionList::getNextAction() const
     }
 }
 
+bool ActionList::removeAction(ConstActionP actionToRemove, std::chrono::nanoseconds removeTimeHint)
+{
+    auto possibleRemoveElements = mActionMap->equal_range(removeTimeHint);
+    for(auto i = possibleRemoveElements.first; i != possibleRemoveElements.second; i++) {
+        if(i->second == actionToRemove) {
+            mActionMap->erase(i);
+            return true;
+            break;
+        }
+    }
+    return false;
+}
+
 } // ns paresis

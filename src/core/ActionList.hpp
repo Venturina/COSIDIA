@@ -43,7 +43,15 @@ public:
      */
     ConstActionP getNextAction() const;
 
-private:
+    /**
+     * Removes specific Action from Action list
+     * @param action to remove
+     * @param time at which the action was scheduled
+     * @return true if remove was successfull, false elsewise
+     */
+    bool removeAction(ConstActionP, std::chrono::nanoseconds);
+
+protected:
     std::unique_ptr<ActionMap> mActionMap;
 };
 
