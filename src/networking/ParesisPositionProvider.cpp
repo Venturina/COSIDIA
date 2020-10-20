@@ -1,35 +1,28 @@
 #include "networking/ParesisPositionProvider.hpp"
+#include "networking/VanetzaDefs.hpp"
 
 namespace paresis
 {
 
-void ParesisPositionProvider::updatePosition()
-{
 
-/*
+
+void ParesisPositionProvider::updatePosition(const VehicleObjectContext& context)
+{
     using namespace vanetza::units;
     static const TrueNorth north;
 
-    auto geopos = mVehicleController->getGeoPosition();
-    mPositionFix.timestamp = mRuntime->now();
-    mPositionFix.latitude = geopos.latitude;
-    mPositionFix.longitude = geopos.longitude;
+    auto timeSincePosix = context.lastUpdate.time_since_epoch();
+    vanetza::Clock::time_point ts { std::chrono::duration_cast<vanetza::Clock::duration>(timeSincePosix - utcItsDiff) };
+    mPositionFix.timestamp = ts;
+
     mPositionFix.confidence.semi_minor = 5.0 * si::meter;
     mPositionFix.confidence.semi_major = 5.0 * si::meter;
-    mPositionFix.course.assign(north + GeoAngle { mVehicleController->getHeading().getTrueNorth() }, north + 3.0 * degree);
-    mPositionFix.speed.assign(mVehicleController->getSpeed(), 1.0 * si::meter_per_second);
 
-    // prevent signal listeners to modify our position data
-    PositionFixObject tmp { mPositionFix };
-    emit(scPositionFixSignal, &tmp);
-*/
+    mPositionFix.longitude = context.longitude * degrees;
+    mPositionFix.latitude = context.latitude * degrees;
 
-    using namespace vanetza::units;
-    
-
-
+    mPositionFix.course.assign(context.heading * north, north + 3.0 * degree);
+    mPositionFix.speed.assign(context.speed * si::meter_per_second, 1.0 * si::meter_per_second);
 }
-
-
 
 }
