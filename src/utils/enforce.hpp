@@ -1,6 +1,8 @@
 #ifndef _ENFORCE_HPP_ASNVO
 #define _ENFORCE_HPP_ASNVO
 
+#include <stdexcept>
+
 #ifdef PARESIS_SAFE
 #define enforce_(condition, msg) \
     if (!condition) { throw std::runtime_error(msg); }
