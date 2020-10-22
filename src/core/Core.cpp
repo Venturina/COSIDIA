@@ -2,7 +2,7 @@
 #include "guiConnector/gui.hpp"
 #include "fiber/customWorkStealing.hpp"
 #include "utils/enforce.hpp"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/fiber/algo/work_stealing.hpp>
 #include <boost/fiber/fiber.hpp>
 #include <boost/fiber/operations.hpp>

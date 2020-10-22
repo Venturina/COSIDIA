@@ -1,9 +1,13 @@
 #pragma once
 
 #include "networking/ParesisPositionProvider.hpp"
+#include "networking/ParesisRuntime.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/VehicleObject.hpp"
 #include "utils/PureLocal.hpp"
+
+#include "vanetza/geonet/router.hpp"
+#include "vanetza/geonet/mib.hpp"
 
 namespace paresis
 {
@@ -32,8 +36,13 @@ private:
 
     /* pure locals, do not return */
     PureLocal<ParesisPositionProvider> mPositionProvider;
+    PureLocal<ParesisRuntime> mRuntime;
+    PureLocal<vanetza::geonet::MIB> mMib;
+    PureLocal<vanetza::geonet::Router> mRouter;
+
+    ReadOnly<vanetza::Clock::time_point> mItsStartTime;
+    ReadOnly<int> mRandomNumber;
     //runtime
-    //postion provider
     //router
 
 };

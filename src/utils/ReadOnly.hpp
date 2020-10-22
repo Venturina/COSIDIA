@@ -7,7 +7,7 @@ template <class T>
 class ReadOnly {
 public:
 
-    void setElement(T& value) {
+    void setElement(T value) {
         enforce(mSet == false, "Tried to ser Read Only was twice");
         mElement = value;
         mSet = true;

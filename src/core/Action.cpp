@@ -13,11 +13,13 @@ Action::Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanosecon
     if(obj >= 0) {
         addAffected(obj);
     }
+    enforce(start >= std::chrono::nanoseconds(0), "Action: negative start time");
     //auto objP = std::make_shared<object::BaseObject>(obj);
     //mAffectedObjects.push_back(std::make_shared<object::BaseObject>(obj));
 }
 Action::Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, std::list<int> obj) : mDuration(duration), mKind(k), mStartTime(start)
 {
+    enforce(start >= std::chrono::nanoseconds(0), "Action: negative start time");
     assert( !(std::find(obj.begin(), obj.end(), -1) != obj.end()));
     for(auto id : obj) {
         if(id >= 0) {

@@ -12,18 +12,18 @@ public:
 
     PureLocal(void* creator) : mCreator(creator) {};
 
-    T& getElement(void* caller) {
+    std::shared_ptr<T>& getElement(void* caller) {
         enforce(caller == mCreator, "PureLocal was used at a wrong place!");
         return mElement;
     }
 
     T& operator()(void* caller) {
         enforce(caller == mCreator, "PureLocal was used at a wrong place!");
-        return mElement;
+        return *mElement;
     }
 
 private:
-    T mElement;
+    std::shared_ptr<T> mElement;
     const void* mCreator;
 };
 
