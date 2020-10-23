@@ -20,28 +20,37 @@ ParesisRuntime::ParesisRuntime(vanetza::Clock::time_point init, vanetza::Clock::
 std::chrono::nanoseconds ParesisRuntime::getDurationStartToNext() const
 {
     auto duration = next() - mSimulationStartTime;
-    DLOG_F(INFO, "duration from start to next: %d", std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
+    DLOG_F(INFO, "duration from start to next: %d us", std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
     return duration;
 }
 
 std::chrono::nanoseconds ParesisRuntime::getDurationNowToNext() const
 {
-    auto duration = next() - (mSimulationStartTime + mRouterStartSimTime);
-    DLOG_F(INFO, "duration from now to next: %d", std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
+    auto duration = next() - now();
+    DLOG_F(INFO, "duration from now to next: %d us", std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
     return duration;
 }
 
 void ParesisRuntime::triggerAbsolute(vanetza::Clock::duration absoluteDuration)
 {
     auto advance = absoluteDuration - mRouterStartSimTime;
-    DLOG_F(INFO, "current router time: %d", std::chrono::duration_cast<std::chrono::milliseconds>(advance).count());
+    DLOG_F(INFO, "current router time: %d us", std::chrono::duration_cast<std::chrono::microseconds>(advance).count());
+    trigger(mRouterStartTime+(absoluteDuration-mRouterStartSimTime));
+    mLastTrigger = absoluteDuration;
+}
+
+void ParesisRuntime::triggerAbsolute(SteadyClock::duration absoluteSteadyClockDuration)
+{
+    auto absoluteDuration = std::chrono::duration_cast<vanetza::Clock::duration>(absoluteSteadyClockDuration);
+    auto advance = absoluteDuration - mRouterStartSimTime;
+    DLOG_F(INFO, "current router time: %d us", std::chrono::duration_cast<std::chrono::microseconds>(advance).count());
     trigger(mRouterStartTime+(absoluteDuration-mRouterStartSimTime));
     mLastTrigger = absoluteDuration;
 }
 
 std::shared_ptr<ParesisRuntime> ParesisRuntime::makeRuntime(SteadyClock::duration initTime) {
     vanetza::Clock::time_point ts { std::chrono::duration_cast<vanetza::Clock::duration>(getUtcStartTime().time_since_epoch() - utcItsDiff + initTime)};
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(initTime);
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(initTime);
     std::shared_ptr<ParesisRuntime> runtime = std::make_shared<ParesisRuntime>(ts,duration);
     return runtime;
 }

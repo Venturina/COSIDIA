@@ -20,6 +20,7 @@ public:
     std::chrono::nanoseconds getDurationNowToNext() const;
 
     void triggerAbsolute(vanetza::Clock::duration);
+    void triggerAbsolute(SteadyClock::duration);
 
     static std::shared_ptr<ParesisRuntime> makeRuntime(SteadyClock::duration initTime);
 

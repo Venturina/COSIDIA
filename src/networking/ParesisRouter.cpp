@@ -68,7 +68,7 @@ RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, st
     DLOG_F(ERROR, "current simulation time: %d ", std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
     mPositionProvider(this).updatePosition(*context);
     mRouter(this).update_position(mPositionProvider(this).position_fix());
-    mRuntime(this).triggerAbsolute(std::chrono::duration_cast<vanetza::Clock::duration>(action->getStartTime()));
+    mRuntime(this).triggerAbsolute((action->getStartTime()));
     mRuntime(this).getDurationNowToNext();
 
 
