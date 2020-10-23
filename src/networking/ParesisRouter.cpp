@@ -21,12 +21,6 @@ ParesisRouter::ParesisRouter() : mPositionProvider(this), mRuntime(this), mMib(t
 void ParesisRouter::initObject(std::shared_ptr<Action> action)
 {
     mRandomNumber.setElement(getCoreP()->getRandomNumber());
-    vanetza::Clock::time_point ts { std::chrono::duration_cast<vanetza::Clock::duration>(getUtcStartTime().time_since_epoch() - utcItsDiff + action->getStartTime())};
-    std::cout << "time since simulation start" << ts.time_since_epoch().count() << std::endl;
-    std::cout << "duration since simulation start " << (ts - mItsStartTime.get()).count() << " action start: " << action->getStartTime().count() << std::endl;
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime());
-    mRuntime.getElement(this).reset(new ParesisRuntime(ts, duration));
-    mRouter.getElement(this).reset(new vanetza::geonet::Router(mRuntime(this), mMib(this)));
 
     // for(int c = 0; c < 10; c++)
     // {
@@ -34,21 +28,12 @@ void ParesisRouter::initObject(std::shared_ptr<Action> action)
     //     mRuntime(this).trigger(mRuntime(this).next());
     // }
 
-    while((mRuntime(this).next() - ts).count() <= 0) {
-        std::cout << (mRuntime(this).next() - ts).count() << std::endl;
-        mRuntime(this).trigger(ts);
-        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(mRuntime(this).next() - ts).count() << std::endl;
-    }
-
-    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(mRuntime(this).next().time_since_epoch() - (mItsStartTime.get().time_since_epoch() + action->getStartTime())).count() << std::endl;
-    std::cout << "from runtime " << std::chrono::duration_cast<std::chrono::milliseconds>(mRuntime(this).getDurationStartToNext() - action->getStartTime()).count() << std::endl;
-
     const auto objList = getCoreP()->getCurrentObjectList();
     auto mobility = getSiblingByName(this, "VehicleObject", objList);
     mVehicleObject = std::static_pointer_cast<VehicleObject>(mobility.lock());
 
-    auto nextAction = createSelfAction(std::chrono::milliseconds(10), mRuntime(this).getDurationStartToNext());
-    nextAction->setType("update");
+    auto nextAction = createSelfAction(std::chrono::milliseconds(10), action->getStartTime() + std::chrono::milliseconds(mRandomNumber.get()));
+    nextAction->setType("initRouter");
     getCoreP()->scheduleAction(nextAction);
 }
 
@@ -60,10 +45,37 @@ void ParesisRouter::startExecution(std::shared_ptr<Action> action) {
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext()).detach();
+    } else if (action->getType() == "initRouter") {
+        boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>)>
+            pt (std::bind(&ParesisRouter::initRouter, this, std::placeholders::_1));
+
+        mFuture = pt.get_future();
+        boost::fibers::fiber(std::move(pt), action).detach();
     } else {
         std::cout << action->getType() << std::endl;
         throw std::runtime_error("ParesisRouter: wrong action received");
     }
+}
+
+RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action) {
+    vanetza::Clock::time_point ts { std::chrono::duration_cast<vanetza::Clock::duration>(getUtcStartTime().time_since_epoch() - utcItsDiff + action->getStartTime())};
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime());
+    mRuntime.getElement(this).reset(new ParesisRuntime(ts, duration));
+    mRouter.getElement(this).reset(new vanetza::geonet::Router(mRuntime(this), mMib(this)));
+
+    while((mRuntime(this).next() - ts).count() <= 0) {
+        std::cout << (mRuntime(this).next() - ts).count() << std::endl;
+        mRuntime(this).trigger(ts);
+        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(mRuntime(this).next() - ts).count() << std::endl;
+    }
+
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(mRuntime(this).next().time_since_epoch() - (mItsStartTime.get().time_since_epoch() + action->getStartTime())).count() << std::endl;
+    std::cout << "from runtime " << std::chrono::duration_cast<std::chrono::milliseconds>(mRuntime(this).getDurationStartToNext() - action->getStartTime()).count() << std::endl;
+
+
+    RouterUpdateData data;
+    scheduleNextUpdate(data, action.get());
+    return data;
 }
 
 RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context)
@@ -81,7 +93,7 @@ RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, st
 }
 
 void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
-    if(action->getType() == "update") {
+    if(action->getType() == "update" || action->getType() == "initRouter") {
         auto data = mFuture.get();
         getCoreP()->scheduleAction(data.actionsToSchedule);
     } else {
