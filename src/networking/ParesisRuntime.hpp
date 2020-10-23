@@ -17,9 +17,11 @@ public:
 
     std::chrono::nanoseconds getDurationStartToNext() const;
 
+    std::chrono::nanoseconds getDurationNowToNext() const;
+
     void triggerAbsolute(vanetza::Clock::duration);
 
-    //void trigger(std::chrono::duration) override;
+    static std::shared_ptr<ParesisRuntime> makeRuntime(SteadyClock::duration initTime);
 
 private:
     vanetza::Clock::duration mLastTrigger;
