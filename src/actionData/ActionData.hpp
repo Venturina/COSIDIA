@@ -9,7 +9,9 @@ namespace paresis
 class ActionData
 {
 public:
-    virtual std::string getType() { return mDataType; }
+    ActionData(std::string type) : mDataType(type) {};
+
+    virtual std::string getType() const { return mDataType; }
 private:
     std::string mDataType = "";
 };

@@ -28,6 +28,7 @@ public:
 class VehicleUpdateActionData : public ActionData
 {
 public:
+    VehicleUpdateActionData() : ActionData("") {}
     //TODO check if key exists
     VehicleUpdate& getUpdateForVehicle(std::string veh) { return mUpdates[veh]; }
     void addData(std::string veh, VehicleUpdate u) { mUpdates[veh] = u; }
