@@ -1,5 +1,5 @@
-project(paresis)
 cmake_minimum_required(VERSION 3.13)
+project(paresis VERSION 0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,6 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 find_package(Boost COMPONENTS atomic context system fiber thread REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
+find_package(Vanetza CONFIG REQUIRED)
 add_subdirectory(extern/CLI11)
 
 add_library(libparesis STATIC
@@ -15,7 +16,6 @@ add_library(libparesis STATIC
 
         src/core/Action.cpp
         src/core/ActionList.cpp
-        src/core/Clock.cpp
         src/core/Config.cpp
         src/core/Core.cpp
         src/core/DebugClock.cpp
@@ -25,7 +25,10 @@ add_library(libparesis STATIC
         src/mobility/MobilityManager.cpp
         src/mobility/SumoMobilityManager.cpp
         src/mobility/SumoUpdater.cpp
+        src/networking/ParesisAccessInterface.cpp
+        src/networking/ParesisPositionProvider.cpp
         src/networking/ParesisRouter.cpp
+        src/networking/ParesisRuntime.cpp
         src/objects/BaseObject.cpp
         src/objects/ObjectActionManager.cpp
         src/objects/ObjectContext.cpp
@@ -57,6 +60,7 @@ endif()
 
 target_include_directories(libparesis PUBLIC src extern extern/hypodermic)
 target_link_libraries(libparesis PUBLIC
+        Vanetza::vanetza
         Boost::boost
         Boost::context
         Boost::system

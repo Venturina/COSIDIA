@@ -1,6 +1,11 @@
 #include "core/Core.hpp"
+#include "networking/ParesisAccessInterface.hpp"
 #include "networking/ParesisRouter.hpp"
 #include "networking/VanetzaDefs.hpp"
+
+#include "vanetza/dcc/bursty_transmit_rate_control.hpp"
+#include "vanetza/dcc/flow_control.hpp"
+#include "vanetza/dcc/fully_meshed_state_machine.hpp"
 
 #include "loguru/loguru.hpp"
 
@@ -8,13 +13,12 @@
 namespace paresis
 {
 
-ParesisRouter::ParesisRouter() : mPositionProvider(this), mRuntime(this), mMib(this), mRouter(this), BaseObject()
+ParesisRouter::ParesisRouter() : mPositionProvider(this), mRuntime(this), mMib(this), mRouter(this), mDccRequestInterface(this), mDccStateMachine(this),
+                                mAccessInterface(this), mTransmitRateControl(this), BaseObject()
 {
     mObjectName = "ParesisRouter";
     mMib.getElement(this).reset(new vanetza::geonet::MIB);
     mPositionProvider.getElement(this).reset(new ParesisPositionProvider());
-    vanetza::Clock::time_point tv {std::chrono::duration_cast<vanetza::Clock::duration>(getUtcStartTime().time_since_epoch() - utcItsDiff)};
-    mItsStartTime.setElement(tv);
 }
 
 void ParesisRouter::initObject(std::shared_ptr<Action> action)
@@ -53,6 +57,13 @@ void ParesisRouter::startExecution(std::shared_ptr<Action> action) {
 RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action) {
     mRuntime.getElement(this) = ParesisRuntime::makeRuntime(action->getStartTime());
     mRouter.getElement(this).reset(new vanetza::geonet::Router(mRuntime(this), mMib(this)));
+
+    mAccessInterface.getElement(this).reset(new ParesisAccessInterface());
+    mDccStateMachine.getElement(this).reset(new vanetza::dcc::FullyMeshedStateMachine());
+    mTransmitRateControl.getElement(this).reset(new vanetza::dcc::BurstyTransmitRateControl(mDccStateMachine(this), mRuntime(this)));
+    mDccRequestInterface.getElement(this).reset(new vanetza::dcc::FlowControl(mRuntime(this), mTransmitRateControl(this), mAccessInterface(this)));
+    mRouter(this).set_access_interface(mDccRequestInterface.getElement(this).get());
+
 
     while(mRuntime(this).getDurationNowToNext().count() <= 0) {
         mRuntime(this).trigger(mRuntime(this).next());

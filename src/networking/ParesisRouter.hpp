@@ -6,6 +6,12 @@
 #include "objects/VehicleObject.hpp"
 #include "utils/PureLocal.hpp"
 
+#include "vanetza/access/interface.hpp"
+
+#include "vanetza/dcc/interface.hpp"
+#include "vanetza/dcc/state_machine.hpp"
+#include "vanetza/dcc/transmit_rate_control.hpp"
+
 #include "vanetza/geonet/router.hpp"
 #include "vanetza/geonet/mib.hpp"
 
@@ -43,7 +49,12 @@ private:
     PureLocal<vanetza::geonet::MIB> mMib;
     PureLocal<vanetza::geonet::Router> mRouter;
 
-    ReadOnly<vanetza::Clock::time_point> mItsStartTime;
+    PureLocal<vanetza::dcc::RequestInterface> mDccRequestInterface;
+    PureLocal<vanetza::dcc::StateMachine> mDccStateMachine;
+    PureLocal<vanetza::access::Interface> mAccessInterface;
+    PureLocal<vanetza::dcc::TransmitRateControl> mTransmitRateControl;
+
+    std::shared_ptr<Action> mNextAction;
     ReadOnly<int> mRandomNumber;
     //runtime
     //router
