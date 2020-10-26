@@ -87,12 +87,25 @@ void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
 }
 
 void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* action)
-{
+{   //TODO: not fully tested yet
     auto nextTp = mRuntime(this).getDurationStartToNext();
-    DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
-    auto nextAction = createSelfAction(std::chrono::milliseconds(10), nextTp);
-    nextAction->setType("update");
-    data.actionsToSchedule = nextAction;
+    if(!mNextAction || mNextAction.get() == action) { // no next Action or nextAction is executed action
+        DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
+        auto nextAction = createSelfAction(std::chrono::milliseconds(10), nextTp);
+        nextAction->setType("update");
+        data.actionsToSchedule = nextAction;
+        mNextAction = nextAction;
+    } else {
+        if(nextTp != mNextAction->getStartTime()) {  // current action has other timestamp, delete next action
+            data.actionToDelete = mNextAction;
+            auto nextAction = createSelfAction(std::chrono::milliseconds(10), nextTp);
+            nextAction->setType("update");
+            data.actionsToSchedule = nextAction;
+            mNextAction = nextAction;
+        } else {
+            // nothing to do, next action is at correct time
+        }
+    }
 }
 
 } // ns paresis

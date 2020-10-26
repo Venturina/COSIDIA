@@ -15,6 +15,7 @@ namespace paresis
 struct RouterUpdateData
 {
     std::shared_ptr<Action> actionsToSchedule;
+    std::shared_ptr<Action> actionToDelete;
 };
 
 class ParesisRouter : public BaseObject
