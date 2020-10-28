@@ -11,6 +11,11 @@ class DebugObject : public BaseObject
 public:
     DebugObject();
 
+    virtual void setName(std::string);
+
+    virtual void initObject() {}
+    virtual void initObject(std::shared_ptr<Action>) {}
+
     virtual void startExecution(std::shared_ptr<Action>);
     virtual void endExecution(std::shared_ptr<Action>);
 

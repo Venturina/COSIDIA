@@ -30,7 +30,9 @@ add_library(libparesis STATIC
         src/networking/ParesisRouter.cpp
         src/networking/ParesisRuntime.cpp
         src/objects/BaseObject.cpp
+        src/objects/CacheQuery.cpp
         src/objects/ObjectActionManager.cpp
+        src/objects/ObjectCache.cpp
         src/objects/ObjectContext.cpp
         src/objects/ObjectFactory.cpp
         src/objects/ObjectList.cpp

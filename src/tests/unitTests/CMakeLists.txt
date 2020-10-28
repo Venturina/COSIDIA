@@ -5,5 +5,6 @@
 add_catch_test(ActionList ActionListTest.cpp)
 add_catch_test(ObjectManager ObjectActionManagerTest.cpp)
 add_catch_test(BaseObject BaseObjectTest.cpp)
+add_catch_test(ObjectCache ObjectCacheTest.cpp)
 add_catch_test(ObjectList ObjectListTest.cpp)
 add_catch_test(ParesisRuntime ParesisRuntimeTest.cpp)
