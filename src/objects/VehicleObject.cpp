@@ -45,7 +45,7 @@ void VehicleObject::startExecution(std::shared_ptr<Action> action)
 VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context)
 {
     auto newContext = std::make_shared<VehicleObjectContext>();
-    auto actionData = std::dynamic_pointer_cast<VehicleUpdateActionData>(action->getActionData());
+    auto actionData = std::dynamic_pointer_cast<const VehicleUpdateActionData>(action->getActionData());
     enforce(actionData, "VehicleObject: Could not cast ActionData to VehicleUpdateActionData");
     enforce(actionData->getUpdateForVehicle(mExternalId.get()).mObjectId == mObjectId, "VehicleObject: ExternalId and ObjectId are not corresponding for VehicleUpdate");
 

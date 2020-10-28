@@ -70,7 +70,7 @@ public:
     /**
      * Get attached ActionData, nullptr if no ActionData is attached
      */
-    std::shared_ptr<ActionData> getActionData() { return mActionData; }
+    std::shared_ptr<const ActionData> getActionData() { return mActionData; }
 
     /**
      * Set start time of Action
@@ -82,7 +82,7 @@ public:
      * Attach ActionData to Action
      * @param ActionData to attach, overriding of existing ActionData is not allowed
      */
-    void setActionData(std::shared_ptr<ActionData>);
+    void setActionData(std::shared_ptr<const ActionData>);
 
     /**
      * Get Kind of Action
@@ -143,7 +143,7 @@ protected:
     /**
      * Action Data contains the needed data provided for action (like transmissions)
      */
-    std::shared_ptr<ActionData> mActionData = nullptr;
+    std::shared_ptr<const ActionData> mActionData = nullptr;
 
     /**
      * Contains all object related data

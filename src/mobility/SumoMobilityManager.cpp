@@ -63,7 +63,7 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const S
     for(auto& sumoIdToUpdate: updaterResult.updateVehicles) {
         int id = mIdMapper(this)[sumoIdToUpdate];
         if (id != 0) {
-            updaterResult.updateData->getUpdateForVehicle(sumoIdToUpdate).mObjectId = id;
+            updaterResult.updateData->setUpdateForVehicle(sumoIdToUpdate).mObjectId = id;
             updateList.push_back(mIdMapper(this)[sumoIdToUpdate]);
         }
     }

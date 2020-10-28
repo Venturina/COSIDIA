@@ -45,7 +45,7 @@ void Action::setBeginId(int id)
     mBeginActionId = id;
 }
 
-void Action::setActionData(std::shared_ptr<ActionData> data)
+void Action::setActionData(std::shared_ptr<const ActionData> data)
 {
     assert(mActionData == nullptr);
     mActionData = std::move(data);
