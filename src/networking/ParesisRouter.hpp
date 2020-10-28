@@ -3,6 +3,7 @@
 #include "networking/ParesisPositionProvider.hpp"
 #include "networking/ParesisRuntime.hpp"
 #include "objects/BaseObject.hpp"
+#include "objects/ObjectCache.hpp"
 #include "objects/VehicleObject.hpp"
 #include "utils/PureLocal.hpp"
 
@@ -20,7 +21,7 @@ namespace paresis
 
 struct RouterUpdateData
 {
-    std::shared_ptr<Action> actionsToSchedule;
+    std::list<std::shared_ptr<Action>> actionsToSchedule;
     std::shared_ptr<Action> actionToDelete;
 };
 

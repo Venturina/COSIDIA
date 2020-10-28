@@ -14,11 +14,12 @@ namespace paresis
 {
 
 ParesisRouter::ParesisRouter() : mPositionProvider(this), mRuntime(this), mMib(this), mRouter(this), mDccRequestInterface(this), mDccStateMachine(this),
-                                mAccessInterface(this), mTransmitRateControl(this), BaseObject()
+                                mAccessInterface(this), mTransmitRateControl(this), mObjectCache(this), BaseObject()
 {
     mObjectName = "ParesisRouter";
     mMib.getElement(this).reset(new vanetza::geonet::MIB);
     mPositionProvider.getElement(this).reset(new ParesisPositionProvider());
+    mObjectCache.getElement(this).reset(new SimpleObjectCache());
 }
 
 void ParesisRouter::initObject(std::shared_ptr<Action> action)
@@ -91,7 +92,9 @@ RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, st
 void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
     if(action->getType() == "update" || action->getType() == "initRouter") {
         auto data = mFuture.get();
-        getCoreP()->scheduleAction(data.actionsToSchedule);
+        for(auto action : data.actionsToSchedule) {
+            getCoreP()->scheduleAction(std::move(action));
+        }
     } else {
         throw std::runtime_error("ParesisRouter: wrong action received");
     }
@@ -100,23 +103,16 @@ void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
 void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* action)
 {   //TODO: not fully tested yet
     auto nextTp = mRuntime(this).getDurationStartToNext();
-    if(!mNextAction || mNextAction.get() == action) { // no next Action or nextAction is executed action
-        DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
-        auto nextAction = createSelfAction(std::chrono::milliseconds(10), nextTp);
-        nextAction->setType("update");
-        data.actionsToSchedule = nextAction;
-        mNextAction = nextAction;
-    } else {
-        if(nextTp != mNextAction->getStartTime()) {  // current action has other timestamp, delete next action
-            data.actionToDelete = mNextAction;
-            auto nextAction = createSelfAction(std::chrono::milliseconds(10), nextTp);
-            nextAction->setType("update");
-            data.actionsToSchedule = nextAction;
-            mNextAction = nextAction;
-        } else {
-            // nothing to do, next action is at correct time
-        }
+
+    if(mNextAction && nextTp != mNextAction->getStartTime()) {
+        data.actionToDelete = mNextAction;
     }
+
+    DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
+    auto nextAction = createSelfAction(std::chrono::milliseconds(10), nextTp);
+    nextAction->setType("update");
+    data.actionsToSchedule.push_back(nextAction);
+    mNextAction = nextAction;
 }
 
 } // ns paresis
