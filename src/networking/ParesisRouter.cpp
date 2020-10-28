@@ -100,11 +100,11 @@ void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
     }
 }
 
-void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* action)
+void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAction)
 {   //TODO: not fully tested yet
     auto nextTp = mRuntime(this).getDurationStartToNext();
 
-    if(mNextAction && nextTp != mNextAction->getStartTime()) {
+    if(mNextAction && mNextAction.get() != currentAction && nextTp != mNextAction->getStartTime()) {
         data.actionToDelete = mNextAction;
     }
 
