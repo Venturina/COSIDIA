@@ -38,8 +38,9 @@ public:
      * @param k Kind of Action (Init, Start, End)
      * @param start Time when the action should be started
      * @param id Object which is the receiver of the Action
+     * @param generating object
      */
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, int id);
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, int id, int generator);
 
     /**
      * Creates an Action for a list of object
@@ -48,8 +49,9 @@ public:
      * @param k Kind of Action (Init, Start, End)
      * @param start Time when the action should be started
      * @param ids Objects which receive the Action
+     * @param generating object
      */
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<int> ids);
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<int> ids, int generator);
 
     /**
      * Get start time of an Action
@@ -138,6 +140,13 @@ public:
      */
     void addAffected(int id);
 
+    /**
+     * Returns the ID of the object which generated the Action
+     *
+     * @return ObjectID
+     */
+    int getGeneratingObject() { return mGeneratingObject; }
+
 
 protected:
     /**
@@ -177,6 +186,11 @@ private:
      * Has to contain the ID of the corresponding START Action
      */
     int mBeginActionId = 0;
+
+    /**
+     * Contains the ObjectId of the Object which has generated the Action
+     */
+    int mGeneratingObject = 0;
 
     std::string mType = "default";
 };

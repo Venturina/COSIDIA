@@ -9,11 +9,11 @@ using namespace paresis;
 
 TEST_CASE( "Test the action manager", "[Action Manager]" ) {
 
-    std::shared_ptr<Action> a0(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1));
-    std::shared_ptr<Action> a1(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1));
-    std::shared_ptr<Action> a2(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1));
-    std::shared_ptr<Action> a3(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1));
-    std::shared_ptr<Action> a4(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1));
+    std::shared_ptr<Action> a0(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1, 5));
+    std::shared_ptr<Action> a1(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1, 5));
+    std::shared_ptr<Action> a2(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1, 5));
+    std::shared_ptr<Action> a3(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1, 5));
+    std::shared_ptr<Action> a4(new Action(std::chrono::nanoseconds(100),Action::Kind::START,std::chrono::nanoseconds(0), 1, 5));
 
     ObjectActionManager manager;
 

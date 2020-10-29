@@ -72,7 +72,7 @@ std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shar
     if(action->getStartTime() < std::chrono::seconds(20)) {
         auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
             Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
-            mObjectId); // ugly as hell?
+            mObjectId, mObjectId); // ugly as hell?
 
         data->actionsToSchedule.push_back(newAction);
     }
@@ -118,7 +118,7 @@ void MobilityManager::initObject(std::shared_ptr<Action> action)
 
     auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
         Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
-        mObjectId); // ugly as hell?
+        mObjectId, mObjectId); // ugly as hell?
 
     getCoreP()->scheduleAction(newAction);
 

@@ -12,7 +12,7 @@ void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
 {
     mUpdateInterval = std::chrono::milliseconds(100);
     auto nextAction = std::make_shared<Action>(std::chrono::milliseconds(10),
-        Action::Kind::START, action->getStartTime()+mUpdateInterval, mObjectId);
+        Action::Kind::START, action->getStartTime()+mUpdateInterval, mObjectId, mObjectId);
 
     getCoreP()->scheduleAction(nextAction);
     mTraci.reset(new traci::API());
@@ -68,7 +68,7 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const S
         }
     }
 
-    ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), updateList));
+    ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), updateList, mObjectId));
     updateAction->setActionData(updaterResult.updateData);
     updateAction->setType("SUMO");
     coreTasks->actionsToSchedule.push_back(updateAction);

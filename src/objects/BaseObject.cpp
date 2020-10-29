@@ -67,7 +67,7 @@ bool BaseObject::isInitialized()
 
 std::shared_ptr<Action> BaseObject::createSelfAction(SteadyClock::duration duration, SteadyClock::duration start)
 {
-    return std::move(std::make_shared<Action>(duration, Action::Kind::START, start, mObjectId));
+    return std::move(std::make_shared<Action>(duration, Action::Kind::START, start, mObjectId, mObjectId));
 }
 
 std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects)
