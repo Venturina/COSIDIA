@@ -17,7 +17,7 @@ public:
 
 private:
     const vanetza::access::DataRequest mRequest;
-    std::unique_ptr<vanetza::ChunkPacket> mPacket;
+    std::shared_ptr<const vanetza::ChunkPacket> mPacket;
 };
 
 

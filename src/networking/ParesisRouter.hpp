@@ -2,12 +2,11 @@
 
 #include "networking/ParesisPositionProvider.hpp"
 #include "networking/ParesisRuntime.hpp"
+#include "networking/ParesisAccessInterface.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectCache.hpp"
 #include "objects/VehicleObject.hpp"
 #include "utils/PureLocal.hpp"
-
-#include "vanetza/access/interface.hpp"
 
 #include "vanetza/dcc/interface.hpp"
 #include "vanetza/dcc/state_machine.hpp"
@@ -34,11 +33,14 @@ public:
     virtual void initObject(std::shared_ptr<Action>);
 
 private:
-
-    void scheduleNextUpdate(RouterUpdateData&, const Action*);
-    RouterUpdateData executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context);
+    RouterUpdateData executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
+    RouterUpdateData transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
 
     RouterUpdateData initRouter(std::shared_ptr<Action> action);
+
+    void scheduleNextUpdate(RouterUpdateData&, const Action*);
+    void scheduleTransmission(RouterUpdateData&, const Action*, ConstObjectContainer_ptr);
+    void commonActions(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>);
 
     /* do not touch this variables from other thread than main */
     std::weak_ptr<VehicleObject> mVehicleObject;
@@ -52,7 +54,7 @@ private:
 
     PureLocal<vanetza::dcc::RequestInterface> mDccRequestInterface;
     PureLocal<vanetza::dcc::StateMachine> mDccStateMachine;
-    PureLocal<vanetza::access::Interface> mAccessInterface;
+    PureLocal<ParesisAccessInterface> mAccessInterface;
     PureLocal<vanetza::dcc::TransmitRateControl> mTransmitRateControl;
 
     std::shared_ptr<Action> mNextAction;
