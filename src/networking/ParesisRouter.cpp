@@ -91,34 +91,35 @@ RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action)
 
 RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
-    commonActions(action, context);
-
-
     RouterUpdateData data;
-    scheduleTransmission(data, action.get(), currentObjects);
-    scheduleNextUpdate(data, action.get());
+    commonActions(data, action, context, currentObjects);
+
     return data;
 }
 
 RouterUpdateData ParesisRouter::transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
-    commonActions(action, context);
+    RouterUpdateData data;
+    commonActions(data, action, context, currentObjects);
     DLOG_F(ERROR, "ParesisRouter: received transmission");
     auto transmission = std::dynamic_pointer_cast<const AccesssInterfaceActionData>(action->getActionData());
-    //TODO: indicate
+    auto dataRequest = transmission->getDataRequest();
+    auto packetPtr = transmission->getPacket();
+    vanetza::geonet::Router::UpPacketPtr upPacket { new vanetza::UpPacket(*packetPtr) };
+    mRouter(this).indicate(std::move(upPacket), dataRequest.source_addr, dataRequest.destination_addr);
 
-    RouterUpdateData data;
-    scheduleTransmission(data, action.get(), currentObjects);
-    scheduleNextUpdate(data, action.get());
     return data;
 }
 
-void ParesisRouter::commonActions(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context)
+void ParesisRouter::commonActions(RouterUpdateData& data, std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
     DLOG_F(ERROR, "current simulation time: %d ", std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
     mPositionProvider(this).updatePosition(*context);
     mRouter(this).update_position(mPositionProvider(this).position_fix());
     mRuntime(this).triggerAbsolute((action->getStartTime()));
+
+    scheduleTransmission(data, action.get(), currentObjects);
+    scheduleNextUpdate(data, action.get());
 }
 
 void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
@@ -151,10 +152,6 @@ void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* cur
             // do nothing here
         } else { // we have to cancel the update
             enforce(mNextAction->getAffected().size()==1, "ParesisRouter: want to cancel action with several recipients");
-            #ifdef PARESIS_SAFE
-            std::cout << "ObjectId: " << mObjectId << " Type: " << mObjectName << " wants to cancel Action: " << mNextAction->getActionId() << std::endl;
-            std::cout << "now: " << std::chrono::duration_cast<std::chrono::milliseconds>(currentAction->getStartTime()).count() << " mNextAction Duration: " << std::chrono::duration_cast<std::chrono::milliseconds>(mNextAction->getStartTime()).count() << " router next action: " << std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count() << std::endl;
-            #endif
             data.actionToDelete = mNextAction;
         }
     }

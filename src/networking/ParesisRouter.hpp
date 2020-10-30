@@ -40,7 +40,7 @@ private:
 
     void scheduleNextUpdate(RouterUpdateData&, const Action*);
     void scheduleTransmission(RouterUpdateData&, const Action*, ConstObjectContainer_ptr);
-    void commonActions(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>);
+    void commonActions(RouterUpdateData&, std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr);
 
     /* do not touch this variables from other thread than main */
     std::weak_ptr<VehicleObject> mVehicleObject;

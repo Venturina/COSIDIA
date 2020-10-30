@@ -15,9 +15,12 @@ public:
     AccesssInterfaceActionData(const vanetza::access::DataRequest request, std::unique_ptr<vanetza::ChunkPacket> packet):
             mRequest(request), mPacket(std::move(packet)), ActionData("AccessInterface") { }
 
+    std::shared_ptr<vanetza::ChunkPacket> getPacket() const { return mPacket; };
+    const vanetza::access::DataRequest getDataRequest() const { return mRequest; }
+
 private:
     const vanetza::access::DataRequest mRequest;
-    std::shared_ptr<const vanetza::ChunkPacket> mPacket;
+    std::shared_ptr< vanetza::ChunkPacket> mPacket;
 };
 
 
