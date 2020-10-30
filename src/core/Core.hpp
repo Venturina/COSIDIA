@@ -84,6 +84,11 @@ public:
      **/
     int getRandomNumber();
 
+    /**
+     * Removes Action from ActionList, Action is required to be in list
+     *
+     * @param: Action to remove
+     */
     void removeAction(std::shared_ptr<Action>);
 
 protected:
@@ -119,6 +124,8 @@ std::chrono::time_point<std::chrono::system_clock> getUtcStartTime();
 
 std::thread::id getCoreThreadId();
 bool onCoreThread();
+
+void setUtcStartTime();
 
 } // ns paresis
 
