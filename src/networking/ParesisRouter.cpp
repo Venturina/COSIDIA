@@ -127,6 +127,9 @@ void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
         for(auto action : data.actionsToSchedule) {
             getCoreP()->scheduleAction(std::move(action));
         }
+        if(data.actionToDelete) {
+            getCoreP()->removeAction(data.actionToDelete);
+        }
     } else {
         throw std::runtime_error("ParesisRouter: wrong EndAction received");
     }
@@ -135,16 +138,26 @@ void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
 void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAction)
 {   //TODO: not fully tested yet
     auto nextTp = mRuntime(this).getDurationStartToNext();
+    enforce(!mNextAction || mNextAction->getType() == "update", "ParesisRouter: next action is no update"); // this should never happen
 
-    if(mNextAction && mNextAction.get() != currentAction && nextTp != mNextAction->getStartTime()) {
-        data.actionToDelete = mNextAction;
+    if(!mNextAction || mNextAction.get() == currentAction) { // new update must be scheduled
+        DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
+        auto nextAction = createSelfAction(std::chrono::milliseconds(2), nextTp);
+        nextAction->setType("update");
+        data.actionsToSchedule.push_back(nextAction);
+        mNextAction = nextAction;
+    } else { // nextAction != current -> further decisions required
+        if(nextTp == mNextAction->getStartTime()) {  // a update is allready scheduled at the correct time point
+            // do nothing here
+        } else { // we have to cancel the update
+            enforce(mNextAction->getAffected().size()==1, "ParesisRouter: want to cancel action with several recipients");
+            #ifdef PARESIS_SAFE
+            std::cout << "ObjectId: " << mObjectId << " Type: " << mObjectName << " wants to cancel Action: " << mNextAction->getActionId() << std::endl;
+            std::cout << "now: " << std::chrono::duration_cast<std::chrono::milliseconds>(currentAction->getStartTime()).count() << " mNextAction Duration: " << std::chrono::duration_cast<std::chrono::milliseconds>(mNextAction->getStartTime()).count() << " router next action: " << std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count() << std::endl;
+            #endif
+            data.actionToDelete = mNextAction;
+        }
     }
-
-    DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
-    auto nextAction = createSelfAction(std::chrono::milliseconds(2), nextTp);
-    nextAction->setType("update");
-    data.actionsToSchedule.push_back(nextAction);
-    mNextAction = nextAction;
 }
 
 void ParesisRouter::scheduleTransmission(RouterUpdateData& data, const Action* currentAction, ConstObjectContainer_ptr currentObjects)
