@@ -218,7 +218,7 @@ void Core::executeActionOnFinishedTimer()
                     endActionList.push_back(elemId);
                 }
             } else {
-                std::cout << "test" << std::endl;
+                DLOG_F(INFO, "Core: dropped Action for deleted Object: %d", elemId);
             }
         }
         if(!endActionList.empty()) {
@@ -247,6 +247,10 @@ void Core::finishSimulation()
     for(auto& t : mThreads) {
         t.join();
     }
+}
+
+void Core::removeAction(std::shared_ptr<Action> action) {
+    enforce(mActions.removeAction(action, action->getStartTime()), "Core: tried to remove unavailable action");
 }
 
 

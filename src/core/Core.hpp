@@ -84,6 +84,8 @@ public:
      **/
     int getRandomNumber();
 
+    void removeAction(std::shared_ptr<Action>);
+
 protected:
     void setup();
     void startThreads(int, std::thread::id);
