@@ -19,11 +19,13 @@ BaseObject::~BaseObject()
 int BaseObject::execute(std::shared_ptr<Action> action)
 {
     enforce(isInitialized(), "Tried to execute a not initialized object");
-
     switch (action->getKind()) {
         case Action::Kind::START:
             if(!mActionManager->startOrDelay(action)) {
                 //getCoreP()->scheduleAction(makeEndAction(action));
+                #ifdef PARESIS_SAFE
+                mCurrentAction = action->getActionId();
+                #endif
                 startExecution(std::move(action));
                 return mObjectId;
             }
@@ -31,6 +33,7 @@ int BaseObject::execute(std::shared_ptr<Action> action)
         case Action::Kind::END:
             {
                 enforce(action->getBeginId() != 0, "BaseObject: EndAction does not correspond to a begin action");
+                enforce(mCurrentAction == action->getBeginId(), "BaseObject: EndAction does not correspond to StartAction");
                 endExecution(action);
                 auto now = getCoreP()->getClock().getSimTimeNow();
                 timingBuffer[currId++] = (action->getStartTime().count() - now.count()) / 1000;
@@ -44,6 +47,9 @@ int BaseObject::execute(std::shared_ptr<Action> action)
                     update.setStartTime(action->getStartTime() + action->getDuration());
                     auto next = mActionManager->activateNextAvailableAction();
                     getCoreP()->scheduleAction(makeEndAction(next));
+                    #ifdef PARESIS_SAFE
+                    mCurrentAction = action->getActionId();
+                    #endif
                     startExecution(std::move(next));
                 }
                 return 0;

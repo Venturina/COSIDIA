@@ -48,6 +48,10 @@ protected:
     std::unique_ptr<ObjectActionManager> mActionManager;
 
     std::string mObjectName = "";
+
+    #ifdef PARESIS_SAFE
+    int mCurrentAction = 0;
+    #endif
 };
 
 
