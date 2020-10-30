@@ -34,10 +34,8 @@ void VehicleObject::startExecution(std::shared_ptr<Action> action)
 
             mFuture = pt.get_future();
             boost::fibers::fiber(std::move(pt), action, mContext.getElement()).detach();
-
     } else {
-        auto newAction = createSelfAction(std::chrono::milliseconds(10), action->getStartTime() + std::chrono::milliseconds(100));
-        getCoreP()->scheduleAction(newAction);
+        enforce(false, "VehicleObject: unknown Action")
     }
 
 }
@@ -68,9 +66,10 @@ void VehicleObject::endExecution(std::shared_ptr<Action> action)
     if(action->getType() == "SUMO") {
         auto data = mFuture.get();
         mContext.swap(data.updatedContext);
+    } else  {
+        enforce(false, "VehicleObject: Unknown action")
     }
     guiUpdateObject(mObjectId, *mContext.getElement());
-
 }
 
 
@@ -78,10 +77,7 @@ void VehicleObject::initObject(std::shared_ptr<Action> action)
 {
     auto number = getCoreP()->getRandomNumber();
     DLOG_F(WARNING, "VehicleObject Init with rnd: %d", number);
-    // random number to avoid vehicle synchronisation
-    auto newAction = createSelfAction(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(number % 1000));
     mContext.swap(std::make_shared<VehicleObjectContext>());
-    getCoreP()->scheduleAction(std::move(newAction));
 }
 
 bool VehicleObject::isInitialized()
