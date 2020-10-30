@@ -58,12 +58,14 @@ std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action> beginAction)
     if(beginAction->getActionData() == nullptr) {
         auto endAction = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), beginAction->getAffected(), beginAction->getGeneratingObject());
         endAction->setBeginId(beginAction->getActionId());
+        endAction->setType(beginAction->getType());
         return endAction;
     } else {
         auto a = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), beginAction->getAffected(), beginAction->getGeneratingObject());
         a->setActionData(beginAction->getActionData());
         a->setBeginId(beginAction->getActionId());
-        return std::move(a);
+        a->setType(beginAction->getType());
+        return a;
     }
 }
 
