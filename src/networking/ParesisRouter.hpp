@@ -57,6 +57,8 @@ private:
     PureLocal<ParesisAccessInterface> mAccessInterface;
     PureLocal<vanetza::dcc::TransmitRateControl> mTransmitRateControl;
 
+
+    bool mInitDone = false;
     std::shared_ptr<Action> mNextAction;
     ReadOnly<int> mRandomNumber;
     //runtime

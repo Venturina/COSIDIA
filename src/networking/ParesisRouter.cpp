@@ -85,6 +85,7 @@ RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action)
         mAccessInterface(this).dropTransmission();
     }
 
+    mInitDone = true;
     scheduleNextUpdate(data, action.get());
     return data;
 }
@@ -100,14 +101,15 @@ RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, st
 RouterUpdateData ParesisRouter::transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
     RouterUpdateData data;
-    commonActions(data, action, context, currentObjects);
-    DLOG_F(ERROR, "ParesisRouter: received transmission");
-    auto transmission = std::dynamic_pointer_cast<const AccesssInterfaceActionData>(action->getActionData());
-    auto dataRequest = transmission->getDataRequest();
-    auto packetPtr = transmission->getPacket();
-    vanetza::geonet::Router::UpPacketPtr upPacket { new vanetza::UpPacket(*packetPtr) };
-    mRouter(this).indicate(std::move(upPacket), dataRequest.source_addr, dataRequest.destination_addr);
-
+    if(mInitDone) {
+        commonActions(data, action, context, currentObjects);
+        DLOG_F(ERROR, "ParesisRouter: received transmission");
+        auto transmission = std::dynamic_pointer_cast<const AccesssInterfaceActionData>(action->getActionData());
+        auto dataRequest = transmission->getDataRequest();
+        auto packetPtr = transmission->getPacket();
+        vanetza::geonet::Router::UpPacketPtr upPacket { new vanetza::UpPacket(*packetPtr) };
+        mRouter(this).indicate(std::move(upPacket), dataRequest.source_addr, dataRequest.destination_addr);
+    }
     return data;
 }
 
