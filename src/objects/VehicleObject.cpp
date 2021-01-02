@@ -27,7 +27,7 @@ VehicleObject::VehicleObject() : BaseObject()
 void VehicleObject::startExecution(std::shared_ptr<Action> action)
 {
     //DLOG_F(WARNING, "VehicleObject %s with id %d, executed at %d", mExternalId.c_str(), mObjectId ,std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
-    if(action->getType() == "SUMO") {
+    if(action->getType() == "SUMO"_sym) {
         boost::fibers::packaged_task<VehicleObjectData
             (std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>)> pt
             (std::bind(&VehicleObject::executeSumoUpdate, this, std::placeholders::_1, std::placeholders::_2));
@@ -63,7 +63,7 @@ VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> actio
 
 void VehicleObject::endExecution(std::shared_ptr<Action> action)
 {
-    if(action->getType() == "SUMO") {
+    if(action->getType() == "SUMO"_sym) {
         auto data = mFuture.get();
         mContext.swap(data.updatedContext);
     } else  {

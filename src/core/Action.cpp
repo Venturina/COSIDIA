@@ -7,6 +7,8 @@
 namespace paresis
 {
 
+const Symbol Action::default_type = "default"_sym;
+
 Action::Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, int obj, int generator) : mDuration(duration), mKind(k), mStartTime(start), mGeneratingObject(generator)
 {
     assert(obj != -1);

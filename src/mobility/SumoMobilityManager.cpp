@@ -70,7 +70,7 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const S
 
     ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), updateList, mObjectId));
     updateAction->setActionData(updaterResult.updateData);
-    updateAction->setType("SUMO");
+    updateAction->setType("SUMO"_sym);
     coreTasks->actionsToSchedule.push_back(updateAction);
 
     return std::move(coreTasks);

@@ -32,32 +32,32 @@ void ParesisRouter::initObject(std::shared_ptr<Action> action)
     mVehicleObject = std::static_pointer_cast<VehicleObject>(mobility.lock());
 
     auto nextAction = createSelfAction(std::chrono::milliseconds(2), action->getStartTime() + std::chrono::milliseconds(mRandomNumber.get()));
-    nextAction->setType("initRouter");
+    nextAction->setType("initRouter"_sym);
     getCoreP()->scheduleAction(nextAction);
 }
 
 
 void ParesisRouter::startExecution(std::shared_ptr<Action> action) {
-    if(action->getType() == "update") {
+    if(action->getType() == "update"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
             pt (std::bind(&ParesisRouter::executeUpdate, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
-    } else if (action->getType() == "initRouter") {
+    } else if (action->getType() == "initRouter"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>)>
             pt (std::bind(&ParesisRouter::initRouter, this, std::placeholders::_1));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action).detach();
-    } else if(action->getType() == "transmission") {
+    } else if(action->getType() == "transmission"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
             pt (std::bind(&ParesisRouter::transmissionReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
     } else {
-        std::cout << action->getType() << std::endl;
+        std::cout << action->getType().value() << std::endl;
         throw std::runtime_error("ParesisRouter: wrong BeginAction received");
     }
 }
@@ -125,7 +125,7 @@ void ParesisRouter::commonActions(RouterUpdateData& data, std::shared_ptr<Action
 }
 
 void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
-    if(action->getType() == "update" || action->getType() == "initRouter" || action->getType() == "transmission") {
+    if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym) {
         auto data = mFuture.get();
         for(auto action : data.actionsToSchedule) {
             getCoreP()->scheduleAction(std::move(action));
@@ -141,12 +141,12 @@ void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
 void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAction)
 {   //TODO: not fully tested yet
     auto nextTp = mRuntime(this).getDurationStartToNext();
-    enforce(!mNextAction || mNextAction->getType() == "update", "ParesisRouter: next action is no update"); // this should never happen
+    enforce(!mNextAction || mNextAction->getType() == "update"_sym, "ParesisRouter: next action is no update"); // this should never happen
 
     if(!mNextAction || mNextAction.get() == currentAction) { // new update must be scheduled
         DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
         auto nextAction = createSelfAction(std::chrono::milliseconds(2), nextTp);
-        nextAction->setType("update");
+        nextAction->setType("update"_sym);
         data.actionsToSchedule.push_back(nextAction);
         mNextAction = nextAction;
     } else { // nextAction != current -> further decisions required
@@ -164,7 +164,7 @@ void ParesisRouter::scheduleTransmission(RouterUpdateData& data, const Action* c
     if(mAccessInterface(this).hasTransmissionRequest()) {
         auto transmission = mAccessInterface(this).getTransmission(currentObjects);
         auto transmissionAction = std::make_shared<Action>(std::chrono::milliseconds(2), Action::Kind::START, currentAction->getEndTime() + std::chrono::milliseconds(1), transmission.first, mObjectId);
-        transmissionAction->setType("transmission");
+        transmissionAction->setType("transmission"_sym);
         transmissionAction->setActionData(transmission.second);
         data.actionsToSchedule.push_back(transmissionAction);
     }

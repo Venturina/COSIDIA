@@ -23,6 +23,7 @@ add_library(libparesis STATIC
         src/core/Config.cpp
         src/core/Core.cpp
         src/core/DebugClock.cpp
+        src/core/Symbol.cpp
         src/core/main.cpp
         src/core/SteadyClock.cpp
         src/fiber/customWorkStealing.cpp

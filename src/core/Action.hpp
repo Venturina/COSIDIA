@@ -8,6 +8,7 @@
 #include "actionData/ActionData.hpp"
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectContext.hpp"
+#include "core/Symbol.hpp"
 
 
 namespace paresis
@@ -101,12 +102,12 @@ public:
     /**
      * Set type string of Action: for more specific processing
      */
-    void setType(std::string type) { mType = type; }
+    void setType(const Symbol& type) { mType = type; }
 
     /**
      * Get type string of Action
      */
-    std::string getType() { return mType; }
+    const Symbol& getType() { return mType; }
 
     /**
      * Set ID of Action
@@ -192,7 +193,8 @@ private:
      */
     int mGeneratingObject = 0;
 
-    std::string mType = "default";
+    static const Symbol default_type;
+    Symbol mType = default_type;
 };
 
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>);
