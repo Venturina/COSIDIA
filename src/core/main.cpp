@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 {
     CLI::App app {"paresis - yet another marvelous simulation environment"};
     std::string config_file = "config.yaml";
-    app.add_option("-c", config_file, "configuration YAML file", true);
+    app.add_option("-c,--config", config_file, "configuration YAML file", true);
 
     loguru::init(argc, argv);
 
