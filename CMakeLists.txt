@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 find_package(Boost COMPONENTS atomic context system fiber thread REQUIRED)
+find_package(TBB REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(Vanetza CONFIG REQUIRED)
 add_subdirectory(extern/CLI11)
@@ -72,6 +73,7 @@ target_link_libraries(libparesis PUBLIC
         ${CMAKE_DL_LIBS}
         yaml-cpp
 	pthread
+        TBB::tbb
 )
 set_property(TARGET libparesis PROPERTY OUTPUT_NAME paresis)
 
