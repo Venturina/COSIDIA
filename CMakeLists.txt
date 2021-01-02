@@ -12,6 +12,9 @@ find_package(yaml-cpp CONFIG REQUIRED)
 find_package(Vanetza CONFIG REQUIRED)
 add_subdirectory(extern/CLI11)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(xxhash REQUIRED IMPORTED_TARGET libxxhash)
+
 add_library(libparesis STATIC
         extern/loguru/loguru.cpp
 
@@ -73,6 +76,7 @@ target_link_libraries(libparesis PUBLIC
         ${CMAKE_DL_LIBS}
         yaml-cpp
 	pthread
+        PkgConfig::xxhash
         TBB::tbb
 )
 set_property(TARGET libparesis PROPERTY OUTPUT_NAME paresis)
