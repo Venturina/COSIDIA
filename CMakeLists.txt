@@ -50,7 +50,7 @@ add_library(libparesis STATIC
         src/utils/Geometry.cc
 )
 
-option(GUI_MODE "foo" ON)
+option(GUI_MODE "foo" OFF)
 if(GUI_MODE)
         find_package(Protobuf REQUIRED)
         include_directories(${PROTOBUF_INCLUDE_DIR})
