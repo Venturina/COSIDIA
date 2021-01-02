@@ -15,7 +15,11 @@ int main(int argc, char* argv[])
 {
     CLI::App app {"paresis - yet another marvelous simulation environment"};
     std::string config_file = "config.yaml";
+    bool debug_mode = false;
+    float sim_speed = 1.0f;
     app.add_option("-c,--config", config_file, "configuration YAML file", true);
+    app.add_option("--debug", debug_mode, "enable debug mode", true);
+    app.add_option("--sim-speed", sim_speed, "simulation speed factor", true);
 
     loguru::init(argc, argv);
 
@@ -36,8 +40,11 @@ int main(int argc, char* argv[])
     loguru::add_file("everything.log", loguru::FileMode::Truncate, loguru::Verbosity_MAX);
     loguru::add_file("error.log", loguru::FileMode::Truncate, loguru::Verbosity_ERROR);
     LOG_F(INFO, "Hello World");
-    //paresis::Core test(std::make_shared<paresis::DebugClock>(1));
-    paresis::Core test(std::make_shared<paresis::SteadyClock>(1));
+
+    std::shared_ptr<paresis::SteadyClock> clock = debug_mode ?
+        std::make_shared<paresis::DebugClock>(sim_speed) :
+        std::make_shared<paresis::SteadyClock>(sim_speed);
+    paresis::Core core(clock);
     loguru::shutdown();
     return 0;
 }
