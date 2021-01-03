@@ -8,6 +8,7 @@
 #include "actionData/ActionData.hpp"
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectContext.hpp"
+#include "objects/ObjectId.hpp"
 #include "core/Symbol.hpp"
 
 
@@ -41,7 +42,7 @@ public:
      * @param id Object which is the receiver of the Action
      * @param generating object
      */
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, int id, int generator);
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, ObjectId id, ObjectId generator);
 
     /**
      * Creates an Action for a list of object
@@ -52,7 +53,7 @@ public:
      * @param ids Objects which receive the Action
      * @param generating object
      */
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<int> ids, int generator);
+    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<ObjectId> ids, ObjectId generator);
 
     /**
      * Get start time of an Action
@@ -97,7 +98,7 @@ public:
      *
      * @return const reference to List of all Affected Objects
      */
-    const std::list<int>& getAffected() const { return mAffectedObjects; }
+    const std::list<ObjectId>& getAffected() const { return mAffectedObjects; }
 
     /**
      * Set type string of Action: for more specific processing
@@ -139,14 +140,14 @@ public:
      *
      * @param id of the affected Object
      */
-    void addAffected(int id);
+    void addAffected(ObjectId id);
 
     /**
      * Returns the ID of the object which generated the Action
      *
      * @return ObjectID
      */
-    int getGeneratingObject() { return mGeneratingObject; }
+    ObjectId getGeneratingObject() { return mGeneratingObject; }
 
 
 protected:
@@ -174,7 +175,7 @@ protected:
     /**
      * All objects which are affected by this action
      */
-    std::list<int> mAffectedObjects;
+    std::list<ObjectId> mAffectedObjects;
 
 private:
     Kind mKind;
@@ -191,14 +192,14 @@ private:
     /**
      * Contains the ObjectId of the Object which has generated the Action
      */
-    int mGeneratingObject = 0;
+    ObjectId mGeneratingObject;
 
     static const Symbol default_type;
     Symbol mType = default_type;
 };
 
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>);
-std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>, std::list<int> endActionList);
+std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>, std::list<ObjectId> endActionList);
 
 } // ns paresis
 

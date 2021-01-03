@@ -1,10 +1,12 @@
 #ifndef _OBJECT_LIST_NVOS
 #define _OBJECT_LIST_NVOS
 
+#include "objects/ObjectId.hpp"
 #include <atomic>
 #include <unordered_map>
 #include <map>
 #include <memory>
+#include <set>
 #include <typeindex>
 #include <typeinfo>
 
@@ -20,47 +22,45 @@ class ObjectContainer
 public:
     void insert(std::shared_ptr<BaseObject>);
     void remove(std::shared_ptr<BaseObject>);
-    void remove(int id);
-    std::shared_ptr<BaseObject> getObject(int id) const;
+    void remove(ObjectId id);
+    std::shared_ptr<BaseObject> getObject(ObjectId id) const;
 
     void insertUnique(std::shared_ptr<BaseObject>);
     std::shared_ptr<BaseObject> getUnique(std::string) const;
 
-    void removeFromSimulation(int);
+    void removeFromSimulation(ObjectId);
 
-    const std::map<int, std::shared_ptr<BaseObject>> getAll() const { return mActiveObjects; };
+    const std::map<ObjectId, std::shared_ptr<BaseObject>> getAll() const { return mActiveObjects; };
 
 private:
-    std::map<int, std::shared_ptr<BaseObject>> mActiveObjects;
-    std::map<std::string, int32_t> mUniqueObjects;
-    std::map<int, int> mRemovedObjects;
+    std::map<ObjectId, std::shared_ptr<BaseObject>> mActiveObjects;
+    std::map<std::string, ObjectId> mUniqueObjects;
+    std::set<ObjectId> mRemovedObjects;
 };
 
 using ObjectContainer_ptr = std::shared_ptr<ObjectContainer>;
 using ConstObjectContainer_ptr = std::shared_ptr<const ObjectContainer>;
-using AtomicObjectId = int;
 
 class ObjectList
 {
 public:
     ObjectList();
-    void addToObjectContainer(int objectId, std::shared_ptr<BaseObject>);
+    void addToObjectContainer(ObjectId objectId, std::shared_ptr<BaseObject>);
     void addUnique(std::shared_ptr<BaseObject>);
 
-    void removeObjectById(int id);
+    void removeObjectById(ObjectId id);
 
-    void removeFromSimulation(int);
+    void removeFromSimulation(ObjectId);
     std::shared_ptr<BaseObject>getUniqueObjectByName(std::string);
-    std::shared_ptr<BaseObject>getObjectByIdFromCurrentContainer(int id);
+    std::shared_ptr<BaseObject>getObjectByIdFromCurrentContainer(ObjectId id);
     ConstObjectContainer_ptr getCurrentObjectContainer() const;
-    int getNextObjectId();
-    //int getCurrentObjectId() { return mCurrentObjectId; }
+    ObjectId getNextObjectId();
 
 private:
     ObjectContainer_ptr mWorkingCopy;
     ConstObjectContainer_ptr mCurrentCopy;
 
-    AtomicObjectId mCurrentObjectId{1};
+    int mCurrentObjectId = 1;
 };
 
 }

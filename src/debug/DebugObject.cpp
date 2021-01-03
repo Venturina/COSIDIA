@@ -35,15 +35,15 @@ DebugObjectParent::DebugObjectParent() : DebugObject()
 void DebugObjectParent::initObject()
 {
     mObjectName = "DebugParentObject";
-    mObjectId = 0;
-    mParentList.insert(0);
+    mObjectId = ObjectId { 0 };
+    mParentList.insert(ObjectId { 0 });
 }
 
 void DebugObjectParent::initObject(std::shared_ptr<Action>)
 {
     mObjectName = "DebugParentObject";
-    mObjectId = 0;
-    mParentList.insert(0);
+    mObjectId = ObjectId { 0 };
+    mParentList.insert(ObjectId { 0 });
 }
 
 DebugObjectChild::DebugObjectChild() : DebugObject()
@@ -54,16 +54,16 @@ void DebugObjectChild::initObject()
 {
     LOG_F(INFO, "Child Initialized");
     mObjectName = "DebugChildObject";
-    mObjectId = 1;
-    mParentList.insert(0);
+    mObjectId = ObjectId { 1 };
+    mParentList.insert(ObjectId { 0 });
 }
 
 void DebugObjectChild::initObject(std::shared_ptr<Action>)
 {
     LOG_F(INFO, "Child Initialized");
     mObjectName = "DebugChildObject";
-    mObjectId = 1;
-    mParentList.insert(0);
+    mObjectId = ObjectId { 1 };
+    mParentList.insert(ObjectId { 0 });
 }
 
 

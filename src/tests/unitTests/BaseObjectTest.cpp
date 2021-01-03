@@ -54,8 +54,8 @@ TEST_CASE( "BaseObject Test: Init and SelfAction", "[BaseObject]" )
     std::shared_ptr<MockDebugObjectChild> child(new MockDebugObjectChild());
     std::shared_ptr<DebugObject> parent(new DebugObjectParent());
 
-    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), 1, 5));
-    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(1), 2, 5));
+    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), ObjectId { 1 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(1), ObjectId { 2 }, ObjectId { 5 }));
 
     SECTION("Create self Action") {
         REQUIRE_FALSE(child->isInitialized());
@@ -90,11 +90,11 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
         auto mockClock = dynamic_cast<const MockClock*>(&(c->getClock()));
         auto mockActionManager = dynamic_cast<MockObjectActionManager*>(child->getMockedObjectManager());
 
-        std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), 1, 5));
-        std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::END, std::chrono::milliseconds(1), 2, 5));
+        std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), ObjectId { 1 }, ObjectId { 5 }));
+        std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::END, std::chrono::milliseconds(1), ObjectId { 2 }, ObjectId { 5 }));
         a1->setActionId(5);
         a2->setBeginId(a1->getActionId());
-        std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::INIT, std::chrono::milliseconds(1), 2, 5));
+        std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::INIT, std::chrono::milliseconds(1), ObjectId { 2 }, ObjectId { 5 }));
 
 
         REQUIRE_CALL(*mockActionManager, startOrDelay(a1))      // call_1

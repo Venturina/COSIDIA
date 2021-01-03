@@ -1,5 +1,6 @@
 #include "core/Core.hpp"
 #include "objects/BaseObject.hpp"
+#include "objects/ObjectId.hpp"
 #include "objects/ObjectList.hpp"
 #include "utils/enforce.hpp"
 
@@ -14,7 +15,7 @@ void ObjectContainer::insert(std::shared_ptr<BaseObject> obj)
     mActiveObjects[obj->getObjectId()] = obj;
 }
 
-void ObjectContainer::remove(int id)
+void ObjectContainer::remove(ObjectId id)
 {
     enforce(onCoreThread() == true, "ObjectContainer: remove on wrong core");
     enforce(mActiveObjects.find(id) != mActiveObjects.end(), "removed object not in container");
@@ -29,7 +30,7 @@ void ObjectContainer::remove(std::shared_ptr<BaseObject> obj)
     remove(obj->getObjectId());
 }
 
-std::shared_ptr<BaseObject> ObjectContainer::getObject(int id) const
+std::shared_ptr<BaseObject> ObjectContainer::getObject(ObjectId id) const
 {
     enforce(mActiveObjects.find(id) != mActiveObjects.end() || mRemovedObjects.find(id) != mRemovedObjects.end(), "ObjectContainer: requested objet not in container nor is it removed");
     if(mActiveObjects.find(id) == mActiveObjects.end()) {
@@ -44,7 +45,7 @@ void ObjectContainer::insertUnique(std::shared_ptr<BaseObject> obj)
     enforce(obj->isInitialized(), "object not initialized")
     enforce(mUniqueObjects.find(obj->getObjectName()) == mUniqueObjects.end(), "unique object already in container");
     enforce(mActiveObjects.find(obj->getObjectId()) == mActiveObjects.end(), "unique object already in container")
-    mUniqueObjects[obj->getObjectName()] = obj->getObjectId();
+    mUniqueObjects.emplace(obj->getObjectName(), obj->getObjectId());
     insert(std::move(obj));
 }
 
@@ -55,8 +56,8 @@ std::shared_ptr<BaseObject> ObjectContainer::getUnique(std::string name) const
     return mActiveObjects.find(mUniqueObjects.find(name)->second)->second;
 }
 
-void ObjectContainer::removeFromSimulation(int id) {
-    mRemovedObjects[id] = mRemovedObjects[id]++;
+void ObjectContainer::removeFromSimulation(ObjectId id) {
+    mRemovedObjects.insert(id);
 }
 
 ObjectList::ObjectList()
@@ -65,7 +66,7 @@ ObjectList::ObjectList()
     mCurrentCopy = std::make_shared<ObjectContainer>(*mWorkingCopy);
 }
 
-void ObjectList::addToObjectContainer(int objectId, std::shared_ptr<BaseObject> object)
+void ObjectList::addToObjectContainer(ObjectId objectId, std::shared_ptr<BaseObject> object)
 {
     //(*mWorkingCopy)[objectId] = object;  // modify current working copy, no changes for other threads
     mWorkingCopy->insert(object);
@@ -78,7 +79,7 @@ void ObjectList::addUnique(std::shared_ptr<BaseObject> obj)
     mCurrentCopy = std::make_shared<ObjectContainer>(*mWorkingCopy);
 }
 
-void ObjectList::removeObjectById(int id)
+void ObjectList::removeObjectById(ObjectId id)
 {
     mWorkingCopy->remove(id);
     mCurrentCopy = std::make_shared<ObjectContainer>(*mWorkingCopy);
@@ -89,7 +90,7 @@ std::shared_ptr<BaseObject> ObjectList::getUniqueObjectByName(std::string name)
     return mCurrentCopy->getUnique(name);
 }
 
-std::shared_ptr<BaseObject> ObjectList::getObjectByIdFromCurrentContainer(int id)
+std::shared_ptr<BaseObject> ObjectList::getObjectByIdFromCurrentContainer(ObjectId id)
 {
     //assert(mCurrentCopy->getObject(id));
     return mCurrentCopy->getObject(id);
@@ -100,13 +101,13 @@ ConstObjectContainer_ptr ObjectList::getCurrentObjectContainer() const
     return mCurrentCopy;
 }
 
-int ObjectList::getNextObjectId()
+ObjectId ObjectList::getNextObjectId()
 {
-    mCurrentObjectId++;
-    return mCurrentObjectId;
+    ++mCurrentObjectId;
+    return ObjectId { mCurrentObjectId };
 }
 
-void ObjectList::removeFromSimulation(int id)
+void ObjectList::removeFromSimulation(ObjectId id)
 {
     mWorkingCopy->remove(id);
     mWorkingCopy->removeFromSimulation(id);

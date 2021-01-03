@@ -17,9 +17,9 @@ public:
     virtual void request(const vanetza::access::DataRequest&, std::unique_ptr<vanetza::ChunkPacket>) override;
 
     bool hasTransmissionRequest() const { return mHasRequest; }
-    std::pair<const std::list<int>,std::shared_ptr<const AccesssInterfaceActionData>> getTransmission(std::shared_ptr<const ObjectContainer>);
+    std::pair<const std::list<ObjectId>, std::shared_ptr<const AccesssInterfaceActionData>> getTransmission(std::shared_ptr<const ObjectContainer>);
 
-    void initializeCache(std::string, int);
+    void initializeCache(std::string, ObjectId);
 
     void dropTransmission();
 

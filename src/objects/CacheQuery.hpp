@@ -28,12 +28,12 @@ public:
 class CacheQueryExclude : public CacheQuery
 {
 public:
-    CacheQueryExclude(int excludeId) : mExcludeId(excludeId), CacheQuery() {};
+    CacheQueryExclude(ObjectId excludeId) : mExcludeId(excludeId), CacheQuery() {};
     ~CacheQueryExclude() = default;
 
     virtual bool applyQuery(const BaseObject*) const override;
 private:
-    int mExcludeId = 0;
+    ObjectId mExcludeId;
 };
 
 

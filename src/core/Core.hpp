@@ -24,9 +24,9 @@ public:
     /**
      *  Fetch the current ObjectId
      * Must be called from main thread.
-     * @return: int ObjectId to use
+     * @return: ObjectId to use
      **/
-    int getNextObjectId();
+    ObjectId getNextObjectId();
 
     /**
      * Fetch the current ActionId
@@ -61,7 +61,7 @@ public:
      *
      *  @param ObjectId from the object which should be deleted.
      **/
-    void removeObjectFromSimulation(int);
+    void removeObjectFromSimulation(ObjectId);
 
     /**
      * Allows to retrive clock information.

@@ -52,19 +52,19 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const S
 
     // remove vehicles
     for(auto& sumoIdOfArrived: updaterResult.arrivedVehicles) {
-        auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", mIdMapper(this)[sumoIdOfArrived], objectContainer);
-        for(int obj : deleter) {
+        auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", mIdMapper(this).at(sumoIdOfArrived), objectContainer);
+        for(ObjectId obj : deleter) {
             coreTasks->objectsToDelete.push_back(obj);
         }
     }
 
     // update vehicles
-    std::list<int> updateList;
+    std::list<ObjectId> updateList;
     for(auto& sumoIdToUpdate: updaterResult.updateVehicles) {
-        int id = mIdMapper(this)[sumoIdToUpdate];
-        if (id != 0) {
+        ObjectId id = mIdMapper(this).at(sumoIdToUpdate);
+        if (id.valid()) {
             updaterResult.updateData->setUpdateForVehicle(sumoIdToUpdate).mObjectId = id;
-            updateList.push_back(mIdMapper(this)[sumoIdToUpdate]);
+            updateList.push_back(id);
         }
     }
 
@@ -78,7 +78,7 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const S
 
 void SumoMobilityManager::addVehicle(const std::string& vehicle, MobilityManagerTasks* tasks, ConstObjectContainer_ptr objectContainer)
 {
-    mIdMapper(this)[vehicle] = 0;
+    mIdMapper(this).emplace(vehicle, ObjectId::stub());
     AnyMap a;
     a.add<std::string>("id", vehicle);
     auto vehicleObject = ObjectFactory::getInstance().createObject("vehicle", objectContainer, &a);

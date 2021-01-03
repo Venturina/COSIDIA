@@ -7,7 +7,7 @@
 namespace paresis
 {
 
-TemporaryObject::TemporaryObject(int id, std::shared_ptr<BaseObject> obj, bool initialized) :
+TemporaryObject::TemporaryObject(ObjectId id, std::shared_ptr<BaseObject> obj, bool initialized) :
     mBaseObject(obj), mTempId(id), mIsInitialized(initialized)
 {
 }
@@ -22,26 +22,26 @@ void TemporaryObject::setTempParent(const TemporaryObject& parent)
     mTempParents.emplace(parent.getTempId());
 }
 
-void TemporaryObject::setTempMapping(int realId)
+void TemporaryObject::setTempMapping(ObjectId realId)
 {
     mTempMapping.first = mTempId;
     mTempMapping.second = realId;
 }
 
-void TemporaryObject::setRealChildren(int realId)
+void TemporaryObject::setRealChildren(ObjectId realId)
 {
     DLOG_F(ERROR, "Object: %s gets child: ", mBaseObject->getObjectName().c_str());
     mBaseObject->addChild(realId);
 }
 
-void TemporaryObject::setRealParent(int realId)
+void TemporaryObject::setRealParent(ObjectId realId)
 {
     DLOG_F(ERROR, "Object: %s gets parent: ", mBaseObject->getObjectName().c_str());
     mBaseObject->addParent(realId); // TODO parent as a list!
 }
-int TemporaryObject::getRealId()
+ObjectId TemporaryObject::getRealId()
 {
-    assert(mTempMapping.second != -1);
+    assert(mTempMapping.second.valid());
     return mTempMapping.second;
 }
 

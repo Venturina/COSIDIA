@@ -17,10 +17,10 @@ public:
     ObjectRemover(ObjectRemover const&) = delete;
     void operator=(ObjectRemover const&) = delete;
 
-    virtual std::vector<int> getObjectsToDelete(std::string, int, ConstObjectContainer_ptr);
+    virtual std::vector<ObjectId> getObjectsToDelete(const std::string&, ObjectId, ConstObjectContainer_ptr);
 
 protected:
-    std::vector<int> getVehicleRelatedObjects(int, ConstObjectContainer_ptr);
+    std::vector<ObjectId> getVehicleRelatedObjects(ObjectId, ConstObjectContainer_ptr);
 
 private:
     ObjectRemover() {};

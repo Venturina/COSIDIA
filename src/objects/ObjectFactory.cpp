@@ -39,10 +39,10 @@ TemporaryObjectList ObjectFactory::createVehicleObject(ConstObjectContainer_ptr 
     auto vehicle = std::make_shared<VehicleObject>();
     vehicle->setExternalId(data->get<std::string>("id"));
 
-    TemporaryObject tRadio(0, objectList->getUnique("Radio"), true);
-    TemporaryObject tChannel(1, microchannel);
-    TemporaryObject tVehicle(2, vehicle);
-    TemporaryObject tRouter(3, router);
+    TemporaryObject tRadio(ObjectId { 0 }, objectList->getUnique("Radio"), true);
+    TemporaryObject tChannel(ObjectId { 1 }, microchannel);
+    TemporaryObject tVehicle(ObjectId { 2 }, vehicle);
+    TemporaryObject tRouter(ObjectId { 3 }, router);
 
     tRadio.setTempChild(tChannel);
     tChannel.setTempParent(tRadio);

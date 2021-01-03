@@ -12,7 +12,7 @@ namespace paresis
 SimulationManager::SimulationManager() : BaseObject()
 {
     mObjectName = "SimulationManager";
-    addParent(0);
+    addParent(ObjectId::root());
     mObjectId = getCoreP()->getNextObjectId();
     DLOG_F(INFO, "Id of SimulationManager: %d", mObjectId);
 

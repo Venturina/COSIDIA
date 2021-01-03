@@ -26,7 +26,7 @@ public:
      * @param SearchQuery to restrict the search further. When CacheQuery::applyQuery evaluates to true, Object will be added to result list
      * @return List of Object IDs which match type and query
      */
-    virtual std::list<int> getObjectsByType(std::shared_ptr<const ObjectContainer>, const std::string&, const CacheQuery* = nullptr) = 0;
+    virtual std::list<ObjectId> getObjectsByType(std::shared_ptr<const ObjectContainer>, const std::string&, const CacheQuery* = nullptr) = 0;
 };
 
 
@@ -37,14 +37,14 @@ public:
 class SimpleObjectCache : public ObjectCache
 {
 public:
-    virtual std::list<int> getObjectsByType(std::shared_ptr<const ObjectContainer>, const std::string&, const CacheQuery* = nullptr) override;
+    virtual std::list<ObjectId> getObjectsByType(std::shared_ptr<const ObjectContainer>, const std::string&, const CacheQuery* = nullptr) override;
 
 protected:
-    std::list<int> performSearch(const std::string&, const CacheQuery*);
+    std::list<ObjectId> performSearch(const std::string&, const CacheQuery*);
     void resetQueries();
 
     std::weak_ptr<const ObjectContainer> mLastObjectContainer;
-    std::map<std::pair<const std::string, const CacheQuery*>, std::list<int>> mCachedRequests;
+    std::map<std::pair<const std::string, const CacheQuery*>, std::list<ObjectId>> mCachedRequests;
 };
 
 

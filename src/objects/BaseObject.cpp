@@ -7,7 +7,9 @@
 namespace paresis
 {
 
-BaseObject::BaseObject() : mActionManager(new ObjectActionManager())
+BaseObject::BaseObject() :
+    mObjectId(ObjectId::stub()),
+    mActionManager(new ObjectActionManager())
 {
 }
 
@@ -16,7 +18,7 @@ BaseObject::~BaseObject()
     DLOG_F(ERROR, "Called Destructor of %d, %s", mObjectId, mObjectName.c_str());
 }
 
-int BaseObject::execute(std::shared_ptr<Action> action)
+ObjectId BaseObject::execute(std::shared_ptr<Action> action)
 {
     enforce(isInitialized(), "Tried to execute a not initialized object");
     switch (action->getKind()) {
@@ -29,7 +31,7 @@ int BaseObject::execute(std::shared_ptr<Action> action)
                 startExecution(std::move(action));
                 return mObjectId;
             }
-            return 0;
+            return ObjectId::stub();
         case Action::Kind::END:
             {
                 enforce(action->getBeginId() != 0, "BaseObject: EndAction does not correspond to a begin action");
@@ -52,19 +54,19 @@ int BaseObject::execute(std::shared_ptr<Action> action)
                     #endif
                     startExecution(std::move(next));
                 }
-                return 0;
+                return ObjectId::stub();
             }
         case Action::Kind::INIT:
             initObject(action);
-            return 0;
+            return ObjectId::stub();
         default:
-            return 0;
+            return ObjectId::stub();
     }
 }
 
 bool BaseObject::isInitialized()
 {
-    if(mObjectName.compare("") == 0 || mObjectId == -1 || mParentList.empty()) {
+    if(mObjectName.compare("") == 0 || !mObjectId.valid() || mParentList.empty()) {
         return false;
     } else {
         return true;

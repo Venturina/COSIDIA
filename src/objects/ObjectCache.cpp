@@ -5,7 +5,7 @@
 namespace paresis
 {
 
-std::list<int> SimpleObjectCache::getObjectsByType(std::shared_ptr<const ObjectContainer> container, const std::string& type, const CacheQuery* query)
+std::list<ObjectId> SimpleObjectCache::getObjectsByType(std::shared_ptr<const ObjectContainer> container, const std::string& type, const CacheQuery* query)
 {
     if(mLastObjectContainer.expired() || mLastObjectContainer.lock().get() != container.get()) {
         resetQueries();
@@ -18,7 +18,7 @@ std::list<int> SimpleObjectCache::getObjectsByType(std::shared_ptr<const ObjectC
     }
 }
 
-std::list<int> SimpleObjectCache::performSearch(const std::string& type, const CacheQuery* query)
+std::list<ObjectId> SimpleObjectCache::performSearch(const std::string& type, const CacheQuery* query)
 {
     auto hit = mCachedRequests.find(std::make_pair(type, query));
     if (hit != mCachedRequests.end()) {

@@ -31,12 +31,12 @@ public:
 
 TEST_CASE("Action List", "[ActionList]") {
     MockCore core;
-    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(1), 1, 5));
-    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), 2, 5));
-    std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), 3, 5));
-    std::shared_ptr<Action> a4(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(3), 4, 5));
-    std::shared_ptr<Action> a5(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), 5, 5));
-    std::shared_ptr<Action> a6(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(3), 6, 5));
+    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(1), ObjectId { 1 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), ObjectId { 2 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), ObjectId { 3 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a4(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(3), ObjectId { 4 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a5(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), ObjectId { 5 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a6(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(3), ObjectId { 6 }, ObjectId { 5 }));
 
     DebugActionMap list;
 

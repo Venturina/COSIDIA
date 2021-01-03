@@ -18,7 +18,7 @@ struct MobilityManagerTasks
 {
     std::list<std::shared_ptr<Action>> actionsToSchedule;
     std::list<TemporaryObjectList> vehiclesToAdd;
-    std::vector<int> objectsToDelete;
+    std::vector<ObjectId> objectsToDelete;
 };
 
 
@@ -37,7 +37,7 @@ public:
     virtual void initObject(std::shared_ptr<Action>) override;
 
 protected:
-    PureLocal<std::map<std::string, int>> mIdMapper;
+    PureLocal<std::map<std::string, ObjectId>> mIdMapper;
 
     /**
      * Checks if vehicles in IdMapper are still unresolved

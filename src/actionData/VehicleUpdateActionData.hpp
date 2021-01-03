@@ -2,6 +2,7 @@
 #define _VEHICLE_UPDATE_ACTION_DATA_HPP_SNDFO
 
 #include "actionData/ActionData.hpp"
+#include "objects/ObjectId.hpp"
 
 #include <map>
 #include <string>
@@ -22,7 +23,7 @@ public:
     double mSumoHeading;
 
     std::string mVehicle;
-    int mObjectId;
+    ObjectId mObjectId = ObjectId::stub();
 };
 
 class VehicleUpdateActionData : public ActionData

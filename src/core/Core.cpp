@@ -100,7 +100,7 @@ int Core::getRandomNumber()
     return mDistribution(mRnd);
 }
 
-int Core::getNextObjectId()
+ObjectId Core::getNextObjectId()
 {
     enforce(onCoreThread() == true, "Core: Object ID's must be fetched from core!");
     return mObjectList.getNextObjectId();
@@ -133,7 +133,7 @@ void Core::addUniqueObject(std::shared_ptr<BaseObject> obj)
     mObjectList.addUnique(obj);
 }
 
-void Core::removeObjectFromSimulation(int id) {
+void Core::removeObjectFromSimulation(ObjectId id) {
     enforce(onCoreThread() == true, "Core: Objects must be removed from core!");
     mObjectList.removeFromSimulation(id);
 }
@@ -208,13 +208,13 @@ void Core::executeActionOnFinishedTimer()
         auto l = mCurrentAction->getAffected();
         auto action = mActions.popNextAction();
         enforce(mCurrentAction->getActionId() == action->getActionId(), "Core: Current Action != Popped Action");
-        std::list<int> endActionList;
+        std::list<ObjectId> endActionList;
         for(auto & elemId : l)
         {
-            enforce(elemId >= 0, "Core: tried to execute object with id 0");
+            enforce(elemId.valid(), "Core: tried to execute object with invalid id");
             auto obj = mObjectList.getObjectByIdFromCurrentContainer(elemId);
             if (obj) {
-                if(obj->execute(action) != 0) {
+                if(obj->execute(action).valid()) {
                     endActionList.push_back(elemId);
                 }
             } else {

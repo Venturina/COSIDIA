@@ -11,17 +11,17 @@ ObjectRemover& ObjectRemover::getInstance()
     return instance;
 }
 
-std::vector<int> ObjectRemover::getObjectsToDelete(std::string objectIdentifier, int id, ConstObjectContainer_ptr objectList)
+std::vector<ObjectId> ObjectRemover::getObjectsToDelete(const std::string& objectIdentifier, ObjectId id, ConstObjectContainer_ptr objectList)
 {
     if(!objectIdentifier.compare("vehicle")) {
         return getVehicleRelatedObjects(id, objectList);
     }
-    return std::vector<int>();
+    return std::vector<ObjectId>();
 }
 
-std::vector<int> ObjectRemover::getVehicleRelatedObjects(int id, ConstObjectContainer_ptr objectList)
+std::vector<ObjectId> ObjectRemover::getVehicleRelatedObjects(ObjectId id, ConstObjectContainer_ptr objectList)
 {
-    std::vector<int> removeList;
+    std::vector<ObjectId> removeList;
     auto obj = objectList->getObject(id);
     enforce(obj->getObjectName() == "VehicleObject", "Object to remove must be VehicleObject");
     removeList.push_back(id);

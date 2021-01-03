@@ -33,18 +33,20 @@ void MobilityManager::startExecution(std::shared_ptr<Action> action)
 void MobilityManager::fetchVehicleIds(ConstObjectContainer_ptr objectList)
 {
     auto data = objectList->getAll();
-    for(auto& vehicle : mIdMapper(this)) {
-        if(vehicle.second == 0) {
+    for (auto it = mIdMapper(this).begin(); it != mIdMapper(this).end(); ++it) {
+        ObjectId& id = it->second;
+        if(!id.valid()) {
             DLOG_F(ERROR, "found unresolved vehicle");
             for(auto& obj : data) {
                 if(obj.second->getObjectName() == "VehicleObject") {
                     auto st = dynamic_cast<VehicleObject*>(obj.second.get())->getExternalId();
-                    if(st == vehicle.first) {
-                        mIdMapper(this)[vehicle.first] = obj.second->getObjectId();
+                    if(st == it->first) {
+                        // replace stub object id by real one
+                        id = obj.second->getObjectId();
                         std::string s = "fetched vehicle id: ";
-                        s.append(std::to_string(obj.second->getObjectId()));
+                        s.append(std::to_string(obj.second->getObjectId().raw()));
                         s.append(" for ");
-                        s.append(vehicle.first);
+                        s.append(it->first);
                         DLOG_F(ERROR, s.c_str());
                     }
                 }
@@ -66,7 +68,7 @@ std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shar
         map.add<std::string>("id", "abc.0");
         auto vehicle = ObjectFactory::getInstance().createObject("vehicle", objectList, &map);
         data->vehiclesToAdd.push_back(vehicle);
-        mIdMapper(this)[id] = 0;
+        mIdMapper(this).emplace(id, ObjectId::stub());
     }
 
     if(action->getStartTime() < std::chrono::seconds(20)) {
@@ -80,7 +82,7 @@ std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shar
     std::list<std::string> deletedKeys;
     if(updateCount % 5 == 0 && updateCount < 105 && updateCount > 10) {
         for(auto& v : mIdMapper(this)) {
-            if(v.second != 0) {
+            if(v.second.valid()) {
                 auto deleter = ObjectRemover::getInstance().getObjectsToDelete("vehicle", v.second, objectList);
                 data->objectsToDelete = deleter;
                 deletedKeys.push_back(v.first);

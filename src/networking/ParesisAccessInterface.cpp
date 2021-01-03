@@ -13,7 +13,7 @@ void ParesisAccessInterface::request(const vanetza::access::DataRequest& request
     mHasRequest = true;
 }
 
-std::pair<const std::list<int>,std::shared_ptr<const AccesssInterfaceActionData>> ParesisAccessInterface::getTransmission(std::shared_ptr<const ObjectContainer> container)
+std::pair<const std::list<ObjectId>, std::shared_ptr<const AccesssInterfaceActionData>> ParesisAccessInterface::getTransmission(std::shared_ptr<const ObjectContainer> container)
 {
     enforce(hasTransmissionRequest(), "ParesisActionInterface: transmission request without pending transmission");
     enforce(mCacheQuery, "ParesisAccessInterface: ObjectCache was not initialized");
@@ -22,7 +22,7 @@ std::pair<const std::list<int>,std::shared_ptr<const AccesssInterfaceActionData>
     return std::make_pair(mObjectCache->getObjectsByType(container, mRequestObjectType, mCacheQuery.get()), getCurrentTransmission());
 }
 
-void ParesisAccessInterface::initializeCache(std::string typeIdentifier, int excludeId)
+void ParesisAccessInterface::initializeCache(std::string typeIdentifier, ObjectId excludeId)
 {
     mRequestObjectType = typeIdentifier;
     mObjectCache.reset(new SimpleObjectCache());

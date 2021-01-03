@@ -15,32 +15,32 @@ class BaseObject;
 class TemporaryObject
 {
 public:
-    TemporaryObject(int, std::shared_ptr<BaseObject>, bool initialized = false);
+    TemporaryObject(ObjectId, std::shared_ptr<BaseObject>, bool initialized = false);
     void setTempParent(const TemporaryObject&);
     void setTempChild(const TemporaryObject&);
-    void setTempMapping(int);
+    void setTempMapping(ObjectId);
 
-    void setRealParent(int);
-    void setRealChildren(int);
+    void setRealParent(ObjectId);
+    void setRealChildren(ObjectId);
 
     bool isInitialized() { return mIsInitialized; }
-    int getRealId();
-    int getTempId() const { return mTempId; }
+    ObjectId getRealId();
+    ObjectId getTempId() const { return mTempId; }
 
     void addToCore();
 
     std::string getObjectName();
-    std::set<int> getTemporaryChildren() { return mTempChildren; }
-    std::set<int> getTemporaryParent() { return mTempParents; }
+    std::set<ObjectId> getTemporaryChildren() { return mTempChildren; }
+    std::set<ObjectId> getTemporaryParent() { return mTempParents; }
 
     void initialize(SteadyClock::duration);
 
 private:
-    int mTempId;
+    ObjectId mTempId;
     bool mIsInitialized;
-    std::set<int> mTempParents;
-    std::set<int> mTempChildren;
-    std::pair<int, int> mTempMapping = {-1,-1};
+    std::set<ObjectId> mTempParents;
+    std::set<ObjectId> mTempChildren;
+    std::pair<ObjectId, ObjectId> mTempMapping = { ObjectId::stub(), ObjectId::stub() };
 
     std::shared_ptr<Action> mInitAction;
     std::shared_ptr<BaseObject> mBaseObject;
@@ -68,7 +68,7 @@ public:
 
 private:
     std::list<std::shared_ptr<TemporaryObject>> mTempList;
-    std::map<int,std::shared_ptr<TemporaryObject>> mResolvedIds;
+    std::map<ObjectId,std::shared_ptr<TemporaryObject>> mResolvedIds;
 };
 
 } // namespace paresis
