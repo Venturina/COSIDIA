@@ -10,7 +10,6 @@ find_package(Boost COMPONENTS atomic context system fiber thread REQUIRED)
 find_package(TBB REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(Vanetza CONFIG REQUIRED)
-add_subdirectory(extern/CLI11)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(xxhash REQUIRED IMPORTED_TARGET libxxhash)
@@ -24,7 +23,6 @@ add_library(libparesis STATIC
         src/core/Core.cpp
         src/core/DebugClock.cpp
         src/core/Symbol.cpp
-        src/core/main.cpp
         src/core/SteadyClock.cpp
         src/fiber/customWorkStealing.cpp
         src/mobility/MobilityManager.cpp
@@ -73,7 +71,6 @@ target_link_libraries(libparesis PUBLIC
         Boost::system
         Boost::thread
         Boost::fiber
-        CLI11::CLI11
         ${CMAKE_DL_LIBS}
         yaml-cpp
         pthread
@@ -107,6 +104,7 @@ add_subdirectory(src/tests/unitTests)
 
 add_executable(paresis src/core/main.cpp)
 target_link_libraries(paresis libparesis)
+target_include_directories(paresis PUBLIC extern/CLI11/include)
 
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
 if (USE_JEMALLOC)
