@@ -19,8 +19,8 @@ ParesisRouter::ParesisRouter() : mPositionProvider(this), mRuntime(this), mMib(t
                                 mAccessInterface(this), mTransmitRateControl(this), BaseObject()
 {
     mObjectName = "ParesisRouter";
-    mMib.getElement(this).reset(new vanetza::geonet::MIB);
-    mPositionProvider.getElement(this).reset(new ParesisPositionProvider());
+    mMib.constructElement(this);
+    mPositionProvider.constructElement(this);
 }
 
 void ParesisRouter::initObject(std::shared_ptr<Action> action)
@@ -64,10 +64,10 @@ void ParesisRouter::startExecution(std::shared_ptr<Action> action) {
 
 RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action) 
 {
-    mRuntime.getElement(this) = ParesisRuntime::makeRuntime(action->getStartTime());
-    mRouter.getElement(this).reset(new vanetza::geonet::Router(mRuntime(this), mMib(this)));
+    mRuntime.constructElement(this, ParesisRuntime::makeRuntime(action->getStartTime()));
+    mRouter.constructElement(this, mRuntime(this), mMib(this));
 
-    mAccessInterface.getElement(this).reset(new ParesisAccessInterface());
+    mAccessInterface.constructElement(this);
     mAccessInterface(this).initializeCache(mObjectName, mObjectId); // TODO: Send to Radio, not to other routers
 
     // TODO: Add DCC again
@@ -75,7 +75,7 @@ RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action)
     // mTransmitRateControl.getElement(this).reset(new vanetza::dcc::BurstyTransmitRateControl(mDccStateMachine(this), mRuntime(this)));
     // mDccRequestInterface.getElement(this).reset(new vanetza::dcc::FlowControl(mRuntime(this), mTransmitRateControl(this), mAccessInterface(this)));
 
-    mDccRequestInterface.getElement(this).reset(new DccPassThrough(mAccessInterface(this)));
+    mDccRequestInterface.constructElement<DccPassThrough>(this, mAccessInterface(this));
     mRouter(this).set_access_interface(mDccRequestInterface.getElement(this).get());
 
     RouterUpdateData data;

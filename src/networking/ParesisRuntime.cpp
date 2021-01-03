@@ -48,11 +48,10 @@ void ParesisRuntime::triggerAbsolute(SteadyClock::duration absoluteSteadyClockDu
     mLastTrigger = absoluteDuration;
 }
 
-std::shared_ptr<ParesisRuntime> ParesisRuntime::makeRuntime(SteadyClock::duration initTime) {
+std::unique_ptr<ParesisRuntime> ParesisRuntime::makeRuntime(SteadyClock::duration initTime) {
     vanetza::Clock::time_point ts { std::chrono::duration_cast<vanetza::Clock::duration>(getUtcStartTime().time_since_epoch() - utcItsDiff + initTime)};
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(initTime);
-    std::shared_ptr<ParesisRuntime> runtime = std::make_shared<ParesisRuntime>(ts,duration);
-    return runtime;
+    return std::make_unique<ParesisRuntime>(ts, duration);
 }
 
 } // namespace paresis

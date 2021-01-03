@@ -13,7 +13,7 @@ namespace paresis
 MobilityManager::MobilityManager() : mIdMapper(this), BaseObject()
 {
     mObjectName = "MobilityManager";
-    mIdMapper.getElement(this).reset(new std::map<std::string, int>);
+    mIdMapper.constructElement(this);
 }
 
 void MobilityManager::startExecution(std::shared_ptr<Action> action)
