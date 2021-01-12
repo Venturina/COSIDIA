@@ -9,10 +9,13 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 find_package(Boost COMPONENTS atomic context system fiber thread REQUIRED)
 find_package(TBB REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
-find_package(Vanetza CONFIG REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(xxhash REQUIRED IMPORTED_TARGET libxxhash)
+
+set(VANETZA_EXPORT_PACKAGE OFF)
+set(VANETZA_INSTALL OFF)
+add_subdirectory(extern/vanetza)
 
 add_library(libparesis STATIC
         extern/loguru/loguru.cpp
