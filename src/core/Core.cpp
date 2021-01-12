@@ -6,8 +6,7 @@
 #include <boost/fiber/algo/work_stealing.hpp>
 #include <boost/fiber/fiber.hpp>
 #include <boost/fiber/operations.hpp>
-#include <iostream>
-#include <sstream>
+#include <boost/format.hpp>
 #include <thread>
 
 #include <loguru/loguru.hpp>
@@ -170,16 +169,16 @@ void Core::startThreads(int thread_count, std::thread::id mainThread) {
     // thread registers itself at work-stealing scheduler
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
 
-    std::stringstream s;
-    s << std::this_thread::get_id();
-    std::stringstream m;
-    m << mainThread;
-    LOG_F(INFO, "launched thread: %s with main thread: %s", s.str().c_str(), m.str().c_str());
+    boost::format thread_name("worker #%1%");
+    thread_name % thread_count;
+    loguru::set_thread_name(thread_name.str().c_str());
+
+    LOG_F(INFO, "launched thread: %d with main thread: %d", std::this_thread::get_id(), mainThread);
 
     std::unique_lock< boost::fibers::mutex > lk( mFiberMutex);
     mConditionClose.wait(lk, [this](){ return this->mIsFinished; });
 
-    LOG_F(INFO, "Finished thread: %s", s.str().c_str());
+    LOG_F(INFO, "Finished thread: %d", std::this_thread::get_id());
 }
 
 void Core::runSimulationLoop()
@@ -189,13 +188,10 @@ void Core::runSimulationLoop()
         //sleep(5);
         finishSimulation();
     } else {
-        //std::cout << "next action in: ";
-        //auto t = mClock.getDurationUntil(mCurrentAction->getStartTime());
         auto expiry = mClock->getDurationUntil(mCurrentAction->getStartTime());
         //std::cout << mClock.getDurationUntil(mCurrentAction->getStartTime()).count() << std::endl;
         mTimer.expires_after(mClock->getDurationUntil(mCurrentAction->getStartTime()));
         mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
-        //std::cout << (int64_t)mClock.getSimTimeNow() - (int64_t)mCurrentAction->getStartTime() << std::endl;
     }
 }
 
