@@ -15,6 +15,7 @@ std::list<ObjectId> SimpleObjectCache::getObjectsByType(std::shared_ptr<const Ob
         return performSearch(type, query);
     } else {
         enforce(false, "SimpleObjectCache: something went wrong");
+        return std::list<ObjectId> {};
     }
 }
 
