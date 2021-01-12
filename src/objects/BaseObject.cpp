@@ -4,7 +4,7 @@
 
 #include <loguru/loguru.hpp>
 
-namespace paresis
+namespace cosidia
 {
 
 BaseObject::BaseObject() :
@@ -25,7 +25,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
         case Action::Kind::START:
             if(!mActionManager->startOrDelay(action)) {
                 //getCoreP()->scheduleAction(makeEndAction(action));
-                #ifdef PARESIS_SAFE
+                #ifdef COSIDIA_SAFE
                 mCurrentAction = action->getActionId();
                 #endif
                 startExecution(std::move(action));
@@ -49,7 +49,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
                     update.setStartTime(action->getStartTime() + action->getDuration());
                     auto next = mActionManager->activateNextAvailableAction();
                     getCoreP()->scheduleAction(makeEndAction(next));
-                    #ifdef PARESIS_SAFE
+                    #ifdef COSIDIA_SAFE
                     mCurrentAction = action->getActionId();
                     #endif
                     startExecution(std::move(next));

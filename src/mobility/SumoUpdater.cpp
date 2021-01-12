@@ -3,7 +3,7 @@
 
 #include "loguru/loguru.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 SumoUpdater::SumoUpdater(traci::LiteAPI& a) : mLiteApi(a)

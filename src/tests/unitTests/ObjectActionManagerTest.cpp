@@ -5,7 +5,7 @@
 #include "core/Action.hpp"
 #include "objects/ObjectActionManager.hpp"
 
-using namespace paresis;
+using namespace cosidia;
 
 TEST_CASE( "Test the action manager", "[Action Manager]" ) {
 

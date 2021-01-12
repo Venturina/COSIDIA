@@ -3,7 +3,7 @@
 #include "core/Core.hpp"
 #include "utils/enforce.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 template <class T>
@@ -25,6 +25,6 @@ private:
 };
 
 
-} // ns paresis
+} // ns cosidia
 
 

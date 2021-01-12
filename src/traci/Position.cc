@@ -3,14 +3,14 @@
 namespace traci
 {
 
-paresis::Position position_cast(const Boundary& boundary, const TraCIPosition& pos)
+cosidia::Position position_cast(const Boundary& boundary, const TraCIPosition& pos)
 {
     const double x = pos.x - boundary.lowerLeftPosition().x;
     const double y = boundary.upperRightPosition().y - pos.y;
-    return paresis::Position(x, y);
+    return cosidia::Position(x, y);
 }
 
-TraCIPosition position_cast(const Boundary& boundary, const paresis::Position& pos)
+TraCIPosition position_cast(const Boundary& boundary, const cosidia::Position& pos)
 {
     const double x = pos.x.value() + boundary.lowerLeftPosition().x;
     const double y = boundary.upperRightPosition().y - pos.y.value();

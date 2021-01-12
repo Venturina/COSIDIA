@@ -3,7 +3,7 @@
 
 #include "objects/BaseObject.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 class Radio : public BaseObject

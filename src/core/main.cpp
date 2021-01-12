@@ -13,7 +13,7 @@
 
 int main(int argc, char* argv[])
 {
-    CLI::App app {"paresis - yet another marvelous simulation environment"};
+    CLI::App app {"COSIDIA - concurrent simulation of discrete actions"};
     std::string config_file = "config.yaml";
     bool debug_mode = false;
     float sim_speed = 1.0f;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
     try {
         YAML::Node config = YAML::LoadFile(config_file);
-        paresis::setGlobalConfig(config);
+        cosidia::setGlobalConfig(config);
     } catch (const YAML::BadFile& e) {
         LOG_F(ERROR, "Could not read YAML config file");
         return 1;
@@ -41,10 +41,10 @@ int main(int argc, char* argv[])
     loguru::add_file("error.log", loguru::FileMode::Truncate, loguru::Verbosity_ERROR);
     LOG_F(INFO, "Hello World");
 
-    std::shared_ptr<paresis::SteadyClock> clock = debug_mode ?
-        std::make_shared<paresis::DebugClock>(sim_speed) :
-        std::make_shared<paresis::SteadyClock>(sim_speed);
-    paresis::Core core(clock);
+    std::shared_ptr<cosidia::SteadyClock> clock = debug_mode ?
+        std::make_shared<cosidia::DebugClock>(sim_speed) :
+        std::make_shared<cosidia::SteadyClock>(sim_speed);
+    cosidia::Core core(clock);
     loguru::shutdown();
     return 0;
 }

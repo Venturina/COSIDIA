@@ -2,7 +2,7 @@
 
 #include "loguru/loguru.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 bool ObjectActionManager::isActionRunning()
@@ -57,4 +57,4 @@ std::shared_ptr<Action> ObjectActionManager::activateNextAvailableAction()
 }
 
 
-} // namespace paresis
+} // namespace cosidia

@@ -3,7 +3,7 @@
 
 #include "core/SteadyClock.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 class DebugClock : public SteadyClock
@@ -21,6 +21,6 @@ private:
 
 };
 
-} // namespace paresis
+} // namespace cosidia
 
 #endif /* _DEBUG_CLOCK_HPP_SDNFO */

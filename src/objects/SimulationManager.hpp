@@ -3,7 +3,7 @@
 
 #include "BaseObject.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 class Core;
@@ -21,6 +21,6 @@ private:
 };
 
 
-} // namespace paresis
+} // namespace cosidia
 
 #endif /* SIMULATION_MANAGER_HPP */

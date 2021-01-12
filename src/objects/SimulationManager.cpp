@@ -6,7 +6,7 @@
 
 #include <loguru/loguru.hpp>
 
-namespace paresis
+namespace cosidia
 {
 
 SimulationManager::SimulationManager() : BaseObject()
@@ -32,4 +32,4 @@ void SimulationManager::startAndScheduleObject(std::shared_ptr<BaseObject> obj)
     getCoreP()->scheduleAction(std::move(action));
 }
 
-} // namespace paresis
+} // namespace cosidia

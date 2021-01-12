@@ -4,7 +4,7 @@
 #include "objects/BaseObject.hpp"
 
 
-namespace paresis
+namespace cosidia
 {
 
 class Microchannel : public BaseObject

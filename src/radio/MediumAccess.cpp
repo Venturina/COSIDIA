@@ -4,7 +4,7 @@
 #include <sstream>
 #include <functional>
 
-namespace paresis
+namespace cosidia
 {
 
 MediumAccess::MediumAccess() : BaseObject()

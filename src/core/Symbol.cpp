@@ -4,7 +4,7 @@
 #include <string_view>
 #include <variant>
 
-namespace paresis
+namespace cosidia
 {
 
 class SymbolData
@@ -137,4 +137,4 @@ Symbol operator "" _sym(const char* c, std::size_t len)
     return Symbol(c, len);
 }
 
-} // namespace paresis
+} // namespace cosidia

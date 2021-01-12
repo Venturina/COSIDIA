@@ -9,7 +9,7 @@ namespace traci
     class LiteAPI;
 }
 
-namespace paresis
+namespace cosidia
 {
 
 // struct VehicleUpdate
@@ -36,5 +36,5 @@ namespace paresis
 // };
 
 
-} // ns paresis
+} // ns cosidia
 #endif /* BASE_VEHICLE_UPDATER_HPP_SHON */

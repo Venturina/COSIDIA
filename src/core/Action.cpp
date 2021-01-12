@@ -4,7 +4,7 @@
 
 #include <loguru/loguru.hpp>
 
-namespace paresis
+namespace cosidia
 {
 
 const Symbol Action::default_type = "default"_sym;

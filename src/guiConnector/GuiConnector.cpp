@@ -3,7 +3,7 @@
 
 #include <boost/asio/ip/address.hpp>
 
-namespace paresis
+namespace cosidia
 {
 
 GuiConnector& GuiConnector::getInstance()
@@ -38,4 +38,4 @@ void GuiConnector::updateObject(int vehicleId, VehicleObjectContext context)
         );
 }
 
-} // namespace paresis
+} // namespace cosidia

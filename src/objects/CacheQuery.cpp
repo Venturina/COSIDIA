@@ -1,6 +1,6 @@
 #include "objects/CacheQuery.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 bool CacheQueryExclude::applyQuery(const BaseObject* element) const
@@ -12,4 +12,4 @@ bool CacheQueryExclude::applyQuery(const BaseObject* element) const
     }
 }
 
-} // namespace paresis
+} // namespace cosidia

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(paresis VERSION 0.1)
+project(COSIDIA VERSION 0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,7 +17,7 @@ set(VANETZA_EXPORT_PACKAGE OFF)
 set(VANETZA_INSTALL OFF)
 add_subdirectory(extern/vanetza)
 
-add_library(libparesis STATIC
+add_library(cosidia STATIC
         extern/loguru/loguru.cpp
 
         src/core/Action.cpp
@@ -31,10 +31,10 @@ add_library(libparesis STATIC
         src/mobility/MobilityManager.cpp
         src/mobility/SumoMobilityManager.cpp
         src/mobility/SumoUpdater.cpp
-        src/networking/ParesisAccessInterface.cpp
-        src/networking/ParesisPositionProvider.cpp
-        src/networking/ParesisRouter.cpp
-        src/networking/ParesisRuntime.cpp
+        src/networking/AccessInterface.cpp
+        src/networking/PositionProvider.cpp
+        src/networking/Router.cpp
+        src/networking/Runtime.cpp
         src/objects/BaseObject.cpp
         src/objects/CacheQuery.cpp
         src/objects/ObjectActionManager.cpp
@@ -52,22 +52,22 @@ add_library(libparesis STATIC
         src/utils/Geometry.cc
 )
 
-option(GUI_MODE "foo" OFF)
+option(GUI_MODE "Enable GUI extension" OFF)
 if(GUI_MODE)
         find_package(Protobuf REQUIRED)
         include_directories(${PROTOBUF_INCLUDE_DIR})
-        target_sources(libparesis PRIVATE
+        target_sources(cosidia PRIVATE
                 src/guiConnector/GuiConnector.cpp
                 src/guiConnector/gen/guiMsg.pb.cc
         )
-        target_compile_definitions(libparesis PUBLIC WITH_GUI)
-        target_link_libraries(libparesis PUBLIC
+        target_compile_definitions(cosidia PUBLIC WITH_GUI)
+        target_link_libraries(cosidia PUBLIC
                 ${PROTOBUF_LIBRARY}
         )
 endif()
 
-target_include_directories(libparesis PUBLIC src extern extern/hypodermic)
-target_link_libraries(libparesis PUBLIC
+target_include_directories(cosidia PUBLIC src extern extern/hypodermic)
+target_link_libraries(cosidia PUBLIC
         Vanetza::vanetza
         Boost::boost
         Boost::context
@@ -80,17 +80,16 @@ target_link_libraries(libparesis PUBLIC
         PkgConfig::xxhash
         TBB::tbb
 )
-set_property(TARGET libparesis PROPERTY OUTPUT_NAME paresis)
 
-option(PARESIS_SAFE_MODE "foo" ON)
-if(PARESIS_SAFE_MODE)
-        target_compile_definitions(libparesis PUBLIC PARESIS_SAFE)
+option(COSIDIA_SAFE_MODE "Build COSIDIA with safety runtime checks" ON)
+if(COSIDIA_SAFE_MODE)
+        target_compile_definitions(cosidia PUBLIC COSIDIA_SAFE)
 endif()
 
 macro(add_catch_test NAME)
         add_executable(test_${NAME} ${ARGN} ${PROJECT_SOURCE_DIR}/src/debug/DebugObject.cpp)
         target_include_directories(test_${NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/extern)
-        target_link_libraries(test_${NAME} libparesis)
+        target_link_libraries(test_${NAME} cosidia)
         set_target_properties(test_${NAME} PROPERTIES
                 RUNTIME_OUTPUT_NAME ${NAME}
                 RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/tests
@@ -105,12 +104,13 @@ enable_testing()
 add_subdirectory(src/traci)
 add_subdirectory(src/tests/unitTests)
 
-add_executable(paresis src/core/main.cpp)
-target_link_libraries(paresis libparesis)
-target_include_directories(paresis PUBLIC extern/CLI11/include)
+add_executable(cosidia_exec src/core/main.cpp)
+target_link_libraries(cosidia_exec cosidia)
+target_include_directories(cosidia_exec PUBLIC extern/CLI11/include)
+set_property(TARGET cosidia_exec PROPERTY OUTPUT_NAME cosidia)
 
 option(USE_JEMALLOC "Use jemalloc memory allocation library" OFF)
 if (USE_JEMALLOC)
         find_package(jemalloc MODULE REQUIRED)
-        target_link_libraries(libparesis PUBLIC jemalloc::jemalloc)
+        target_link_libraries(cosidia PUBLIC jemalloc::jemalloc)
 endif()

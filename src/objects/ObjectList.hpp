@@ -10,7 +10,7 @@
 #include <typeindex>
 #include <typeinfo>
 
-namespace paresis
+namespace cosidia
 {
 
 class BaseObject;

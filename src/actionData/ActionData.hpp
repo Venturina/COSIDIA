@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace paresis
+namespace cosidia
 {
 
 class ActionData

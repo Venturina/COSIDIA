@@ -11,7 +11,7 @@
 #include <boost/units/systems/si/plane_angle.hpp>
 #include <vector>
 
-namespace paresis
+namespace cosidia
 {
 
 /**
@@ -93,31 +93,31 @@ struct Angle
 } // namespace artery
 
 // this register macro needs to be outside of any namespaces
-BOOST_GEOMETRY_REGISTER_RING(std::vector<paresis::Position>)
+BOOST_GEOMETRY_REGISTER_RING(std::vector<cosidia::Position>)
 
 namespace boost { namespace geometry { namespace traits
 {
 
-BOOST_GEOMETRY_DETAIL_SPECIALIZE_POINT_TRAITS(paresis::Position, 2, double, cs::cartesian)
+BOOST_GEOMETRY_DETAIL_SPECIALIZE_POINT_TRAITS(cosidia::Position, 2, double, cs::cartesian)
 
-template<> struct access<paresis::Position, 0>
+template<> struct access<cosidia::Position, 0>
 {
-    static inline double get(const paresis::Position& pos) { return pos.x.value(); }
-    static inline void set(paresis::Position& pos, double v) { pos.x = paresis::Position::value_type::from_value(v); }
+    static inline double get(const cosidia::Position& pos) { return pos.x.value(); }
+    static inline void set(cosidia::Position& pos, double v) { pos.x = cosidia::Position::value_type::from_value(v); }
 };
 
-template<> struct access<paresis::Position, 1>
+template<> struct access<cosidia::Position, 1>
 {
-    static inline double get(const paresis::Position& pos) { return pos.y.value(); }
-    static inline void set(paresis::Position& pos, double v) { pos.y = paresis::Position::value_type::from_value(v); }
+    static inline double get(const cosidia::Position& pos) { return pos.y.value(); }
+    static inline void set(cosidia::Position& pos, double v) { pos.y = cosidia::Position::value_type::from_value(v); }
 };
 
-template<> struct point_order<std::vector<paresis::Position>>
+template<> struct point_order<std::vector<cosidia::Position>>
 {
     static const order_selector value = clockwise;
 };
 
-template<> struct closure<std::vector<paresis::Position>>
+template<> struct closure<std::vector<cosidia::Position>>
 {
     static const closure_selector value = open;
 };

@@ -5,7 +5,7 @@
 #include "radio/Transmission.hpp"
 #include <vector>
 
-namespace paresis
+namespace cosidia
 {
 
 class MicrochannelContext : public ObjectContext

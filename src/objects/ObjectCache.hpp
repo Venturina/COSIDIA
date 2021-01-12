@@ -7,7 +7,7 @@
 #include <list>
 #include <map>
 
-namespace paresis
+namespace cosidia
 {
 
 /**
@@ -49,4 +49,4 @@ protected:
 
 
 
-} // namespace paresis
+} // namespace cosidia

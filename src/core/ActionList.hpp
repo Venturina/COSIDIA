@@ -7,7 +7,7 @@
 #include <memory>
 
 
-namespace paresis
+namespace cosidia
 {
 
 using ActionP = std::shared_ptr<Action>;
@@ -55,6 +55,6 @@ protected:
     std::unique_ptr<ActionMap> mActionMap;
 };
 
-} // ns paresis
+} // ns cosidia
 
 #endif /* _ACTION_LIST_HPP_SDNOL */

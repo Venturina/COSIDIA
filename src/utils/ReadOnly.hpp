@@ -1,6 +1,6 @@
 #pragma once
 
-namespace paresis
+namespace cosidia
 {
 
 template <class T>
@@ -23,4 +23,4 @@ private:
     bool mSet = false;
 };
 
-} // namespace paresis
+} // namespace cosidia

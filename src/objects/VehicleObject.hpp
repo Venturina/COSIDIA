@@ -10,7 +10,7 @@
 
 
 
-namespace paresis
+namespace cosidia
 {
 
 struct VehicleObjectContext
@@ -59,7 +59,7 @@ private:
     ContextContainer<VehicleObjectContext> mContext;
 };
 
-} // namespace paresis
+} // namespace cosidia
 
 
 

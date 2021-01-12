@@ -2,7 +2,7 @@
 
 #include "loguru/loguru.hpp"
 
-namespace paresis
+namespace cosidia
 {
 Radio::Radio() : BaseObject()
 {
@@ -24,4 +24,4 @@ void Radio::initObject(std::shared_ptr<Action>)
     DLOG_F(INFO, "init Radio");
 }
 
-} // ns paresis
+} // ns cosidia

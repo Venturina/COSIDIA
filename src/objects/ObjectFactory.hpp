@@ -8,7 +8,7 @@
 class BaseObject;
 class Core;
 
-namespace paresis
+namespace cosidia
 {
 
 using FactoryData = AnyMap;
@@ -43,5 +43,5 @@ private:
 
 };
 
-} // namespace paresis
+} // namespace cosidia
 #endif /* OBJECT_FACTORY_HPP_ */

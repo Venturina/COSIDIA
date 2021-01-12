@@ -3,7 +3,7 @@
 #include <tbb/concurrent_unordered_set.h>
 #include <string_view>
 
-namespace paresis
+namespace cosidia
 {
 
 class SymbolData;
@@ -32,4 +32,4 @@ private:
 
 Symbol operator "" _sym(const char*, std::size_t);
 
-} // namespace paresis
+} // namespace cosidia

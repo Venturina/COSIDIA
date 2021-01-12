@@ -9,7 +9,7 @@
 #include <boost/fiber/all.hpp>
 #include <set>
 
-namespace paresis
+namespace cosidia
 {
 
 class Core;
@@ -48,7 +48,7 @@ protected:
 
     std::string mObjectName = "";
 
-    #ifdef PARESIS_SAFE
+    #ifdef COSIDIA_SAFE
     int mCurrentAction = 0;
     #endif
 };
@@ -60,6 +60,6 @@ std::weak_ptr<BaseObject> getChildByName(BaseObject* obj, std::string name, Cons
 int getRelatedObjectByName(std::shared_ptr<BaseObject> obj, std::string name, ConstObjectContainer_ptr objects);
 
 
-} // ns paresis
+} // ns cosidia
 
 #endif /* _BASE_OBJECT_HPP_ */

@@ -2,7 +2,7 @@
 #include "objects/ObjectRemover.hpp"
 #include "utils/enforce.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 ObjectRemover& ObjectRemover::getInstance()
@@ -29,7 +29,7 @@ std::vector<ObjectId> ObjectRemover::getVehicleRelatedObjects(ObjectId id, Const
     auto microchannel = getParentByName(obj.get(), "Microchannel", objectList);
     removeList.push_back(microchannel.lock()->getObjectId());
 
-    auto router = getSiblingByName(obj.get(), "ParesisRouter", objectList);
+    auto router = getSiblingByName(obj.get(), "Router", objectList);
     removeList.push_back(router.lock()->getObjectId());
 
     return removeList;

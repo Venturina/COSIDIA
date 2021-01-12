@@ -8,7 +8,7 @@
 #include "traci/LiteAPI.h"
 #include <memory>
 
-namespace paresis
+namespace cosidia
 {
 
 class SumoMobilityManager : public MobilityManager
@@ -36,7 +36,7 @@ private:
     std::unique_ptr<SumoUpdater> mUpdater;
 };
 
-} // ns paresis
+} // ns cosidia
 
 
 #endif /* _SUMO_MOBILITY_MANAGER_HPP_NOSDNF */

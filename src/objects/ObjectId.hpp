@@ -1,6 +1,6 @@
 #pragma once
 
-namespace paresis
+namespace cosidia
 {
 
 /**
@@ -52,4 +52,4 @@ private:
     int mId = -1;
 };
 
-} // namespace paresis
+} // namespace cosidia

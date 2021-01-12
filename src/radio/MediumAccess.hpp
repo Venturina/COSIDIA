@@ -4,7 +4,7 @@
 #include "objects/BaseObject.hpp"
 #include "boost/fiber/fiber.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 class Core;

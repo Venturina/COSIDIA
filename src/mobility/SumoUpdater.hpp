@@ -5,7 +5,7 @@
 #include "mobility/BaseVehicleUpdater.hpp"
 #include "traci/LiteAPI.h"
 
-namespace paresis
+namespace cosidia
 {
 
 class SumoUpdater
@@ -46,7 +46,7 @@ private:
     std::unordered_set<std::string> mSubscribedVehicles;
 };
 
-} // ns paresis
+} // ns cosidia
 
 
 

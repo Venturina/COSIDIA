@@ -2,7 +2,7 @@
 #include "debug/DebugObject.hpp"
 #include "loguru/loguru.hpp"
 
-namespace paresis
+namespace cosidia
 {
 DebugObject::DebugObject() : BaseObject()
 {
@@ -67,4 +67,4 @@ void DebugObjectChild::initObject(std::shared_ptr<Action>)
 }
 
 
-} // ns paresis
+} // ns cosidia

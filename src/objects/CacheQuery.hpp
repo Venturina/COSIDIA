@@ -1,7 +1,7 @@
 #pragma once
 #include "objects/BaseObject.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 /**
@@ -37,4 +37,4 @@ private:
 };
 
 
-} // namespace paresis
+} // namespace cosidia

@@ -2,7 +2,7 @@
 #include <cassert>
 #include <cmath>
 
-namespace paresis
+namespace cosidia
 {
 
 void SteadyClock::updateSimTime(std::chrono::nanoseconds newTime)
@@ -44,4 +44,4 @@ std::chrono::time_point<std::chrono::steady_clock> SteadyClock::getTimePointforS
     return mStartTime + getDurationUntil(until);
 }
 
-} // ns paresis
+} // ns cosidia

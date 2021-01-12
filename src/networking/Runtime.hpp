@@ -3,17 +3,17 @@
 
 #include "vanetza/common/manual_runtime.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
-class ParesisRuntime : public vanetza::ManualRuntime
+class Runtime : public vanetza::ManualRuntime
 {
 public:
     /**
      * Create runtime
      * \param init initialization value of internal clock
      */
-    explicit ParesisRuntime(vanetza::Clock::time_point init, vanetza::Clock::duration);
+    explicit Runtime(vanetza::Clock::time_point init, vanetza::Clock::duration);
 
     std::chrono::nanoseconds getDurationStartToNext() const;
 
@@ -22,7 +22,7 @@ public:
     void triggerAbsolute(vanetza::Clock::duration);
     void triggerAbsolute(SteadyClock::duration);
 
-    static std::unique_ptr<ParesisRuntime> makeRuntime(SteadyClock::duration initTime);
+    static std::unique_ptr<Runtime> makeRuntime(SteadyClock::duration initTime);
 
 private:
     vanetza::Clock::duration mLastTrigger;
@@ -31,4 +31,4 @@ private:
     vanetza::Clock::time_point mRouterStartTime;
 };
 
-} // namespace paresis
+} // namespace cosidia

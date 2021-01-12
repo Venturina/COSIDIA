@@ -18,7 +18,7 @@
 #include "utils/invariant.hpp"
 
 
-namespace paresis
+namespace cosidia
 {
 
 thread_local Core* coreP;
@@ -254,4 +254,4 @@ void Core::removeAction(std::shared_ptr<Action> action) {
 }
 
 
-} // ns paresis
+} // ns cosidia

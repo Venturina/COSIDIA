@@ -9,5 +9,5 @@ set(SOURCES
     src/traci/sumo/utils/traci/TraCIAPI.cpp
 )
 
-set_property(TARGET libparesis APPEND PROPERTY SOURCES ${SOURCES})
-target_include_directories(libparesis PUBLIC sumo ${Boost_INCLUDE_DIRS})
+set_property(TARGET cosidia APPEND PROPERTY SOURCES ${SOURCES})
+target_include_directories(cosidia PUBLIC sumo ${Boost_INCLUDE_DIRS})

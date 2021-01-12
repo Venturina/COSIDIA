@@ -2,7 +2,7 @@
 #include "core/Core.hpp"
 #include "utils/enforce.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 bool compareFunction(std::chrono::nanoseconds lhs, std::chrono::nanoseconds rhs)
@@ -57,4 +57,4 @@ bool ActionList::removeAction(ConstActionP actionToRemove, std::chrono::nanoseco
     return false;
 }
 
-} // ns paresis
+} // ns cosidia

@@ -1,6 +1,6 @@
 #include "core/DebugClock.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 std::chrono::time_point<std::chrono::steady_clock> DebugClock::getRealTimeForCurrentSimTime()

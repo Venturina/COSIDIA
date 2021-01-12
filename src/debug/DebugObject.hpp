@@ -3,7 +3,7 @@
 
 #include "objects/BaseObject.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 class DebugObject : public BaseObject
@@ -42,6 +42,6 @@ public:
 
 };
 
-} // ns paresis
+} // ns cosidia
 
 #endif /* _DEBUG_OBJECT_HPP_ */

@@ -1,12 +1,12 @@
-#include "networking/ParesisPositionProvider.hpp"
+#include "networking/PositionProvider.hpp"
 #include "networking/VanetzaDefs.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 
 
-void ParesisPositionProvider::updatePosition(const VehicleObjectContext& context)
+void PositionProvider::updatePosition(const VehicleObjectContext& context)
 {
     using namespace vanetza::units;
     static const TrueNorth north;

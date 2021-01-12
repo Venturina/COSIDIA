@@ -1,7 +1,7 @@
 #include "core/Core.hpp"
-#include "networking/ParesisAccessInterface.hpp"
-#include "networking/ParesisDccPassThrough.hpp"
-#include "networking/ParesisRouter.hpp"
+#include "networking/AccessInterface.hpp"
+#include "networking/DccPassThrough.hpp"
+#include "networking/Router.hpp"
 #include "networking/VanetzaDefs.hpp"
 
 #include "vanetza/dcc/bursty_transmit_rate_control.hpp"
@@ -12,18 +12,18 @@
 #include "loguru/loguru.hpp"
 
 
-namespace paresis
+namespace cosidia
 {
 
-ParesisRouter::ParesisRouter() : mPositionProvider(this), mRuntime(this), mMib(this), mRouter(this), mDccRequestInterface(this), mDccStateMachine(this),
+Router::Router() : mPositionProvider(this), mRuntime(this), mMib(this), mRouter(this), mDccRequestInterface(this), mDccStateMachine(this),
                                 mAccessInterface(this), mTransmitRateControl(this), BaseObject()
 {
-    mObjectName = "ParesisRouter";
+    mObjectName = "Router";
     mMib.constructElement(this);
     mPositionProvider.constructElement(this);
 }
 
-void ParesisRouter::initObject(std::shared_ptr<Action> action)
+void Router::initObject(std::shared_ptr<Action> action)
 {
     mRandomNumber.setElement(getCoreP()->getRandomNumber());
 
@@ -37,34 +37,34 @@ void ParesisRouter::initObject(std::shared_ptr<Action> action)
 }
 
 
-void ParesisRouter::startExecution(std::shared_ptr<Action> action) {
+void Router::startExecution(std::shared_ptr<Action> action) {
     if(action->getType() == "update"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
-            pt (std::bind(&ParesisRouter::executeUpdate, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+            pt (std::bind(&Router::executeUpdate, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
     } else if (action->getType() == "initRouter"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>)>
-            pt (std::bind(&ParesisRouter::initRouter, this, std::placeholders::_1));
+            pt (std::bind(&Router::initRouter, this, std::placeholders::_1));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action).detach();
     } else if(action->getType() == "transmission"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
-            pt (std::bind(&ParesisRouter::transmissionReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+            pt (std::bind(&Router::transmissionReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
     } else {
         std::cout << action->getType().value() << std::endl;
-        throw std::runtime_error("ParesisRouter: wrong BeginAction received");
+        throw std::runtime_error("Router: wrong BeginAction received");
     }
 }
 
-RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action) 
+RouterUpdateData Router::initRouter(std::shared_ptr<Action> action)
 {
-    mRuntime.constructElement(this, ParesisRuntime::makeRuntime(action->getStartTime()));
+    mRuntime.constructElement(this, Runtime::makeRuntime(action->getStartTime()));
     mRouter.constructElement(this, mRuntime(this), mMib(this));
 
     mAccessInterface.constructElement(this);
@@ -90,7 +90,7 @@ RouterUpdateData ParesisRouter::initRouter(std::shared_ptr<Action> action)
     return data;
 }
 
-RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
+RouterUpdateData Router::executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
     RouterUpdateData data;
     commonActions(data, action, context, currentObjects);
@@ -98,12 +98,12 @@ RouterUpdateData ParesisRouter::executeUpdate(std::shared_ptr<Action> action, st
     return data;
 }
 
-RouterUpdateData ParesisRouter::transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
+RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
     RouterUpdateData data;
     if(mInitDone) {
         commonActions(data, action, context, currentObjects);
-        DLOG_F(ERROR, "ParesisRouter: received transmission");
+        DLOG_F(ERROR, "Router: received transmission");
         auto transmission = std::dynamic_pointer_cast<const AccesssInterfaceActionData>(action->getActionData());
         auto dataRequest = transmission->getDataRequest();
         auto packetPtr = transmission->getPacket();
@@ -113,7 +113,7 @@ RouterUpdateData ParesisRouter::transmissionReceived(std::shared_ptr<Action> act
     return data;
 }
 
-void ParesisRouter::commonActions(RouterUpdateData& data, std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
+void Router::commonActions(RouterUpdateData& data, std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
     DLOG_F(ERROR, "current simulation time: %d ", std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
     mPositionProvider(this).updatePosition(*context);
@@ -124,7 +124,7 @@ void ParesisRouter::commonActions(RouterUpdateData& data, std::shared_ptr<Action
     scheduleNextUpdate(data, action.get());
 }
 
-void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
+void Router::endExecution(std::shared_ptr<Action> action) {
     if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym) {
         auto data = mFuture.get();
         for(auto action : data.actionsToSchedule) {
@@ -134,14 +134,14 @@ void ParesisRouter::endExecution(std::shared_ptr<Action> action) {
             getCoreP()->removeAction(data.actionToDelete);
         }
     } else {
-        throw std::runtime_error("ParesisRouter: wrong EndAction received");
+        throw std::runtime_error("Router: wrong EndAction received");
     }
 }
 
-void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAction)
+void Router::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAction)
 {   //TODO: not fully tested yet
     auto nextTp = mRuntime(this).getDurationStartToNext();
-    enforce(!mNextAction || mNextAction->getType() == "update"_sym, "ParesisRouter: next action is no update"); // this should never happen
+    enforce(!mNextAction || mNextAction->getType() == "update"_sym, "Router: next action is no update"); // this should never happen
 
     if(!mNextAction || mNextAction.get() == currentAction) { // new update must be scheduled
         DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
@@ -153,13 +153,13 @@ void ParesisRouter::scheduleNextUpdate(RouterUpdateData& data, const Action* cur
         if(nextTp == mNextAction->getStartTime()) {  // a update is allready scheduled at the correct time point
             // do nothing here
         } else { // we have to cancel the update
-            enforce(mNextAction->getAffected().size()==1, "ParesisRouter: want to cancel action with several recipients");
+            enforce(mNextAction->getAffected().size()==1, "Router: want to cancel action with several recipients");
             data.actionToDelete = mNextAction;
         }
     }
 }
 
-void ParesisRouter::scheduleTransmission(RouterUpdateData& data, const Action* currentAction, ConstObjectContainer_ptr currentObjects)
+void Router::scheduleTransmission(RouterUpdateData& data, const Action* currentAction, ConstObjectContainer_ptr currentObjects)
 {
     if(mAccessInterface(this).hasTransmissionRequest()) {
         auto transmission = mAccessInterface(this).getTransmission(currentObjects);
@@ -170,4 +170,4 @@ void ParesisRouter::scheduleTransmission(RouterUpdateData& data, const Action* c
     }
 }
 
-} // ns paresis
+} // ns cosidia

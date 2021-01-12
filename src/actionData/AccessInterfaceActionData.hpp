@@ -5,7 +5,7 @@
 #include "vanetza/access/data_request.hpp"
 #include "vanetza/net/chunk_packet.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 
@@ -24,4 +24,4 @@ private:
 };
 
 
-} // namespace paresis
+} // namespace cosidia

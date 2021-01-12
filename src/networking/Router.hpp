@@ -1,8 +1,8 @@
 #pragma once
 
-#include "networking/ParesisPositionProvider.hpp"
-#include "networking/ParesisRuntime.hpp"
-#include "networking/ParesisAccessInterface.hpp"
+#include "networking/PositionProvider.hpp"
+#include "networking/Runtime.hpp"
+#include "networking/AccessInterface.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectCache.hpp"
 #include "objects/VehicleObject.hpp"
@@ -15,7 +15,7 @@
 #include "vanetza/geonet/router.hpp"
 #include "vanetza/geonet/mib.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 struct RouterUpdateData
@@ -24,10 +24,10 @@ struct RouterUpdateData
     std::shared_ptr<Action> actionToDelete;
 };
 
-class ParesisRouter : public BaseObject
+class Router : public BaseObject
 {
 public:
-    ParesisRouter();
+    Router();
     virtual void startExecution(std::shared_ptr<Action>);
     virtual void endExecution(std::shared_ptr<Action>);
     virtual void initObject(std::shared_ptr<Action>);
@@ -47,14 +47,14 @@ private:
     boost::fibers::future<RouterUpdateData> mFuture;
 
     /* pure locals, do not return */
-    PureLocal<ParesisPositionProvider> mPositionProvider;
-    PureLocal<ParesisRuntime> mRuntime;
+    PureLocal<PositionProvider> mPositionProvider;
+    PureLocal<Runtime> mRuntime;
     PureLocal<vanetza::geonet::MIB> mMib;
     PureLocal<vanetza::geonet::Router> mRouter;
 
     PureLocal<vanetza::dcc::RequestInterface> mDccRequestInterface;
     PureLocal<vanetza::dcc::StateMachine> mDccStateMachine;
-    PureLocal<ParesisAccessInterface> mAccessInterface;
+    PureLocal<AccessInterface> mAccessInterface;
     PureLocal<vanetza::dcc::TransmitRateControl> mTransmitRateControl;
 
 
@@ -66,4 +66,4 @@ private:
 
 };
 
-} // namespace paresis
+} // namespace cosidia

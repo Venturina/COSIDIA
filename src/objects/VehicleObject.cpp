@@ -9,7 +9,7 @@
 #include <loguru/loguru.hpp>
 #include <memory>
 
-namespace paresis
+namespace cosidia
 {
 
 
@@ -92,4 +92,4 @@ void VehicleObject::setExternalId(std::string id)
 }
 
 
-} // namespace paresis
+} // namespace cosidia

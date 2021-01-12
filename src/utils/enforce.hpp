@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-#ifdef PARESIS_SAFE
+#ifdef CONSIDIA_SAFE
 #define enforce_(condition, msg) \
     if (!condition) { throw std::runtime_error(msg); }
 #else

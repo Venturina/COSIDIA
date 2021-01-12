@@ -7,7 +7,7 @@
 #include "utils/PureLocal.hpp"
 #include <unordered_set>
 
-namespace paresis
+namespace cosidia
 {
 
 /**
@@ -42,7 +42,7 @@ protected:
     /**
      * Checks if vehicles in IdMapper are still unresolved
      * If unresolved vehicle was found, ObjectList is searched for Vehicle with unresolved SUMO id
-     * When vehicle is found, IdMapper is filled with the corresponding paresis id
+     * When vehicle is found, IdMapper is filled with the corresponding cosidia id
      */
     virtual void fetchVehicleIds(ConstObjectContainer_ptr);
 
@@ -60,5 +60,5 @@ private:
 
 
 
-} // namespace paresis
+} // namespace cosidia
 #endif /* _MOBILITY_MANAGER_HPP_SDON */

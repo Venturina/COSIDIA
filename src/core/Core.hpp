@@ -9,7 +9,7 @@
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectList.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 extern int timingBuffer[64ULL*1024ULL*1024ULL];
@@ -127,7 +127,7 @@ bool onCoreThread();
 
 void setUtcStartTime();
 
-} // ns paresis
+} // ns cosidia
 
 
 #endif /* _CORE_HPP_ONSO */

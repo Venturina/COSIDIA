@@ -12,7 +12,7 @@
 #include "core/Symbol.hpp"
 
 
-namespace paresis
+namespace cosidia
 {
 
 class BaseObject;
@@ -20,7 +20,7 @@ class BaseObject;
 typedef int ActionId;
 
 /** A action describes
- *  a specific action in the paresis system.
+ *  a specific action in the cosidia system.
  *  It contains a start time point, a duration and something to execute
  */
 
@@ -201,7 +201,7 @@ private:
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>);
 std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>, std::list<ObjectId> endActionList);
 
-} // ns paresis
+} // ns cosidia
 
 
 #endif /* _ACTION_HPP_NVOS */

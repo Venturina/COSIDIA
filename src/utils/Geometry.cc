@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cmath>
 
-namespace paresis
+namespace cosidia
 {
 
 double Angle::radian() const

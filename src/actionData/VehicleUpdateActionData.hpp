@@ -8,7 +8,7 @@
 #include <string>
 
 
-namespace paresis
+namespace cosidia
 {
 
 
@@ -40,6 +40,6 @@ private:
 };
 
 
-} // namespace paresis
+} // namespace cosidia
 
 #endif /* _VEHICLE_UPDATE_ACTION_DATA_HPP_SNDFO */

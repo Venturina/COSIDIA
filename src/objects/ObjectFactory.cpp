@@ -1,4 +1,4 @@
-#include "networking/ParesisRouter.hpp"
+#include "networking/Router.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectFactory.hpp"
 #include "objects/VehicleObject.hpp"
@@ -7,7 +7,7 @@
 
 #include "loguru/loguru.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 ObjectFactory& ObjectFactory::getInstance()
@@ -34,7 +34,7 @@ TemporaryObjectList ObjectFactory::createObject(std::string identifier, ConstObj
 TemporaryObjectList ObjectFactory::createVehicleObject(ConstObjectContainer_ptr objectList, FactoryData* data)
 {
     enforce(data != nullptr, "ObjectFactory: Need FactoryData to create Vehicle")
-    auto router = std::make_shared<ParesisRouter>();
+    auto router = std::make_shared<Router>();
     auto microchannel = std::make_shared<Microchannel>();
     auto vehicle = std::make_shared<VehicleObject>();
     vehicle->setExternalId(data->get<std::string>("id"));

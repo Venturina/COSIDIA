@@ -1,13 +1,12 @@
-#ifndef PARESIS_POSITION_PROVIDER_SODNF
-#define PARESIS_POSITION_PROVIDER_SODNF
+#pragma once
 
 #include "vanetza/common/position_provider.hpp"
 #include "objects/VehicleObject.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
-class ParesisPositionProvider : public vanetza::PositionProvider
+class PositionProvider : public vanetza::PositionProvider
 {
 public:
     virtual const vanetza::PositionFix& position_fix() { return mPositionFix; };
@@ -20,5 +19,3 @@ private:
 };
 
 }
-
-#endif /* PARESIS_POSITION_PROVIDER_SODNF */

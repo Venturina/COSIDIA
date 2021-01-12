@@ -6,7 +6,7 @@
 #include <set>
 #include <tuple>
 
-namespace paresis
+namespace cosidia
 {
 
 class Action;
@@ -71,7 +71,7 @@ private:
     std::map<ObjectId,std::shared_ptr<TemporaryObject>> mResolvedIds;
 };
 
-} // namespace paresis
+} // namespace cosidia
 
 
 

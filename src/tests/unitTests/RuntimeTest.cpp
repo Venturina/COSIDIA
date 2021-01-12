@@ -1,14 +1,14 @@
 #include <catch2/catch.hpp>
 #include "core/Core.hpp"
 #include "core/SteadyClock.hpp"
-#include "networking/ParesisRuntime.hpp"
+#include "networking/Runtime.hpp"
 #include "networking/VanetzaDefs.hpp"
 #include "vanetza/geonet/mib.hpp"
 #include "vanetza/geonet/router.hpp"
 
 #include <chrono>
 
-using namespace paresis;
+using namespace cosidia;
 
 class MockClock : public SteadyClock
 {
@@ -26,14 +26,14 @@ public:
 
 };
 
-TEST_CASE( "ParesisRuntime", "[ParesisRuntime]" ) {
+TEST_CASE( "Runtime", "[Runtime]" ) {
     MockCore core;
     // time point 100ms after simulation start
     SteadyClock::duration d{std::chrono::milliseconds(100)};
 
-    auto runtime = ParesisRuntime::makeRuntime(d);
-    auto mib = vanetza::geonet::MIB();
-    auto router = vanetza::geonet::Router(*runtime, mib);  // start router at 100ms
+    auto runtime = Runtime::makeRuntime(d);
+    vanetza::geonet::MIB mib;
+    vanetza::geonet::Router router {*runtime, mib};  // start router at 100ms
     auto runtimeStart = runtime->now();
     auto simulationStart = runtime->now() - std::chrono::milliseconds(100);
     auto simStart2 = getUtcStartTime().time_since_epoch() - utcItsDiff;

@@ -1,7 +1,7 @@
 #include "radio/Microchannel.hpp"
 #include "radio/MicrochannelContext.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 Microchannel::Microchannel() : BaseObject()

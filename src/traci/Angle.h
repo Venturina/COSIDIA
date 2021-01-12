@@ -19,8 +19,8 @@ struct TraCIAngle
     double degree;
 };
 
-paresis::Angle angle_cast(TraCIAngle);
-TraCIAngle angle_cast(paresis::Angle);
+cosidia::Angle angle_cast(TraCIAngle);
+TraCIAngle angle_cast(cosidia::Angle);
 
 } // namespace traci
 

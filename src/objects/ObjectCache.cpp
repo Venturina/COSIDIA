@@ -2,7 +2,7 @@
 #include "objects/ObjectCache.hpp"
 #include "utils/enforce.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 std::list<ObjectId> SimpleObjectCache::getObjectsByType(std::shared_ptr<const ObjectContainer> container, const std::string& type, const CacheQuery* query)
@@ -14,7 +14,7 @@ std::list<ObjectId> SimpleObjectCache::getObjectsByType(std::shared_ptr<const Ob
     } else if(mLastObjectContainer.lock().get() == container.get()) {
         return performSearch(type, query);
     } else {
-        enforce(false, "SimpleObjectCache: something went wrong")
+        enforce(false, "SimpleObjectCache: something went wrong");
     }
 }
 
@@ -42,4 +42,4 @@ void SimpleObjectCache::resetQueries()
     mCachedRequests.clear();
 }
 
-} // namespace paresis
+} // namespace cosidia

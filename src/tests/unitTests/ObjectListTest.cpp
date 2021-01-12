@@ -5,7 +5,7 @@
 #include "core/Action.hpp"
 #include "objects/ObjectList.hpp"
 
-using namespace paresis;
+using namespace cosidia;
 
 TEST_CASE( "ObjectContainer", "[ObjectContainer]" ) {
     Core c;
@@ -15,7 +15,7 @@ TEST_CASE( "ObjectContainer", "[ObjectContainer]" ) {
     std::shared_ptr<DebugObjectParent> parent(new DebugObjectParent);
 
 
-    #ifdef PARESIS_SAFE
+    #ifdef COSIDIA_SAFE
     SECTION( "Test invariants" ) {
         REQUIRE_THROWS(o->insert(child));
         child->initObject();
@@ -66,7 +66,7 @@ TEST_CASE("ObjectList", "[ObjectList]") {
     std::shared_ptr<DebugObjectParent> parent(new DebugObjectParent);
     parent->initObject();
 
-    #ifdef PARESIS_SAFE
+    #ifdef COSIDIA_SAFE
     SECTION("Insert") {
         auto cur1 = list.getCurrentObjectContainer();
         REQUIRE_THROWS(list.getObjectByIdFromCurrentContainer(child->getObjectId()));

@@ -8,7 +8,7 @@
 
 
 
-using namespace paresis;
+using namespace cosidia;
 
 class MockObjectActionManager : public ObjectActionManager
 {
@@ -75,7 +75,7 @@ TEST_CASE( "BaseObject Test: Init and SelfAction", "[BaseObject]" )
         REQUIRE(self->getActionData() == nullptr);
     }
 
-    #ifdef PARESIS_SAFE
+    #ifdef COSIDIA_SAFE
     SECTION("Is Initialized") {
             REQUIRE_THROWS(parent->execute(a1));
     }

@@ -8,7 +8,7 @@
 #include "debug/DebugObject.hpp"
 
 
-using namespace paresis;
+using namespace cosidia;
 
 class MockClock : public SteadyClock
 {

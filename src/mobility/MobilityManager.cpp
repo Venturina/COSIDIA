@@ -7,7 +7,7 @@
 #include <loguru/loguru.hpp>
 
 
-namespace paresis
+namespace cosidia
 {
 
 MobilityManager::MobilityManager() : mIdMapper(this), BaseObject()
@@ -126,4 +126,4 @@ void MobilityManager::initObject(std::shared_ptr<Action> action)
 
 }
 
-} // namespace paresis
+} // namespace cosidia

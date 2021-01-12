@@ -1,6 +1,6 @@
 #pragma once
 
-#include "networking/ParesisAccessInterface.hpp"
+#include "networking/AccessInterface.hpp"
 #include "vanetza/dcc/data_request.hpp"
 #include "vanetza/dcc/mapping.hpp"
 #include "vanetza/dcc/interface.hpp"

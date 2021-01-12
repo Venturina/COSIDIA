@@ -4,7 +4,7 @@
 
 #include "loguru/loguru.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 TemporaryObject::TemporaryObject(ObjectId id, std::shared_ptr<BaseObject> obj, bool initialized) :

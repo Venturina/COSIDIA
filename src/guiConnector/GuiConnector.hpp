@@ -6,7 +6,7 @@
 
 #include "objects/VehicleObject.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
 class GuiConnector
@@ -30,6 +30,6 @@ private:
     std::unique_ptr<boost::asio::ip::udp::endpoint> mUdpEndpoint;
 };
 
-} // namespace paresis
+} // namespace cosidia
 
 #endif /* _GUI_CONNECTOR_HPP_SDFM */

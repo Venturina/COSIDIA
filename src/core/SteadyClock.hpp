@@ -6,7 +6,7 @@
 #include <iostream>
 #include <iomanip>
 
-namespace paresis
+namespace cosidia
 {
 
 class SteadyClock
@@ -38,6 +38,6 @@ protected:
     duration mSimTime; // in ns
 };
 
-} // ns paresis
+} // ns cosidia
 
 #endif /* _STEADYCLOCK_HPP_LSDNFO */

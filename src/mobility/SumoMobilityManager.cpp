@@ -6,7 +6,7 @@
 
 #include "loguru/loguru.hpp"
 
-namespace paresis
+namespace cosidia
 {
 void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
 {

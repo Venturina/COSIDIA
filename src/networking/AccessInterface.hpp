@@ -1,18 +1,18 @@
 #pragma once
 
-#include "actionData/ParesisAccessInterfaceActionData.hpp"
+#include "actionData/AccessInterfaceActionData.hpp"
 #include "objects/CacheQuery.hpp"
 #include "objects/ObjectCache.hpp"
 #include "objects/ObjectList.hpp"
 #include "vanetza/access/interface.hpp"
 
-namespace paresis
+namespace cosidia
 {
 
-class ParesisAccessInterface : public vanetza::access::Interface
+class AccessInterface : public vanetza::access::Interface
 {
 public:
-    ~ParesisAccessInterface() = default;
+    ~AccessInterface() = default;
 
     virtual void request(const vanetza::access::DataRequest&, std::unique_ptr<vanetza::ChunkPacket>) override;
 
@@ -34,4 +34,4 @@ private:
 };
 
 
-} // namespace paresis
+} // namespace cosidia

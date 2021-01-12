@@ -1,7 +1,7 @@
 #include "Config.hpp"
 #include <mutex>
 
-namespace paresis
+namespace cosidia
 {
 
 static YAML::Node globalConfig;
@@ -19,4 +19,4 @@ const YAML::Node& getGlobalConfig()
     return globalConfig;
 }
 
-} // namespace paresis
+} // namespace cosidia

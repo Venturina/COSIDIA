@@ -7,7 +7,7 @@
 #include <map>
 #include <boost/any.hpp>
 
-namespace paresis
+namespace cosidia
 {
 
 class AnyMap

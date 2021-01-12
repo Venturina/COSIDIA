@@ -3,13 +3,13 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace paresis
+namespace cosidia
 {
 
 void setGlobalConfig(const YAML::Node&);
 const YAML::Node& getGlobalConfig();
 
-} // namespace paresis
+} // namespace cosidia
 
 #endif /* CONFIG_HPP_DUDOEX3L */
 

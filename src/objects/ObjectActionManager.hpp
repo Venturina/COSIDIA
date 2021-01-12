@@ -4,7 +4,7 @@
 #include "core/Action.hpp"
 #include <queue>
 
-namespace paresis
+namespace cosidia
 {
 
 /**
@@ -58,6 +58,6 @@ private:
     std::queue<std::shared_ptr<Action>> mDelayedQueue;
 };
 
-} // namespace paresis
+} // namespace cosidia
 
 #endif /* OBJECT_ACTION_MANAGER_HPP */
