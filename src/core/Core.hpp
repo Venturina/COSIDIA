@@ -93,7 +93,7 @@ public:
 
 protected:
     void setup();
-    void startThreads(int, std::thread::id);
+    void startThread(int worker, int total);
     void runSimulationLoop();
     void executeActionOnFinishedTimer();
     void finishSimulation();

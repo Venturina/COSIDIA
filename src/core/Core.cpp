@@ -148,8 +148,9 @@ void Core::setup()
         DLOG_F(INFO, "detected %d number of concurrent cores", concurentThreadsSupported);
     }
 
-    for(unsigned x = 0; x < std::min(concurentThreadsSupported-2, 30 ); x++) {
-        mThreads.emplace_back(&Core::startThreads, this, concurentThreadsSupported, std::this_thread::get_id());
+    int workerThreads = std::min(concurentThreadsSupported - 2, 30);
+    for(unsigned x = 1; x <= workerThreads; ++x) {
+        mThreads.emplace_back(&Core::startThread, this, x, workerThreads);
     }
 
     // create dummy actions
@@ -165,20 +166,21 @@ void Core::setup()
     mObjectList.addToObjectContainer(manager->getObjectId(), manager);
 }
 
-void Core::startThreads(int thread_count, std::thread::id mainThread) {
+void Core::startThread(int worker_this, int worker_total) {
     // thread registers itself at work-stealing scheduler
     boost::fibers::use_scheduling_algorithm<boost::fibers::algo::shared_work>();
 
-    boost::format thread_name("worker #%1%");
-    thread_name % thread_count;
-    loguru::set_thread_name(thread_name.str().c_str());
+    boost::format thread_name_fmt("worker %1%/%2%");
+    thread_name_fmt % worker_this % worker_total;
+    const char* thread_name = thread_name_fmt.str().c_str();
+    loguru::set_thread_name(thread_name);
 
-    LOG_F(INFO, "launched thread: %d with main thread: %d", std::this_thread::get_id(), mainThread);
+    LOG_F(INFO, "Launched thread: %s", thread_name);
 
     std::unique_lock< boost::fibers::mutex > lk( mFiberMutex);
     mConditionClose.wait(lk, [this](){ return this->mIsFinished; });
 
-    LOG_F(INFO, "Finished thread: %d", std::this_thread::get_id());
+    LOG_F(INFO, "Finished thread: %s", thread_name);
 }
 
 void Core::runSimulationLoop()
@@ -189,7 +191,6 @@ void Core::runSimulationLoop()
         finishSimulation();
     } else {
         auto expiry = mClock->getDurationUntil(mCurrentAction->getStartTime());
-        //std::cout << mClock.getDurationUntil(mCurrentAction->getStartTime()).count() << std::endl;
         mTimer.expires_after(mClock->getDurationUntil(mCurrentAction->getStartTime()));
         mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
     }
