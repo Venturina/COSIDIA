@@ -1,4 +1,5 @@
 #include <iostream>
+#include <optional>
 #include <string>
 #include <boost/fiber/all.hpp>
 
@@ -17,9 +18,12 @@ int main(int argc, char* argv[])
     std::string config_file = "config.yaml";
     bool debug_mode = false;
     float sim_speed = 1.0f;
+    std::optional<std::string> log_all_file, log_error_file;
     app.add_option("-c,--config", config_file, "configuration YAML file", true);
     app.add_option("--debug", debug_mode, "enable debug mode", true);
     app.add_option("--sim-speed", sim_speed, "simulation speed factor", true);
+    app.add_option("--log-all-file", log_all_file, "log everything to this file", false);
+    app.add_option("--log-error-file", log_error_file, "log errors to this file", false);
 
     loguru::init(argc, argv);
 
@@ -37,8 +41,12 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    loguru::add_file("everything.log", loguru::FileMode::Truncate, loguru::Verbosity_MAX);
-    loguru::add_file("error.log", loguru::FileMode::Truncate, loguru::Verbosity_ERROR);
+    if (log_all_file) {
+        loguru::add_file(log_all_file->c_str(), loguru::FileMode::Truncate, loguru::Verbosity_MAX);
+    }
+    if (log_error_file) {
+        loguru::add_file(log_error_file->c_str(), loguru::FileMode::Truncate, loguru::Verbosity_ERROR);
+    }
     LOG_F(INFO, "Hello World");
 
     std::shared_ptr<cosidia::SteadyClock> clock = debug_mode ?
