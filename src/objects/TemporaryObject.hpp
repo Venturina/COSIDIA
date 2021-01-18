@@ -33,7 +33,7 @@ public:
     std::set<ObjectId> getTemporaryChildren() { return mTempChildren; }
     std::set<ObjectId> getTemporaryParent() { return mTempParents; }
 
-    void initialize(SteadyClock::duration);
+    void initialize(SimClock::time_point);
 
 private:
     ObjectId mTempId;
@@ -64,7 +64,7 @@ public:
      *
      * @param time when init Actions should be scheduled
      */
-    void resolveAndStart(SteadyClock::duration);
+    void resolveAndStart(SimClock::time_point time);
 
 private:
     std::list<std::shared_ptr<TemporaryObject>> mTempList;

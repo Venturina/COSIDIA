@@ -29,9 +29,7 @@ public:
 TEST_CASE( "Runtime", "[Runtime]" ) {
     MockCore core;
     // time point 100ms after simulation start
-    SteadyClock::duration d{std::chrono::milliseconds(100)};
-
-    auto runtime = Runtime::makeRuntime(d);
+    auto runtime = Runtime::makeRuntime(SimClock::atMillisecond(100));
     vanetza::geonet::MIB mib;
     vanetza::geonet::Router router {*runtime, mib};  // start router at 100ms
     auto runtimeStart = runtime->now();
@@ -41,32 +39,32 @@ TEST_CASE( "Runtime", "[Runtime]" ) {
     REQUIRE(std::chrono::duration_cast<std::chrono::microseconds>(simStart2) == simulationStart.time_since_epoch());
 
     // absolute time to next action
-    REQUIRE(runtime->getDurationStartToNext() == std::chrono::milliseconds(100));
+    REQUIRE(runtime->getNextStart() == SimClock::atMillisecond(100));
 
     // from now to next action
     REQUIRE(runtime->getDurationNowToNext() == std::chrono::milliseconds(0));
 
-    runtime->triggerAbsolute(d);
+    runtime->trigger(SimClock::atMillisecond(100));
     REQUIRE(runtime->now() - runtimeStart == std::chrono::milliseconds(0));
 
-    REQUIRE(runtime->getDurationStartToNext() == std::chrono::microseconds(3798856));
+    REQUIRE(runtime->getNextStart() == SimClock::atMicrosecond(3798856));
     REQUIRE(runtime->now() - runtimeStart == std::chrono::microseconds(0));
     REQUIRE(runtime->getDurationNowToNext() == std::chrono::microseconds(3698856));
 
     // set now to 1us before next event
-    runtime->triggerAbsolute(runtime->getDurationStartToNext() - std::chrono::microseconds(1));
+    runtime->trigger(runtime->getNextStart() - std::chrono::microseconds(1));
 
-    REQUIRE(runtime->getDurationStartToNext() == std::chrono::microseconds(3798856));
+    REQUIRE(runtime->getNextStart() == SimClock::atMicrosecond(3798856));
     REQUIRE(runtime->now() - simulationStart == std::chrono::microseconds(3798855));  //startToNext - 1us
     REQUIRE(runtime->now() - runtimeStart == std::chrono::microseconds(3698855));
     REQUIRE(runtime->next() - runtime->now() == std::chrono::microseconds(1));
     REQUIRE(std::chrono::duration_cast<std::chrono::microseconds>(runtime->getDurationNowToNext()) == std::chrono::microseconds(1));  // same as next - now
 
     // advance 1us to trigger next event
-    runtime->triggerAbsolute(runtime->getDurationStartToNext());
+    runtime->trigger(runtime->getNextStart());
 
     REQUIRE(runtime->now() - simulationStart == std::chrono::microseconds(3798856)); // 1
-    REQUIRE(runtime->getDurationStartToNext() == std::chrono::microseconds(7519689)); // 2
+    REQUIRE(runtime->getNextStart() == SimClock::atMicrosecond(7519689)); // 2
     REQUIRE(runtime->getDurationNowToNext() == std::chrono::microseconds(3720833)); // = 1-2
 
 }

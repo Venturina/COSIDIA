@@ -71,7 +71,7 @@ std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shar
         mIdMapper(this).emplace(id, ObjectId::stub());
     }
 
-    if(action->getStartTime() < std::chrono::seconds(20)) {
+    if(action->getStartTime() < SimClock::atSecond(20)) {
         auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
             Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
             mObjectId, mObjectId); // ugly as hell?

@@ -3,27 +3,26 @@
 namespace cosidia
 {
 
-std::chrono::time_point<std::chrono::steady_clock> DebugClock::getRealTimeForCurrentSimTime()
+SteadyClock::time_point DebugClock::getRealTimeForCurrentSimTime()
 {
     return std::chrono::steady_clock::now();
 }
 
-std::chrono::nanoseconds DebugClock::getSimTimeNow() const
+SimClock::time_point DebugClock::getSimTimeNow() const
 {
     return mSimTime;
 }
 
-std::chrono::nanoseconds DebugClock::getDurationUntil(std::chrono::nanoseconds until)
+SteadyClock::duration DebugClock::getDurationUntil(SimClock::time_point until)
 {
     auto currentTime = mSimTime;
     updateSimTime(until);
     return until - currentTime;
 }
 
-std::chrono::time_point<std::chrono::steady_clock> DebugClock::getTimePointforSimTime(std::chrono::nanoseconds until)
+SteadyClock::time_point DebugClock::getTimePointforSimTime(SimClock::time_point until)
 {
     return std::chrono::steady_clock::now() + getDurationUntil(until);
 }
-
 
 }

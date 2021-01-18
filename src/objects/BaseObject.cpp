@@ -38,7 +38,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
                 enforce(mCurrentAction == action->getBeginId(), "BaseObject: EndAction does not correspond to StartAction");
                 endExecution(action);
                 auto now = getCoreP()->getClock().getSimTimeNow();
-                timingBuffer[currId++] = (action->getStartTime().count() - now.count()) / 1000;
+                timingBuffer[currId++] = (action->getStartTime() - now).count() / 1000;
                 //DLOG_F(ERROR, "time: expected: %d now: %d value: %d, type %s", action->getStartTime().count()/1000, now.count()/1000, (action->getStartTime().count() - now.count()) / 1000, mObjectName.c_str());
                 // if(!((action->getStartTime() < std::chrono::seconds(3)) ||
                 //     (action->getStartTime() - now) > std::chrono::milliseconds(-1))) {
@@ -73,7 +73,7 @@ bool BaseObject::isInitialized()
     }
 }
 
-std::shared_ptr<Action> BaseObject::createSelfAction(SteadyClock::duration duration, SteadyClock::duration start)
+std::shared_ptr<Action> BaseObject::createSelfAction(SimClock::duration duration, SimClock::time_point start)
 {
     return std::move(std::make_shared<Action>(duration, Action::Kind::START, start, mObjectId, mObjectId));
 }
@@ -85,7 +85,7 @@ std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, Co
         for(const auto siblingId : parent->getChildren()) {
             const auto sibling = objects->getObject(siblingId);
             if(sibling->getObjectName() == name) {
-                return std::weak_ptr(sibling);
+                return std::weak_ptr<BaseObject>(sibling);
             }
         }
     }
@@ -98,7 +98,7 @@ std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, Con
     for(const auto parentId : obj->getParents()) {
         auto parent = objects->getObject(parentId);
         if(parent->getObjectName() == name) {
-            return std::weak_ptr(parent);
+            return std::weak_ptr<BaseObject>(parent);
         }
     }
     enforce(false, "getParentByName failed")

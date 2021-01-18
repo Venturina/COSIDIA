@@ -9,19 +9,19 @@ namespace cosidia
 
 const Symbol Action::default_type = "default"_sym;
 
-Action::Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, ObjectId obj, ObjectId generator) : mDuration(duration), mKind(k), mStartTime(start), mGeneratingObject(generator)
+Action::Action(Duration duration, Kind k, TimePoint start, ObjectId obj, ObjectId generator) : mDuration(duration), mKind(k), mStartTime(start), mGeneratingObject(generator)
 {
     assert(obj.valid());
     if(obj.valid()) {
         addAffected(obj);
     }
-    enforce(start >= std::chrono::nanoseconds(0), "Action: negative start time");
+    enforce(start >= TimePoint { Duration::zero() }, "Action: negative start time");
     //auto objP = std::make_shared<object::BaseObject>(obj);
     //mAffectedObjects.push_back(std::make_shared<object::BaseObject>(obj));
 }
-Action::Action(std::chrono::nanoseconds duration, Kind k, std::chrono::nanoseconds start, std::list<ObjectId> obj, ObjectId generator) : mDuration(duration), mKind(k), mStartTime(start), mGeneratingObject(generator)
+Action::Action(Duration duration, Kind k, TimePoint start, std::list<ObjectId> obj, ObjectId generator) : mDuration(duration), mKind(k), mStartTime(start), mGeneratingObject(generator)
 {
-    enforce(start >= std::chrono::nanoseconds(0), "Action: negative start time");
+    enforce(start >= TimePoint { Duration::zero() }, "Action: negative start time");
     assert(std::all_of(obj.begin(), obj.end(), [](ObjectId id) { return id.valid(); }));
     for(auto id : obj) {
         if(id.valid()) {
@@ -37,7 +37,7 @@ void Action::addAffected(ObjectId id){
     mAffectedObjects.push_back(id);
 }
 
-void Action::setStartTime(SteadyClock::duration start)
+void Action::setStartTime(TimePoint start)
 {
     mStartTime = start;
 }

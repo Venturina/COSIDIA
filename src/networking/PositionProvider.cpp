@@ -1,19 +1,16 @@
 #include "networking/PositionProvider.hpp"
+#include "networking/Runtime.hpp"
 #include "networking/VanetzaDefs.hpp"
 
 namespace cosidia
 {
-
-
 
 void PositionProvider::updatePosition(const VehicleObjectContext& context)
 {
     using namespace vanetza::units;
     static const TrueNorth north;
 
-    auto timeSincePosix = context.lastUpdate.time_since_epoch();
-    vanetza::Clock::time_point ts { std::chrono::duration_cast<vanetza::Clock::duration>(timeSincePosix - utcItsDiff) };
-    mPositionFix.timestamp = ts;
+    mPositionFix.timestamp = Runtime::convert(context.lastUpdate);
 
     mPositionFix.confidence.semi_minor = 5.0 * si::meter;
     mPositionFix.confidence.semi_major = 5.0 * si::meter;

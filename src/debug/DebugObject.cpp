@@ -23,7 +23,7 @@ void DebugObject::setName(std::string name)
     mObjectName = name;
 }
 
-std::shared_ptr<Action> DebugObject::testCreateSelfAction(SteadyClock::duration duration, SteadyClock::duration start)
+std::shared_ptr<Action> DebugObject::testCreateSelfAction(SimClock::duration duration, SimClock::time_point start)
 {
     return createSelfAction(duration, start);
 }

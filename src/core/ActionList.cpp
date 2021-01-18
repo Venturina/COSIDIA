@@ -5,20 +5,15 @@
 namespace cosidia
 {
 
-bool compareFunction(std::chrono::nanoseconds lhs, std::chrono::nanoseconds rhs)
-{
-    return lhs < rhs;
-}
-
 ActionList::ActionList()
 {
-    mActionMap = std::make_unique<ActionMap>(ActionMap(compareFunction));
+    mActionMap = std::make_unique<ActionMap>();
 }
 
 void ActionList::insertAction(ActionP action)
 {
     enforce(onCoreThread(), "Inserted Action from wrong thread!");
-    mActionMap->insert(std::pair<std::chrono::nanoseconds, ActionP>(action->getStartTime(), action));
+    mActionMap->insert(std::pair<SimClock::time_point, ActionP>(action->getStartTime(), action));
 }
 
 ActionP ActionList::popNextAction()
@@ -44,7 +39,7 @@ ConstActionP ActionList::getNextAction() const
     }
 }
 
-bool ActionList::removeAction(ConstActionP actionToRemove, std::chrono::nanoseconds removeTimeHint)
+bool ActionList::removeAction(ConstActionP actionToRemove, SimClock::time_point removeTimeHint)
 {
     auto possibleRemoveElements = mActionMap->equal_range(removeTimeHint);
     for(auto i = possibleRemoveElements.first; i != possibleRemoveElements.second; i++) {

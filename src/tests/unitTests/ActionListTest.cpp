@@ -31,12 +31,12 @@ public:
 
 TEST_CASE("Action List", "[ActionList]") {
     MockCore core;
-    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(1), ObjectId { 1 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), ObjectId { 2 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), ObjectId { 3 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a4(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(3), ObjectId { 4 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a5(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(2), ObjectId { 5 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a6(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(3), ObjectId { 6 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(2), ObjectId { 2 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(2), ObjectId { 3 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a4(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(3), ObjectId { 4 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a5(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(2), ObjectId { 5 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a6(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(3), ObjectId { 6 }, ObjectId { 5 }));
 
     DebugActionMap list;
 
@@ -79,15 +79,15 @@ TEST_CASE("Action List", "[ActionList]") {
         list.insertAction(a6); // start time = 3
 
         // wrong time hint
-        REQUIRE(list.removeAction(a3, std::chrono::milliseconds(1)) == false);
+        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(1)) == false);
         REQUIRE(list.getActionMap()->size() == 6);
 
         // actually remove
-        REQUIRE(list.removeAction(a3, std::chrono::milliseconds(2)) == true);
+        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == true);
         REQUIRE(list.getActionMap()->size() == 5);
 
         // wrong pointer
-        REQUIRE(list.removeAction(a3, std::chrono::milliseconds(2)) == false);
+        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == false);
         REQUIRE(list.getActionMap()->size() == 5);
     }
 
@@ -98,7 +98,7 @@ TEST_CASE("Action List", "[ActionList]") {
         list.insertAction(a2); // start time = 2
         list.insertAction(a3); // start time = 2
         list.insertAction(a6); // start time = 3
-        REQUIRE(list.removeAction(a3, std::chrono::milliseconds(2)) == true);
+        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == true);
 
 
         auto pop1 = list.popNextAction();

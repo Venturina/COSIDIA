@@ -115,10 +115,10 @@ RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, st
 
 void Router::commonActions(RouterUpdateData& data, std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
-    DLOG_F(ERROR, "current simulation time: %d ", std::chrono::duration_cast<std::chrono::milliseconds>(action->getStartTime()).count());
+    DLOG_F(ERROR, "current simulation time: %d ", SimClock::getMilliseconds(action->getStartTime()));
     mPositionProvider(this).updatePosition(*context);
     mRouter(this).update_position(mPositionProvider(this).position_fix());
-    mRuntime(this).triggerAbsolute((action->getStartTime()));
+    mRuntime(this).trigger((action->getStartTime()));
 
     scheduleTransmission(data, action.get(), currentObjects);
     scheduleNextUpdate(data, action.get());
@@ -140,11 +140,11 @@ void Router::endExecution(std::shared_ptr<Action> action) {
 
 void Router::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAction)
 {   //TODO: not fully tested yet
-    auto nextTp = mRuntime(this).getDurationStartToNext();
+    auto nextTp = mRuntime(this).getNextStart();
     enforce(!mNextAction || mNextAction->getType() == "update"_sym, "Router: next action is no update"); // this should never happen
 
     if(!mNextAction || mNextAction.get() == currentAction) { // new update must be scheduled
-        DLOG_F(ERROR, "next Update at: %d milliseconds", std::chrono::duration_cast<std::chrono::milliseconds>(nextTp).count());
+        DLOG_F(ERROR, "next Update at: %d milliseconds", SimClock::getMilliseconds(nextTp));
         auto nextAction = createSelfAction(std::chrono::milliseconds(2), nextTp);
         nextAction->setType("update"_sym);
         data.actionsToSchedule.push_back(nextAction);

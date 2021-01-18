@@ -37,7 +37,7 @@ public:
     virtual bool isInitialized();
 
 protected:
-    std::shared_ptr<Action> createSelfAction(SteadyClock::duration duration, SteadyClock::duration start);
+    std::shared_ptr<Action> createSelfAction(SimClock::duration duration, SimClock::time_point start);
 
 
     ObjectId mObjectId;

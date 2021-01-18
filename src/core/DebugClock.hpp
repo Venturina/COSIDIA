@@ -11,14 +11,10 @@ class DebugClock : public SteadyClock
 public:
     DebugClock(float simSpeed) : SteadyClock(simSpeed) {};
 
-    virtual std::chrono::time_point<std::chrono::steady_clock> getRealTimeForCurrentSimTime() override;
-    virtual std::chrono::nanoseconds getSimTimeNow() const override;
-    virtual std::chrono::nanoseconds getDurationUntil(std::chrono::nanoseconds) override;
-    virtual std::chrono::time_point<std::chrono::steady_clock> getTimePointforSimTime(std::chrono::nanoseconds) override;
-
-
-private:
-
+    virtual SteadyClock::time_point getRealTimeForCurrentSimTime() override;
+    virtual SimClock::time_point getSimTimeNow() const override;
+    virtual SteadyClock::duration getDurationUntil(SimClock::time_point) override;
+    virtual SteadyClock::time_point getTimePointforSimTime(SimClock::time_point) override;
 };
 
 } // namespace cosidia

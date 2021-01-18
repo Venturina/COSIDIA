@@ -55,13 +55,13 @@ void TemporaryObject::addToCore()
     getCoreP()->addObject(mBaseObject);
 }
 
-void TemporaryObject::initialize(SteadyClock::duration d)
+void TemporaryObject::initialize(SimClock::time_point t)
 {
     if(!isInitialized()) {
         auto id = getCoreP()->getNextObjectId();
         mBaseObject->setObjectId(id);
         setTempMapping(id);
-        auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50), Action::Kind::INIT, d + std::chrono::milliseconds(1), id, id);
+        auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50), Action::Kind::INIT, t + std::chrono::milliseconds(1), id, id);
 
         getCoreP()->scheduleAction(newAction);
     } else {
@@ -70,11 +70,11 @@ void TemporaryObject::initialize(SteadyClock::duration d)
 }
 
 
-void TemporaryObjectList::resolveAndStart(SteadyClock::duration d)
+void TemporaryObjectList::resolveAndStart(SimClock::time_point start)
 {
     DLOG_F(ERROR, "Try Resolve");
     for(auto& obj : mTempList) {
-        obj->initialize(d);
+        obj->initialize(start);
         mResolvedIds[obj->getTempId()] = obj;
     }
 

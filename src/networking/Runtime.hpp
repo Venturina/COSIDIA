@@ -13,22 +13,23 @@ public:
      * Create runtime
      * \param init initialization value of internal clock
      */
-    explicit Runtime(vanetza::Clock::time_point init, vanetza::Clock::duration);
+    explicit Runtime(SimClock::time_point start);
 
-    std::chrono::nanoseconds getDurationStartToNext() const;
+    SimClock::time_point getNextStart() const;
 
-    std::chrono::nanoseconds getDurationNowToNext() const;
+    SimClock::duration getDurationNowToNext() const;
 
-    void triggerAbsolute(vanetza::Clock::duration);
-    void triggerAbsolute(SteadyClock::duration);
+    void trigger(vanetza::Clock::time_point);
+    void trigger(SimClock::time_point);
 
-    static std::unique_ptr<Runtime> makeRuntime(SteadyClock::duration initTime);
+    static std::unique_ptr<Runtime> makeRuntime(SimClock::time_point initTime);
+
+    static vanetza::Clock::time_point convert(SimClock::time_point);
 
 private:
-    vanetza::Clock::duration mLastTrigger;
-    vanetza::Clock::duration mRouterStartSimTime;
-    vanetza::Clock::time_point mSimulationStartTime;
-    vanetza::Clock::time_point mRouterStartTime;
+    SimClock::time_point mSimStartTime;
+    vanetza::Clock::time_point mItsStartTime;
+    vanetza::Clock::time_point mLastTrigger;
 };
 
 } // namespace cosidia

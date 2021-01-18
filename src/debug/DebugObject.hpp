@@ -19,7 +19,7 @@ public:
     virtual void startExecution(std::shared_ptr<Action>);
     virtual void endExecution(std::shared_ptr<Action>);
 
-    std::shared_ptr<Action> testCreateSelfAction(SteadyClock::duration duration, SteadyClock::duration start);
+    std::shared_ptr<Action> testCreateSelfAction(SimClock::duration duration, SimClock::time_point start);
 };
 
 class DebugObjectParent : public DebugObject

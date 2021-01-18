@@ -9,33 +9,68 @@
 namespace cosidia
 {
 
+class SimClock
+{
+public:
+    using rep = int64_t;
+    using period = std::nano;
+    using duration = std::chrono::duration<rep, period>;
+    using time_point = std::chrono::time_point<SimClock>;
+
+    template<typename Rep, typename Period>
+    constexpr static time_point at(std::chrono::duration<Rep, Period> d)
+    {
+        return time_point { d };
+    }
+
+    constexpr static time_point atSecond(SimClock::rep sec)
+    {
+        return at(std::chrono::seconds(sec));
+    }
+
+    constexpr static time_point atMillisecond(SimClock::rep msec)
+    {
+        return at(std::chrono::milliseconds(msec));
+    }
+
+    constexpr static time_point atMicrosecond(SimClock::rep usec)
+    {
+        return at(std::chrono::microseconds(usec));
+    }
+
+    constexpr static time_point atNanosecond(SimClock::rep nsec)
+    {
+        return at(std::chrono::nanoseconds(nsec));
+    }
+
+    constexpr static rep getMilliseconds(time_point t)
+    {
+        using factor = std::ratio_divide<period, std::milli>;
+        return t.time_since_epoch().count() * factor::num / factor::den;
+    }
+};
+
 class SteadyClock
 {
 public:
-    typedef int64_t rep;
-    typedef std::nano period;
-    typedef std::chrono::duration<rep, period> duration;
-    typedef std::chrono::time_point<SteadyClock> time_point;
+    using duration = std::chrono::steady_clock::duration;
+    using time_point = std::chrono::steady_clock::time_point;
 
-    SteadyClock(float simSpeed) : mSimSpeed(simSpeed), mSimTime(0) {
-        mStartTime = std::chrono::steady_clock::now();
-    }
+    SteadyClock(float simSpeed);
 
-    void restart() {
-        mStartTime = std::chrono::steady_clock::now();
-    }
+    void restart();
 
-    virtual std::chrono::nanoseconds getSimTimeNow() const;
-    virtual void updateSimTime(std::chrono::nanoseconds);  // is called whenever the simulation executes an event
-    virtual std::chrono::time_point<std::chrono::steady_clock> getRealTimeForCurrentSimTime(); // returns expected RealTime for given SimTime
-    virtual std::chrono::nanoseconds getDurationUntil(std::chrono::nanoseconds);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
-    virtual std::chrono::time_point<std::chrono::steady_clock> getTimePointforSimTime(std::chrono::nanoseconds);
+    virtual SimClock::time_point getSimTimeNow() const;
+    virtual void updateSimTime(SimClock::time_point);  // is called whenever the simulation executes an event
+    virtual time_point getRealTimeForCurrentSimTime(); // returns expected RealTime for given SimTime
+    virtual duration getDurationUntil(SimClock::time_point);  // returns how many (real) nanoseconds have to be waited until the passed time is reached
+    virtual time_point getTimePointforSimTime(SimClock::time_point);
 
 protected:
     float mSimSpeed;
 
-    std::chrono::time_point<std::chrono::steady_clock> mStartTime;
-    duration mSimTime; // in ns
+    time_point mStartTime;
+    SimClock::time_point mSimTime; // in ns
 };
 
 } // ns cosidia

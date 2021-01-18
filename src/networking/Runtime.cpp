@@ -1,6 +1,8 @@
 #include "core/Core.hpp"
 #include "networking/Runtime.hpp"
 #include "networking/VanetzaDefs.hpp"
+#include "utils/enforce.hpp"
+#include "utils/invariant.hpp"
 
 #include "loguru/loguru.hpp"
 
@@ -8,50 +10,54 @@
 namespace cosidia
 {
 
-Runtime::Runtime(vanetza::Clock::time_point init, vanetza::Clock::duration initSim) : vanetza::ManualRuntime(init)
+vanetza::Clock::time_point Runtime::convert(SimClock::time_point sim)
 {
-    vanetza::Clock::time_point tp {std::chrono::duration_cast<vanetza::Clock::duration>(getUtcStartTime().time_since_epoch() - utcItsDiff)};
-    mSimulationStartTime = tp;
-    mRouterStartTime = init;
-    mRouterStartSimTime = initSim;
-    mLastTrigger = std::chrono::milliseconds{0};
+    // getUtcStartTime reports the UTC time point corresponding to the start of simulation
+    std::chrono::system_clock::time_point utc = getUtcStartTime() + sim.time_since_epoch();
+    // convert UTC (UNIX time epoch) to ITS (TAI) clock starting at 2004-01-01
+    vanetza::Clock::time_point its {
+        std::chrono::duration_cast<vanetza::Clock::duration>(utc.time_since_epoch() - utcItsDiff)
+    };
+    return its;
 }
 
-std::chrono::nanoseconds Runtime::getDurationStartToNext() const
+Runtime::Runtime(SimClock::time_point init) : vanetza::ManualRuntime(convert(init))
 {
-    auto duration = next() - mSimulationStartTime;
-    DLOG_F(INFO, "duration from start to next: %d us", std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
-    return duration;
+    mSimStartTime = init;
+    mItsStartTime = now();
 }
 
-std::chrono::nanoseconds Runtime::getDurationNowToNext() const
+SimClock::time_point Runtime::getNextStart() const
 {
-    auto duration = next() - now();
-    DLOG_F(INFO, "duration from now to next: %d us", std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
-    return duration;
+    return mSimStartTime + (next() - mItsStartTime);
 }
 
-void Runtime::triggerAbsolute(vanetza::Clock::duration absoluteDuration)
+SimClock::duration Runtime::getDurationNowToNext() const
 {
-    auto advance = absoluteDuration - mRouterStartSimTime;
-    DLOG_F(INFO, "current router time: %d us", std::chrono::duration_cast<std::chrono::microseconds>(advance).count());
-    trigger(mRouterStartTime+(absoluteDuration-mRouterStartSimTime));
-    mLastTrigger = absoluteDuration;
+    return next() - now();
 }
 
-void Runtime::triggerAbsolute(SteadyClock::duration absoluteSteadyClockDuration)
+void Runtime::trigger(vanetza::Clock::time_point tp)
 {
-    auto absoluteDuration = std::chrono::duration_cast<vanetza::Clock::duration>(absoluteSteadyClockDuration);
-    auto advance = absoluteDuration - mRouterStartSimTime;
-    DLOG_F(INFO, "current router time: %d us", std::chrono::duration_cast<std::chrono::microseconds>(advance).count());
-    trigger(mRouterStartTime+(absoluteDuration-mRouterStartSimTime));
-    mLastTrigger = absoluteDuration;
+    enforce(tp >= mLastTrigger, "trigger can only advance forward in time");
+    auto advance = tp - mItsStartTime;
+    DLOG_F(INFO, "current router run for: %d us", std::chrono::duration_cast<std::chrono::microseconds>(advance).count());
+    ManualRuntime::trigger(tp);
+    mLastTrigger = tp;
 }
 
-std::unique_ptr<Runtime> Runtime::makeRuntime(SteadyClock::duration initTime) {
-    vanetza::Clock::time_point ts { std::chrono::duration_cast<vanetza::Clock::duration>(getUtcStartTime().time_since_epoch() - utcItsDiff + initTime)};
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(initTime);
-    return std::make_unique<Runtime>(ts, duration);
+void Runtime::trigger(SimClock::time_point tp)
+{
+    SimClock::duration simAdvance = tp - mSimStartTime;
+    auto itsAdvance = std::chrono::duration_cast<vanetza::Clock::duration>(simAdvance);
+    vanetza::Clock::time_point itsAdvanceTo = mItsStartTime + itsAdvance;
+    invariant(itsAdvanceTo >= mLastTrigger, "trigger can only advance forward in time");
+    trigger(itsAdvanceTo);
+}
+
+std::unique_ptr<Runtime> Runtime::makeRuntime(SimClock::time_point initTime)
+{
+    return std::make_unique<Runtime>(initTime);
 }
 
 } // namespace cosidia

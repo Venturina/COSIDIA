@@ -22,7 +22,7 @@ struct VehicleObjectContext
 
     double heading = 0; /* plane angle (-180 - 180)  */
 
-    std::chrono::system_clock::time_point lastUpdate; /* UTC time */
+    SimClock::time_point lastUpdate;
 
     VehicleObjectContext& operator=(VehicleObjectContext* other);
 };

@@ -27,6 +27,9 @@ typedef int ActionId;
 class Action
 {
 public:
+    using Duration = SimClock::duration;
+    using TimePoint = SimClock::time_point;
+
     enum class Kind {
         INIT,
         START,
@@ -42,7 +45,7 @@ public:
      * @param id Object which is the receiver of the Action
      * @param generating object
      */
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, ObjectId id, ObjectId generator);
+    Action(Duration duration, Kind k, TimePoint start, ObjectId id, ObjectId generator);
 
     /**
      * Creates an Action for a list of object
@@ -53,23 +56,23 @@ public:
      * @param ids Objects which receive the Action
      * @param generating object
      */
-    Action(SteadyClock::duration duration, Kind k, SteadyClock::duration start, std::list<ObjectId> ids, ObjectId generator);
+    Action(Duration duration, Kind k, TimePoint start, std::list<ObjectId> ids, ObjectId generator);
 
     /**
      * Get start time of an Action
      */
-    SteadyClock::duration getStartTime() const { return mStartTime; }
+    TimePoint getStartTime() const { return mStartTime; }
 
     /**
      * Get duration of an Action
      */
-    SteadyClock::duration getDuration() const { return mDuration; }
+    Duration getDuration() const { return mDuration; }
 
 
     /**
      * Get End time
      */
-    const SteadyClock::duration getEndTime() const { return mDuration + mStartTime; }
+    TimePoint getEndTime() const { return mDuration + mStartTime; }
 
     /**
      * Get attached ActionData, nullptr if no ActionData is attached
@@ -80,7 +83,7 @@ public:
      * Set start time of Action
      * @param start The start Time
      */
-    void setStartTime(SteadyClock::duration start);
+    void setStartTime(TimePoint start);
 
     /**
      * Attach ActionData to Action
@@ -164,13 +167,13 @@ protected:
     /**
      * Time after which the gathering action should be scheduled
      */
-    SteadyClock::duration mDuration;
+    Duration mDuration;
 
     /**
      * Start time
      * If startTime == 0, start immediately
      */
-    SteadyClock::duration mStartTime;
+    TimePoint mStartTime;
 
     /**
      * All objects which are affected by this action

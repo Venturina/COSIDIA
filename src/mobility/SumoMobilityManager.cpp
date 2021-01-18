@@ -29,7 +29,7 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::doVehicleUpdate(std::
     fetchVehicleIds(objectList);
 
     auto t = action->getStartTime();
-    auto res = mUpdater->step(std::chrono::duration_cast<std::chrono::milliseconds>(t));
+    auto res = mUpdater->step(std::chrono::duration_cast<std::chrono::milliseconds>(t.time_since_epoch()));
     auto data = executeUpdate(res, objectList, action);
 
     if(mLite->simulation().getMinExpectedNumber() > 0) {

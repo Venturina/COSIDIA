@@ -20,7 +20,7 @@ class MockClock : public SteadyClock
 {
 public:
     MockClock() : SteadyClock(1) {};
-    MAKE_CONST_MOCK0(getSimTimeNow, std::chrono::nanoseconds(), override);
+    MAKE_CONST_MOCK0(getSimTimeNow, SimClock::time_point(), override);
 };
 
 class MockCore : public Core
@@ -54,8 +54,8 @@ TEST_CASE( "BaseObject Test: Init and SelfAction", "[BaseObject]" )
     std::shared_ptr<MockDebugObjectChild> child(new MockDebugObjectChild());
     std::shared_ptr<DebugObject> parent(new DebugObjectParent());
 
-    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), ObjectId { 1 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(1), ObjectId { 2 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(500), ObjectId { 1 }, ObjectId { 5 }));
+    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(1), ObjectId { 2 }, ObjectId { 5 }));
 
     SECTION("Create self Action") {
         REQUIRE_FALSE(child->isInitialized());
@@ -67,10 +67,10 @@ TEST_CASE( "BaseObject Test: Init and SelfAction", "[BaseObject]" )
         REQUIRE(child->isInitialized());
         REQUIRE(parent->isInitialized());
 
-        auto self = child->testCreateSelfAction(std::chrono::milliseconds(2), std::chrono::milliseconds(1));
+        auto self = child->testCreateSelfAction(std::chrono::milliseconds(2), SimClock::atMillisecond(1));
         REQUIRE(self->getAffected().front() == child->getObjectId());
         REQUIRE(self->getKind() == Action::Kind::START);
-        REQUIRE(self->getStartTime() == std::chrono::milliseconds(1));
+        REQUIRE(self->getStartTime() == SimClock::atMillisecond(1));
         REQUIRE(self->getDuration() == std::chrono::milliseconds(2));
         REQUIRE(self->getActionData() == nullptr);
     }
@@ -90,11 +90,11 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
         auto mockClock = dynamic_cast<const MockClock*>(&(c->getClock()));
         auto mockActionManager = dynamic_cast<MockObjectActionManager*>(child->getMockedObjectManager());
 
-        std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, std::chrono::milliseconds(500), ObjectId { 1 }, ObjectId { 5 }));
-        std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::END, std::chrono::milliseconds(1), ObjectId { 2 }, ObjectId { 5 }));
+        std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(500), ObjectId { 1 }, ObjectId { 5 }));
+        std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::END, SimClock::atMillisecond(1), ObjectId { 2 }, ObjectId { 5 }));
         a1->setActionId(5);
         a2->setBeginId(a1->getActionId());
-        std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::INIT, std::chrono::milliseconds(1), ObjectId { 2 }, ObjectId { 5 }));
+        std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::INIT, SimClock::atMillisecond(1), ObjectId { 2 }, ObjectId { 5 }));
 
 
         REQUIRE_CALL(*mockActionManager, startOrDelay(a1))      // call_1
