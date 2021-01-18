@@ -1,7 +1,7 @@
 #ifndef _INVARIANT_HPP_SNDVO
 #define _INVARIANT_HPP_SNDVO
 
-#ifdef CONSIDIA_SAFE
+#ifdef COSIDIA_SAFE
 #define invariant_(condition, msg) \
     if (!condition) { throw std::runtime_error(msg); }
 #else
