@@ -48,7 +48,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
                     auto update = mActionManager->fetchNextAction();
                     update.setStartTime(action->getStartTime() + action->getDuration());
                     auto next = mActionManager->activateNextAvailableAction();
-                    getCoreP()->scheduleAction(makeEndAction(next));
+                    getCoreP()->scheduleAction(makeEndAction(next, std::list<ObjectId> {mObjectId}) );
                     #ifdef COSIDIA_SAFE
                     mCurrentAction = action->getActionId();
                     #endif
