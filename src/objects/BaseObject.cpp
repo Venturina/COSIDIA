@@ -50,7 +50,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
                     auto next = mActionManager->activateNextAvailableAction();
                     getCoreP()->scheduleAction(makeEndAction(next, std::list<ObjectId> {mObjectId}) );
                     #ifdef COSIDIA_SAFE
-                    mCurrentAction = action->getActionId();
+                    mCurrentAction = update.getActionId();
                     #endif
                     startExecution(std::move(next));
                 }
