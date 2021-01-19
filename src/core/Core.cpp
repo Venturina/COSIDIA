@@ -153,15 +153,6 @@ void Core::setup()
         mThreads.emplace_back(&Core::startThread, this, x, workerThreads);
     }
 
-    // create dummy actions
-    // for (int x = 0; x < 10000; x++)
-    // {
-    //     std::cout << "create action" << x  << std::endl;
-    //     auto m = std::make_shared<MediumAccess>(this);
-    //     Action a(std::chrono::seconds{1} + std::chrono::nanoseconds{200}, Action::Kind::START, std::chrono::seconds{1} + std::chrono::milliseconds{x}, m);
-    //     mActions.insertAction(std::make_shared<Action>(a));
-    // }
-
     auto manager = std::make_shared<SimulationManager>();
     mObjectList.addToObjectContainer(manager->getObjectId(), manager);
 }
@@ -234,8 +225,6 @@ void Core::finishSimulation()
         mIsFinished = true;
     }
 
-//     unsigned long long timingBuffer[64ULL*1024ULL*1024ULL];
-// unsigned long long currId = 0;
     for(unsigned long long id = 0; id < currId; id ++) {
         std::cout << timingBuffer[id] <<  std::endl;
     }
