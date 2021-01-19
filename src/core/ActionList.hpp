@@ -12,7 +12,7 @@ namespace cosidia
 
 using ActionP = std::shared_ptr<Action>;
 using ConstActionP = std::shared_ptr<const Action>;
-using ActionMap = std::multimap<SimClock::time_point, ActionP>;
+using ActionMap = std::map<SimClock::time_point, std::list<ActionP>>;
 
 /**
  * ActionList is the Future Action Set of the Discrete Action Simulation
@@ -32,16 +32,21 @@ public:
     void insertAction(ActionP);
 
     /**
-     * Removes the next Action from the ActionList
-     * @return next Action
+     * Returns next time point at which an Action is available
      */
-    ActionP popNextAction();
+    SimClock::time_point getNextTimePoint();
 
     /**
-     * Returns next Action without removing it.
-     * @return next Action
+     * Remove actions for next time point fomr Action list
+     * @return next Actions
      */
-    ConstActionP getNextAction() const;
+    std::list<ActionP> popNextActions();
+
+    /**
+     * Returns next actions without removing it.
+     * @return next actions
+     */
+    std::list<ActionP> getNextActionList() const;
 
     /**
      * Removes specific Action from Action list

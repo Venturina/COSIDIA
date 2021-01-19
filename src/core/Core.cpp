@@ -176,27 +176,28 @@ void Core::startThread(int worker_this, int worker_total) {
 
 void Core::runSimulationLoop()
 {
-    mCurrentAction = mActions.getNextAction();
-    if(!mCurrentAction) {
+    mCurrentActionTime = mActions.getNextTimePoint();
+
+    if(mCurrentActionTime == SimClock::invalid()) {
         //sleep(5);
         finishSimulation();
     } else {
-        auto expiry = mClock->getDurationUntil(mCurrentAction->getStartTime());
-        mTimer.expires_after(mClock->getDurationUntil(mCurrentAction->getStartTime()));
+        mTimer.expires_after(mClock->getDurationUntil(mCurrentActionTime));
         mTimer.async_wait(boost::bind(&Core::executeActionOnFinishedTimer, this));
     }
 }
 
 void Core::executeActionOnFinishedTimer()
 {
-    if(!(mCurrentAction == mActions.getNextAction())) {
-        throw std::runtime_error("messed up with upcoming tasks");
-    } else {
-        enforce(mCurrentAction->getActionId()!=0, "Core: tried to execute Action without Action Id");
-        auto l = mCurrentAction->getAffected();
-        auto action = mActions.popNextAction();
-        enforce(mCurrentAction->getActionId() == action->getActionId(), "Core: Current Action != Popped Action");
+    auto actions = mActions.popNextActions();
+    enforce(mCurrentActionTime == actions.begin()->get()->getStartTime(), "Core: currentAction time corresponds not to fetched action time");
+    for(auto& action : actions) {
+
+        enforce(action->getActionId() != 0, "Core: tried to execute Action without Id");
+
+        //this part has to be removed after actions only have one component as affected
         std::list<ObjectId> endActionList;
+        auto l = action->getAffected();
         for(auto & elemId : l)
         {
             enforce(elemId.valid(), "Core: tried to execute object with invalid id");
@@ -212,9 +213,10 @@ void Core::executeActionOnFinishedTimer()
         if(!endActionList.empty()) {
             scheduleAction(makeEndAction(action, endActionList));
         }
-        //LOG_F(INFO, "delayed by: %d nanoseconds", (mClock.getSimTimeNow() - mCurrentAction->getStartTime()).count());
-        runSimulationLoop();
+
+        //-----------
     }
+    runSimulationLoop();
 }
 
 void Core::finishSimulation()

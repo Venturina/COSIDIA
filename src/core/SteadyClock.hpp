@@ -23,6 +23,16 @@ public:
         return time_point { d };
     }
 
+    constexpr static time_point invalid()
+    {
+        return atSecond(-1);
+    }
+
+    constexpr static time_point zero()
+    {
+        return atSecond(0);
+    }
+
     constexpr static time_point atSecond(SimClock::rep sec)
     {
         return at(std::chrono::seconds(sec));

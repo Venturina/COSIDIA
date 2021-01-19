@@ -49,24 +49,59 @@ TEST_CASE("Action List", "[ActionList]") {
         list.insertAction(a5); // start time = 2
         REQUIRE(list.getActionMap()->size() == 3);
         list.insertAction(a2); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 4);
+        REQUIRE(list.getActionMap()->size() == 3);
         list.insertAction(a3); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 5);
+        REQUIRE(list.getActionMap()->size() == 3);
         list.insertAction(a6); // start time = 3
-        REQUIRE(list.getActionMap()->size() == 6);
+        REQUIRE(list.getActionMap()->size() == 3);
+        // list layout
+        /*  Time    Actions
+            [1]     a1
+            [2]     a5, a2, a3
+            [3]     a4, a6
+        */
+
 
         // pop and get
-        REQUIRE(list.getActionMap()->begin()->second == a1);
-        REQUIRE(list.getNextAction() == a1);
-        REQUIRE(list.getActionMap()->size() == 6);
-        REQUIRE(list.popNextAction() == a1);
-        REQUIRE(list.getActionMap()->size() == 5);
+        REQUIRE(*(list.getNextActionList().begin()) == a1);
+        REQUIRE(list.getNextTimePoint() == a1->getStartTime());
+        REQUIRE(list.getActionMap()->size() == 3);
+
+        auto actions = list.popNextActions();
+        REQUIRE(actions.size() == 1);
+        REQUIRE(*(actions.begin()) == a1 );
+        REQUIRE(list.getActionMap()->size() == 2);
+        /*  Time    Actions
+            [2]     a5, a2, a3
+            [3]     a4, a6
+        */
+
+
+        REQUIRE(*(list.getNextActionList().begin()) == a5);
+        REQUIRE(list.getNextActionList().size() == 3);
+        REQUIRE(list.getNextTimePoint() == a5->getStartTime());
+        REQUIRE(list.getActionMap()->size() == 2);
+        /*  Time    Actions
+            [2]     a5, a2, a3
+            [3]     a4, a6
+        */
+
+        actions = list.popNextActions();
+        REQUIRE(actions.size() == 3);
+        REQUIRE(list.getActionMap()->size() == 1);
+        /*  Time    Actions
+            [3]     a4, a6
+        */
 
         // insert again
         list.insertAction(a1);
-        REQUIRE(list.getActionMap()->begin()->second == a1);
-        REQUIRE(list.getNextAction() == a1);
-        REQUIRE(list.getActionMap()->size() == 6);
+        REQUIRE(*(list.getNextActionList().begin()) == a1);
+        REQUIRE(list.getNextTimePoint() == a1->getStartTime());
+        REQUIRE(list.getActionMap()->size() == 2);
+        /*  Time    Actions
+            [1]     a1
+            [3]     a4, a6
+        */
     }
 
     SECTION("Remove") {
@@ -77,19 +112,66 @@ TEST_CASE("Action List", "[ActionList]") {
         list.insertAction(a2); // start time = 2
         list.insertAction(a3); // start time = 2
         list.insertAction(a6); // start time = 3
+        // list layout
+        /*  Time    Actions
+            [1]     a1
+            [2]     a5, a2, a3
+            [3]     a4, a6
+        */
 
         // wrong time hint
         REQUIRE(list.removeAction(a3, SimClock::atMillisecond(1)) == false);
-        REQUIRE(list.getActionMap()->size() == 6);
+        REQUIRE(list.getActionMap()->size() == 3);
 
         // actually remove
         REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == true);
-        REQUIRE(list.getActionMap()->size() == 5);
+        REQUIRE(list.getActionMap()->size() == 3);
+        /*  Time    Actions
+            [1]     a1
+            [2]     a5, a2
+            [3]     a4, a6
+        */
 
         // wrong pointer
         REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == false);
-        REQUIRE(list.getActionMap()->size() == 5);
+        REQUIRE(list.getActionMap()->size() == 3);
+
+        // remove with FAS
+        REQUIRE(list.removeAction(a1, SimClock::atMillisecond(1)) == true);
+        REQUIRE(list.getActionMap()->size() == 2);
+        /*  Time    Actions
+            [2]     a5, a2
+            [3]     a4, a6
+        */
+
+        auto l = list.getNextActionList();
+        REQUIRE(l.size() == 2);
+        auto lIterator = l.begin();
+        REQUIRE(lIterator->get() == a5.get());
+        lIterator++;
+        REQUIRE(lIterator->get() == a2.get());
+
+        // insert again
+        list.insertAction(a1);
+        REQUIRE(list.getActionMap()->size() == 3);
+        /*  Time    Actions
+            [1]     a1
+            [2]     a5, a2
+            [3]     a4, a6
+        */
+
+        REQUIRE(list.removeAction(a5, SimClock::atMillisecond(2)) == true);
+        REQUIRE(list.getActionMap()->size() == 3);
+        REQUIRE(list.removeAction(a2, SimClock::atMillisecond(2)) == true);
+        REQUIRE(list.getActionMap()->size() == 2);
+        /*  Time    Actions
+            [1]     a1
+            [3]     a4, a6
+        */
+        
     }
+
+
 
     SECTION("check order") {
         list.insertAction(a1); // start time = 1
@@ -98,49 +180,32 @@ TEST_CASE("Action List", "[ActionList]") {
         list.insertAction(a2); // start time = 2
         list.insertAction(a3); // start time = 2
         list.insertAction(a6); // start time = 3
-        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == true);
+        /*  Time    Actions
+            [1]     a1
+            [2]     a5, a2, a3
+            [3]     a4, a6
+        */
 
+        REQUIRE(list.removeAction(a2, SimClock::atMillisecond(2)) == true);
+        /*  Time    Actions
+            [1]     a1
+            [2]     a5, a3
+            [3]     a4, a6
+        */
 
-        auto pop1 = list.popNextAction();
-        auto pop2 = list.popNextAction();
-        auto pop3 = list.popNextAction();
-        auto pop4 = list.popNextAction();
-        auto pop5 = list.popNextAction();
+        auto pop1 = list.popNextActions();
+        auto pop2 = list.popNextActions();
+        auto pop3 = list.popNextActions();
 
-        // if key is equal, new inserted item will placed behind all items with same key
-        REQUIRE(pop1 == a1);
-        REQUIRE(pop2 == a5);
-        REQUIRE(pop3 == a2);
-        REQUIRE(pop4 == a4);
-        REQUIRE(pop5 == a6);
-        REQUIRE(list.getActionMap()->size() == 0);
+        REQUIRE(pop1.size() == 1);
+        REQUIRE(*(pop1.begin()) == a1);
+        REQUIRE(pop2.size() == 2);
+        REQUIRE(*(pop2.begin()) == a5);
+        REQUIRE(*(++pop2.begin()) == a3);
+        REQUIRE(pop3.size() == 2);
+        REQUIRE(*(pop3.begin()) == a4);
+        REQUIRE(*(++pop3.begin()) == a6);
 
-        list.insertAction(a1); // start time = 1
-        REQUIRE(list.getActionMap()->size() == 1);
-        list.insertAction(a3); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 2);
-        list.insertAction(a4); // start time = 3
-        REQUIRE(list.getActionMap()->size() == 3);
-        list.insertAction(a5); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 4);
-        list.insertAction(a2); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 5);
-        list.insertAction(a6); // start time = 3
-        REQUIRE(list.getActionMap()->size() == 6);
-
-        pop1 = list.popNextAction();
-        pop2 = list.popNextAction();
-        pop3 = list.popNextAction();
-        pop4 = list.popNextAction();
-        pop5 = list.popNextAction();
-        auto pop6 = list.popNextAction();
-
-        REQUIRE(pop1 == a1);
-        REQUIRE(pop2 == a3);
-        REQUIRE(pop3 == a5);
-        REQUIRE(pop4 == a2);
-        REQUIRE(pop5 == a4);
-        REQUIRE(pop6 == a6);
         REQUIRE(list.getActionMap()->size() == 0);
     }
 }
