@@ -9,32 +9,10 @@ namespace cosidia
 
 const Symbol Action::default_type = "default"_sym;
 
-Action::Action(Duration duration, Kind k, TimePoint start, ObjectId obj, ObjectId generator) : mDuration(duration), mKind(k), mStartTime(start), mGeneratingObject(generator)
+Action::Action(Duration duration, Kind k, TimePoint start, ObjectId obj, ObjectId generator) : mDuration(duration), mKind(k), mStartTime(start), mAffectedObject(obj), mGeneratingObject(generator)
 {
-    assert(obj.valid());
-    if(obj.valid()) {
-        addAffected(obj);
-    }
+    enforce(mAffectedObject.valid(), "Action: tried to add invalid object id to action");
     enforce(start >= TimePoint { Duration::zero() }, "Action: negative start time");
-    //auto objP = std::make_shared<object::BaseObject>(obj);
-    //mAffectedObjects.push_back(std::make_shared<object::BaseObject>(obj));
-}
-Action::Action(Duration duration, Kind k, TimePoint start, std::list<ObjectId> obj, ObjectId generator) : mDuration(duration), mKind(k), mStartTime(start), mGeneratingObject(generator)
-{
-    enforce(start >= TimePoint { Duration::zero() }, "Action: negative start time");
-    assert(std::all_of(obj.begin(), obj.end(), [](ObjectId id) { return id.valid(); }));
-    for(auto id : obj) {
-        if(id.valid()) {
-            addAffected(id);
-        }
-    }
-    //auto objP = std::make_shared<object::BaseObject>(obj);
-    //mAffectedObjects.push_back(std::make_shared<object::BaseObject>(obj));
-}
-
-void Action::addAffected(ObjectId id){
-    assert(id.valid());
-    mAffectedObjects.push_back(id);
 }
 
 void Action::setStartTime(TimePoint start)
@@ -71,23 +49,4 @@ std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action> beginAction)
     }
 }
 
-std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action> beginAction, std::list<ObjectId> affected)
-{
-    enforce(beginAction->getActionId() != 0, "Action: ActionId is 0");
-    enforce(beginAction->getBeginId() == 0, "Action: Tried to make endAction with already set beginActionId");
-    if(beginAction->getActionData() == nullptr) {
-        auto action = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), affected, beginAction->getGeneratingObject());
-        action->setType(beginAction->getType());
-        action->setBeginId(beginAction->getActionId());
-        return action;
-    } else {
-        auto a = std::make_shared<Action>(std::chrono::nanoseconds{0}, Action::Kind::END, beginAction->getStartTime() + beginAction->getDuration(), affected, beginAction->getGeneratingObject());
-        a->setActionData(beginAction->getActionData());
-        a->setType(beginAction->getType());
-        a->setBeginId(beginAction->getActionId());
-        return std::move(a);
-    }
-}
-
-
-}
+} // ns cosidia

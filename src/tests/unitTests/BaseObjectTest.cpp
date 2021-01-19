@@ -68,7 +68,7 @@ TEST_CASE( "BaseObject Test: Init and SelfAction", "[BaseObject]" )
         REQUIRE(parent->isInitialized());
 
         auto self = child->testCreateSelfAction(std::chrono::milliseconds(2), SimClock::atMillisecond(1));
-        REQUIRE(self->getAffected().front() == child->getObjectId());
+        REQUIRE(self->getAffected()== child->getObjectId());
         REQUIRE(self->getKind() == Action::Kind::START);
         REQUIRE(self->getStartTime() == SimClock::atMillisecond(1));
         REQUIRE(self->getDuration() == std::chrono::milliseconds(2));

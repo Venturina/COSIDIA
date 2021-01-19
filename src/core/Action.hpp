@@ -48,17 +48,6 @@ public:
     Action(Duration duration, Kind k, TimePoint start, ObjectId id, ObjectId generator);
 
     /**
-     * Creates an Action for a list of object
-     *
-     * @param duration Time span a action takes to be calculated
-     * @param k Kind of Action (Init, Start, End)
-     * @param start Time when the action should be started
-     * @param ids Objects which receive the Action
-     * @param generating object
-     */
-    Action(Duration duration, Kind k, TimePoint start, std::list<ObjectId> ids, ObjectId generator);
-
-    /**
      * Get start time of an Action
      */
     TimePoint getStartTime() const { return mStartTime; }
@@ -97,11 +86,11 @@ public:
     Kind getKind() const { return mKind; }
 
     /**
-     * Get all affected Objects
+     * Get affected object
      *
-     * @return const reference to List of all Affected Objects
+     * @return const reference to affected object
      */
-    const std::list<ObjectId>& getAffected() const { return mAffectedObjects; }
+    const ObjectId getAffected() const { return mAffectedObject; }
 
     /**
      * Set type string of Action: for more specific processing
@@ -139,13 +128,6 @@ public:
     int getBeginId() { return mBeginActionId; };
 
     /**
-     * Adds additional affected objects by ID
-     *
-     * @param id of the affected Object
-     */
-    void addAffected(ObjectId id);
-
-    /**
      * Returns the ID of the object which generated the Action
      *
      * @return ObjectID
@@ -176,9 +158,9 @@ protected:
     TimePoint mStartTime;
 
     /**
-     * All objects which are affected by this action
+     * Object wich is affected by the action
      */
-    std::list<ObjectId> mAffectedObjects;
+    ObjectId mAffectedObject;
 
 private:
     Kind mKind;

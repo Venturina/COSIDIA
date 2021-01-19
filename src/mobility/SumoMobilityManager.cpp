@@ -59,19 +59,17 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const S
     }
 
     // update vehicles
-    std::list<ObjectId> updateList;
+
     for(auto& sumoIdToUpdate: updaterResult.updateVehicles) {
         ObjectId id = mIdMapper(this).at(sumoIdToUpdate);
         if (id.valid()) {
             updaterResult.updateData->setUpdateForVehicle(sumoIdToUpdate).mObjectId = id;
-            updateList.push_back(id);
+            ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), id, mObjectId));
+            updateAction->setActionData(updaterResult.updateData);
+            updateAction->setType("SUMO"_sym);
+            coreTasks->actionsToSchedule.push_back(updateAction);
         }
     }
-
-    ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), updateList, mObjectId));
-    updateAction->setActionData(updaterResult.updateData);
-    updateAction->setType("SUMO"_sym);
-    coreTasks->actionsToSchedule.push_back(updateAction);
 
     return std::move(coreTasks);
 }

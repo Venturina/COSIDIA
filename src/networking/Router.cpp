@@ -153,7 +153,6 @@ void Router::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAct
         if(nextTp == mNextAction->getStartTime()) {  // a update is allready scheduled at the correct time point
             // do nothing here
         } else { // we have to cancel the update
-            enforce(mNextAction->getAffected().size()==1, "Router: want to cancel action with several recipients");
             data.actionToDelete = mNextAction;
         }
     }
@@ -163,10 +162,12 @@ void Router::scheduleTransmission(RouterUpdateData& data, const Action* currentA
 {
     if(mAccessInterface(this).hasTransmissionRequest()) {
         auto transmission = mAccessInterface(this).getTransmission(currentObjects);
-        auto transmissionAction = std::make_shared<Action>(std::chrono::milliseconds(2), Action::Kind::START, currentAction->getEndTime() + std::chrono::milliseconds(1), transmission.first, mObjectId);
-        transmissionAction->setType("transmission"_sym);
-        transmissionAction->setActionData(transmission.second);
-        data.actionsToSchedule.push_back(transmissionAction);
+        for(auto& obj : transmission.first) {
+            auto transmissionAction = std::make_shared<Action>(std::chrono::milliseconds(2), Action::Kind::START, currentAction->getEndTime() + std::chrono::milliseconds(1), obj, mObjectId);
+            transmissionAction->setType("transmission"_sym);
+            transmissionAction->setActionData(transmission.second);
+            data.actionsToSchedule.push_back(transmissionAction);
+        }
     }
 }
 

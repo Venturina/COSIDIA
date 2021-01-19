@@ -192,30 +192,21 @@ void Core::executeActionOnFinishedTimer()
     auto actions = mActions.popNextActions();
     enforce(mCurrentActionTime == actions.begin()->get()->getStartTime(), "Core: currentAction time corresponds not to fetched action time");
     for(auto& action : actions) {
-
         enforce(action->getActionId() != 0, "Core: tried to execute Action without Id");
 
-        //this part has to be removed after actions only have one component as affected
-        std::list<ObjectId> endActionList;
-        auto l = action->getAffected();
-        for(auto & elemId : l)
-        {
-            enforce(elemId.valid(), "Core: tried to execute object with invalid id");
-            auto obj = mObjectList.getObjectByIdFromCurrentContainer(elemId);
-            if (obj) {
-                if(obj->execute(action).valid()) {
-                    endActionList.push_back(elemId);
-                }
-            } else {
-                DLOG_F(INFO, "Core: dropped Action for deleted Object: %d", elemId);
-            }
-        }
-        if(!endActionList.empty()) {
-            scheduleAction(makeEndAction(action, endActionList));
-        }
+        auto affected = action->getAffected();
+        enforce(affected.valid(), "Core: tried to execute object with invalid id");
 
-        //-----------
+        auto obj = mObjectList.getObjectByIdFromCurrentContainer(affected);
+        if (obj) {
+            if(obj->execute(action).valid()) {
+                scheduleAction(makeEndAction(action));
+            }
+        } else {
+            DLOG_F(INFO, "Core: dropped Action for deleted Object: %d", affected);
+        }
     }
+
     runSimulationLoop();
 }
 
