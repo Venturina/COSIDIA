@@ -4,6 +4,7 @@
 #include "objects/CacheQuery.hpp"
 #include "objects/ObjectCache.hpp"
 #include "objects/ObjectList.hpp"
+#include "radio/Transmission.hpp"
 #include "vanetza/access/interface.hpp"
 
 namespace cosidia
@@ -17,7 +18,7 @@ public:
     virtual void request(const vanetza::access::DataRequest&, std::unique_ptr<vanetza::ChunkPacket>) override;
 
     bool hasTransmissionRequest() const { return mHasRequest; }
-    std::pair<const std::list<ObjectId>, std::shared_ptr<const AccesssInterfaceActionData>> getTransmission(std::shared_ptr<const ObjectContainer>);
+    std::shared_ptr<Transmission> getTransmission(std::shared_ptr<const ObjectContainer>);
 
     void initializeCache(std::string, ObjectId);
 
@@ -25,8 +26,8 @@ public:
 
 private:
     bool mHasRequest = false;
-    std::shared_ptr<AccesssInterfaceActionData> mInterfaceActionData;
-    std::shared_ptr<AccesssInterfaceActionData> getCurrentTransmission() { return std::move(mInterfaceActionData); }
+    std::shared_ptr<Transmission> mCurrentTransmission;
+    std::shared_ptr<Transmission> getCurrentTransmission() { return std::move(mCurrentTransmission); }
 
     std::unique_ptr<ObjectCache> mObjectCache;
     std::unique_ptr<CacheQuery> mCacheQuery;
