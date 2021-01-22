@@ -93,6 +93,12 @@ std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, Co
     return std::weak_ptr<BaseObject>();
 }
 
+std::weak_ptr<BaseObject> getSiblingByName(ObjectId id, std::string name, ConstObjectContainer_ptr objects) 
+{
+    auto obj = objects->getObject(id);
+    return getSiblingByName(obj.get(), name, objects);
+}
+
 std::weak_ptr<BaseObject> getParentByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects)
 {
     for(const auto parentId : obj->getParents()) {
