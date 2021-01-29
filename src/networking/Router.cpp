@@ -30,6 +30,7 @@ void Router::initObject(std::shared_ptr<Action> action)
     const auto objList = getCoreP()->getCurrentObjectList();
     auto mobility = getSiblingByName(this, "VehicleObject", objList);
     mVehicleObject = std::static_pointer_cast<VehicleObject>(mobility.lock());
+    mRadioObject = std::static_pointer_cast<Radio>(objList->getUnique("Radio"));
 
     auto nextAction = createSelfAction(std::chrono::milliseconds(2), action->getStartTime() + std::chrono::milliseconds(mRandomNumber.get()));
     nextAction->setType("initRouter"_sym);
@@ -104,10 +105,10 @@ RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, st
     if(mInitDone) {
         commonActions(data, action, context, currentObjects);
         DLOG_F(ERROR, "Router: received transmission");
-        auto transmission = std::dynamic_pointer_cast<const AccesssInterfaceActionData>(action->getActionData());
-        auto dataRequest = transmission->getDataRequest();
+        auto transmission = std::dynamic_pointer_cast<const Transmission>(action->getActionData());
+        auto dataRequest = transmission->getRequest();
         auto packetPtr = transmission->getPacket();
-        vanetza::geonet::Router::UpPacketPtr upPacket { new vanetza::UpPacket(*packetPtr) };
+        vanetza::geonet::Router::UpPacketPtr upPacket { new vanetza::UpPacket(packetPtr) };
         mRouter(this).indicate(std::move(upPacket), dataRequest.source_addr, dataRequest.destination_addr);
     }
     return data;
@@ -132,6 +133,10 @@ void Router::endExecution(std::shared_ptr<Action> action) {
         }
         if(data.actionToDelete) {
             getCoreP()->removeAction(data.actionToDelete);
+        }
+        if(data.transmission) {
+            data.transmission->setupReceiverContext();
+            data.transmission->addEmitter(mObjectId, mVehicleObject.lock()->getContext());
         }
     } else {
         throw std::runtime_error("Router: wrong EndAction received");
@@ -162,12 +167,11 @@ void Router::scheduleTransmission(RouterUpdateData& data, const Action* currentA
 {
     if(mAccessInterface(this).hasTransmissionRequest()) {
         auto transmission = mAccessInterface(this).getTransmission(currentObjects);
-        for(auto& obj : transmission.first) {
-            auto transmissionAction = std::make_shared<Action>(std::chrono::milliseconds(2), Action::Kind::START, currentAction->getEndTime() + std::chrono::milliseconds(1), obj, mObjectId);
-            transmissionAction->setType("transmission"_sym);
-            transmissionAction->setActionData(transmission.second);
-            data.actionsToSchedule.push_back(transmissionAction);
-        }
+        data.transmission = transmission;
+        auto transmissionAction = std::make_shared<Action>(std::chrono::milliseconds(2), Action::Kind::START, currentAction->getEndTime() + std::chrono::milliseconds(1), mRadioObject.lock()->getObjectId(), mObjectId);
+        transmissionAction->setType("transmissionStart"_sym);
+        transmissionAction->setActionData(transmission);
+        data.actionsToSchedule.push_back(transmissionAction);
     }
 }
 

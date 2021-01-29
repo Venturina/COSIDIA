@@ -10,7 +10,7 @@ template <class T>
 class ContextContainer {
 public:
 
-    std::shared_ptr<const T> getElement() {
+    std::shared_ptr<const T> getElement() const {
         enforce(std::this_thread::get_id() == getCoreThreadId(), "Tried to fetch context from wrong thread");
         return mElement;
     }

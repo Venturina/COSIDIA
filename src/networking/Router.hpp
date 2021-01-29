@@ -6,6 +6,7 @@
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectCache.hpp"
 #include "objects/VehicleObject.hpp"
+#include "radio/Radio.hpp"
 #include "utils/PureLocal.hpp"
 
 #include "vanetza/dcc/interface.hpp"
@@ -22,6 +23,7 @@ struct RouterUpdateData
 {
     std::list<std::shared_ptr<Action>> actionsToSchedule;
     std::shared_ptr<Action> actionToDelete;
+    std::shared_ptr<Transmission> transmission;
 };
 
 class Router : public BaseObject
@@ -44,6 +46,7 @@ private:
 
     /* do not touch this variables from other thread than main */
     std::weak_ptr<VehicleObject> mVehicleObject;
+    std::weak_ptr<Radio> mRadioObject;
     boost::fibers::future<RouterUpdateData> mFuture;
 
     /* pure locals, do not return */

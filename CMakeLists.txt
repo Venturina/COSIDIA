@@ -46,8 +46,10 @@ add_library(cosidia STATIC
         src/objects/SimulationManager.cpp
         src/objects/TemporaryObject.cpp
         src/objects/VehicleObject.cpp
+        src/radio/InterferenceDecider.cpp
         src/radio/MediumAccess.cpp
         src/radio/Microchannel.cpp
+        src/radio/PhysicalDecider.cpp
         src/radio/Transmission.cpp
         src/radio/Radio.cpp
         src/utils/Geometry.cc
