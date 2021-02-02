@@ -16,7 +16,7 @@ public:
 class MessagesForEveryonePhysicalDecider : public PhysicalDecider
 {
 public:
-    std::list<ObjectId> decideOnPhysical(const Transmission*);
+    std::list<ObjectId> decideOnPhysical(const Transmission*) override;
 };
 
 
@@ -26,7 +26,7 @@ class SimpleDistancePhysicalDecider : public PhysicalDecider
 public:
     SimpleDistancePhysicalDecider(int distance) : mDistance(distance) {};
 
-    std::list<ObjectId> decideOnPhysical(const Transmission*);
+    std::list<ObjectId> decideOnPhysical(const Transmission*) override;
 
 private:
     int mDistance;  // transmission distance in meters
