@@ -39,6 +39,7 @@ public:
     const vanetza::access::DataRequest& getRequest() const { return mRequest; }
     vanetza::ChunkPacket getPacket() const { return *mPacket; }
     Position getTransmitterPosition() const { return mEmitterContext->position; }
+    double getTransmissionPower() const { return 23.0; } // dBm
 
 private:
     ObjectId mEmitter;
