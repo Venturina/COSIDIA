@@ -2,6 +2,7 @@
 
 #include "objects/ObjectId.hpp"
 #include "radio/Transmission.hpp"
+#include <random>
 
 namespace cosidia
 {
@@ -30,6 +31,20 @@ public:
 
 private:
     int mDistance;  // transmission distance in meters
+};
+
+
+class LogDistancePhysicalDecider : public PhysicalDecider
+{
+public:
+    LogDistancePhysicalDecider(double pathLossExponent = 2.0, double sigma = 0.0);
+
+    std::list<ObjectId> decideOnPhysical(const Transmission*) override;
+
+private:
+    std::mt19937 mRandomGen;
+    double mPathLossExponent;
+    std::normal_distribution<double> mNormalNoise;
 };
 
 } // namespace cosidia
