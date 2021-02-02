@@ -14,7 +14,7 @@ cosidia::Angle angle_cast(TraCIAngle traci)
     // convert to radian
     opp *= pi / 180.0;
 
-    return cosidia::Angle(opp * boost::units::si::radian);
+    return cosidia::Angle::from_rad(opp);
 }
 
 TraCIAngle angle_cast(cosidia::Angle opp)

@@ -5,57 +5,31 @@
 #include <boost/geometry/geometries/geometries.hpp>
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/ring.hpp>
-#include <boost/units/quantity.hpp>
-#include <boost/units/systems/angle/degrees.hpp>
-#include <boost/units/systems/si/length.hpp>
-#include <boost/units/systems/si/plane_angle.hpp>
+#include <boost/math/constants/constants.hpp>
 #include <vector>
 
 namespace cosidia
 {
-
-/**
- * Position represents a point in OMNeT++'s coordinate system
- *
- * Cartesian coordinate system of OMNeT++:
- * - origin is in the top left corner
- * - x axis is growing to the right
- * - y axis is growing to the bottom
- *
- * In accordance with INET, scalar values are in meters.
- */
 struct Position
 {
-    using value_type = boost::units::quantity<boost::units::si::length>;
+    using value_type = double;
 
+    explicit Position(double px, double py) : x(px), y(py) {}
     Position() = default;
     Position(const Position&) = default;
     Position& operator=(const Position&) = default;
 
-    explicit Position(double px, double py) :
-        x(px * boost::units::si::meter),
-        y(py * boost::units::si::meter) {}
-
-    Position (value_type px , value_type py):
-        x(px), y(py) {}
-
-    value_type x;
-    value_type y;
+    value_type x = 0.0;
+    value_type y = 0.0;
 };
 
 bool operator==(const Position&, const Position&);
 bool operator!=(const Position&, const Position&);
 Position::value_type distance(const Position&, const Position&);
 
-
-/**
- * GeoPosition represents a horizontal geodetic datum (latitude and longitude)
- *
- * If not otherwise noted the datum refers to the WGS84 ellipsoid
- */
 struct GeoPosition
 {
-    using value_type = boost::units::quantity<boost::units::degree::plane_angle>;
+    using value_type = double;
 
     GeoPosition() = default;
     GeoPosition(const GeoPosition&) = default;
@@ -65,26 +39,21 @@ struct GeoPosition
     value_type longitude;
 };
 
-
-/**
- * OMNeT++ angle
- * - measured in radian
- * - 0 is headed east
- * - counter-clockwise orientation
- */
 struct Angle
 {
-    using value_type = boost::units::quantity<boost::units::si::plane_angle>;
+    using value_type = double;
+    static constexpr double pi = boost::math::double_constants::pi;
 
     Angle() = default;
     Angle(const Angle&) = default;
     Angle& operator=(const Angle&) = default;
 
-    Angle(value_type angle) : value(angle) {}
-    explicit Angle(double rad) : value(rad * boost::units::si::radian) {}
+    explicit constexpr Angle(value_type angle) : value(angle) {}
+    static constexpr Angle from_rad(double rad) { return Angle(rad); }
+    static constexpr Angle from_deg(double deg) { return Angle(deg / 180.0 * pi); }
 
-    double radian() const;
-    double degree() const;
+    constexpr double radian() const { return value; }
+    constexpr double degree() const { return value * 180.0 / pi; }
     value_type getTrueNorth() const;
 
     value_type value;
@@ -102,14 +71,14 @@ BOOST_GEOMETRY_DETAIL_SPECIALIZE_POINT_TRAITS(cosidia::Position, 2, double, cs::
 
 template<> struct access<cosidia::Position, 0>
 {
-    static inline double get(const cosidia::Position& pos) { return pos.x.value(); }
-    static inline void set(cosidia::Position& pos, double v) { pos.x = cosidia::Position::value_type::from_value(v); }
+    static inline double get(const cosidia::Position& pos) { return pos.x; }
+    static inline void set(cosidia::Position& pos, double v) { pos.x = v; }
 };
 
 template<> struct access<cosidia::Position, 1>
 {
-    static inline double get(const cosidia::Position& pos) { return pos.y.value(); }
-    static inline void set(cosidia::Position& pos, double v) { pos.y = cosidia::Position::value_type::from_value(v); }
+    static inline double get(const cosidia::Position& pos) { return pos.y; }
+    static inline void set(cosidia::Position& pos, double v) { pos.y = v; }
 };
 
 template<> struct point_order<std::vector<cosidia::Position>>
@@ -125,20 +94,6 @@ template<> struct closure<std::vector<cosidia::Position>>
 } // namespace traits
 } // namespace geometry
 } // namespace boost
-
-namespace artery
-{
-namespace geometry
-{
-
-using Point = boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>;
-using Polygon = boost::geometry::model::polygon<Point, false, false, std::vector>;
-using Box = boost::geometry::model::box<Point>;
-using LineString = boost::geometry::model::linestring<Point>;
-using Ring = boost::geometry::model::ring<Point, true, false>;
-
-} // namespace geometry
-} // namespace artery
 
 #endif /* GEOMETRY_H_W8CYK9GM */
 

@@ -12,8 +12,8 @@ cosidia::Position position_cast(const Boundary& boundary, const TraCIPosition& p
 
 TraCIPosition position_cast(const Boundary& boundary, const cosidia::Position& pos)
 {
-    const double x = pos.x.value() + boundary.lowerLeftPosition().x;
-    const double y = boundary.upperRightPosition().y - pos.y.value();
+    const double x = pos.x + boundary.lowerLeftPosition().x;
+    const double y = boundary.upperRightPosition().y - pos.y;
     TraCIPosition tmp;
     tmp.x = x;
     tmp.y = y;
