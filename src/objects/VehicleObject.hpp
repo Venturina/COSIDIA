@@ -5,6 +5,7 @@
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectContext.hpp"
 #include "utils/ContextContainer.hpp"
+#include "utils/Geometry.h"
 #include "utils/ReadOnly.hpp"
 #include <boost/optional.hpp>
 
@@ -17,8 +18,8 @@ struct VehicleObjectContext
 {
     double speed = 0;  /* meter per second */
 
-    double longitude = 0; /* plane angle (-180 - 180)  */
-    double latitude = 0;  /* plane angle (-180 - 180)  */
+    GeoPosition geo;
+    Position position;
 
     double heading = 0; /* plane angle (-180 - 180)  */
 

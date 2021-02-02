@@ -6,6 +6,7 @@
 
 #include <map>
 #include <string>
+#include <tuple>
 
 
 namespace cosidia
@@ -15,12 +16,11 @@ namespace cosidia
 class VehicleUpdate
 {
 public:
-    double mSpeed;
-
+    std::tuple<double, double, double> mPosition;
     double mLongitude;
     double mLatitude;
-
-    double mSumoHeading;
+    double mHeading;
+    double mSpeed;
 
     std::string mVehicle;
     ObjectId mObjectId = ObjectId::stub();

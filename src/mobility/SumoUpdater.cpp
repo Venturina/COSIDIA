@@ -100,6 +100,7 @@ void SumoUpdater::getVehicleUpdate(const libsumo::TraCIResults& vehicleVars, Veh
                 enforce(pos, "SumoUpdater: Could not cast TraCIPosition");
                 auto geoPos = mLiteApi.convertGeo(*pos);
 
+                update.mPosition = std::make_tuple(pos->x, pos->y, pos->z);
                 update.mLatitude = geoPos.latitude;
                 update.mLongitude = geoPos.longitude;
 
@@ -109,7 +110,7 @@ void SumoUpdater::getVehicleUpdate(const libsumo::TraCIResults& vehicleVars, Veh
                 auto heading = dynamic_cast<const libsumo::TraCIDouble*>(vehicleVar.second.get());
                 enforce(heading, "SumoUpdater: could not cast TraCI Heading variable");
 
-                update.mSumoHeading = heading->value;
+                update.mHeading = heading->value;
 
                 break;
             }

@@ -50,12 +50,13 @@ VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> actio
     auto currentUpdate = actionData->getUpdateForVehicle(mExternalId.get());
 
     newContext->speed = currentUpdate.mSpeed;
-    newContext->heading = currentUpdate.mSumoHeading;
-    newContext->longitude = currentUpdate.mLongitude;
-    newContext->latitude = currentUpdate.mLatitude;
+    newContext->heading = currentUpdate.mHeading;
+    std::tie(newContext->position.x, newContext->position.y, std::ignore) = currentUpdate.mPosition;
+    newContext->geo.longitude = currentUpdate.mLongitude;
+    newContext->geo.latitude = currentUpdate.mLatitude;
     newContext->lastUpdate = action->getEndTime();
 
-    DLOG_F(WARNING, "vehicle object %s id %d with speed %f, heading %f and position: %f / %f", mExternalId.get().c_str(), mObjectId, context->speed, context->heading, context->longitude, context->latitude);
+    DLOG_F(WARNING, "vehicle object %s id %d with speed %f, heading %f and position: %f / %f", mExternalId.get().c_str(), mObjectId, context->speed, context->heading, context->geo.longitude, context->geo.latitude);
     VehicleObjectData data;
     data.updatedContext = newContext;
     return data;

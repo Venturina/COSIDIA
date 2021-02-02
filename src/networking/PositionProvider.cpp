@@ -15,8 +15,8 @@ void PositionProvider::updatePosition(const VehicleObjectContext& context)
     mPositionFix.confidence.semi_minor = 5.0 * si::meter;
     mPositionFix.confidence.semi_major = 5.0 * si::meter;
 
-    mPositionFix.longitude = context.longitude * degrees;
-    mPositionFix.latitude = context.latitude * degrees;
+    mPositionFix.longitude = context.geo.longitude * degrees;
+    mPositionFix.latitude = context.geo.latitude * degrees;
 
     mPositionFix.course.assign(context.heading * north, north + 3.0 * degree);
     mPositionFix.speed.assign(context.speed * si::meter_per_second, 1.0 * si::meter_per_second);
