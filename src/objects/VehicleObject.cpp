@@ -12,13 +12,6 @@
 namespace cosidia
 {
 
-
-VehicleObjectContext& VehicleObjectContext::operator=(VehicleObjectContext* other)
-{
-    speed = other->speed;
-    return *this;
-}
-
 VehicleObject::VehicleObject() : BaseObject()
 {
     mObjectName = "VehicleObject";

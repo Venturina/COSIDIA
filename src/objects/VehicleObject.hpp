@@ -24,8 +24,6 @@ struct VehicleObjectContext
     double heading = 0; /* plane angle (-180 - 180)  */
 
     SimClock::time_point lastUpdate;
-
-    VehicleObjectContext& operator=(VehicleObjectContext* other);
 };
 
 struct VehicleObjectData
