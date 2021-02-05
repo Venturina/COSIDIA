@@ -37,6 +37,7 @@ public:
 private:
     RouterUpdateData executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
     RouterUpdateData transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
+    RouterUpdateData requestReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
 
     RouterUpdateData initRouter(std::shared_ptr<Action> action);
 

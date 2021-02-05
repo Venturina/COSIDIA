@@ -1,3 +1,4 @@
+#include "application/ServiceActionData.hpp"
 #include "core/Core.hpp"
 #include "networking/AccessInterface.hpp"
 #include "networking/DccPassThrough.hpp"
@@ -5,9 +6,13 @@
 #include "networking/VanetzaDefs.hpp"
 #include "output/TimingScope.hpp"
 
-#include "vanetza/dcc/bursty_transmit_rate_control.hpp"
-#include "vanetza/dcc/flow_control.hpp"
-#include "vanetza/dcc/fully_meshed_state_machine.hpp"
+#include <vanetza/btp/header.hpp>
+#include <vanetza/btp/header_conversion.hpp>
+#include <vanetza/common/byte_buffer_convertible.hpp>
+#include <vanetza/dcc/bursty_transmit_rate_control.hpp>
+#include <vanetza/dcc/flow_control.hpp>
+#include <vanetza/dcc/fully_meshed_state_machine.hpp>
+#include <vanetza/geonet/data_confirm.hpp>
 
 
 #include "loguru/loguru.hpp"
@@ -58,6 +63,12 @@ void Router::startExecution(std::shared_ptr<Action> action) {
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
+    } else if(action->getType() == "ServiceRequest"_sym) {
+        boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
+            pt (std::bind(&Router::requestReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+        mFuture = pt.get_future();
+        boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
     } else {
         std::cout << action->getType().value() << std::endl;
         throw std::runtime_error("Router: wrong BeginAction received");
@@ -102,6 +113,62 @@ RouterUpdateData Router::executeUpdate(std::shared_ptr<Action> action, std::shar
     return data;
 }
 
+RouterUpdateData Router::requestReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
+{
+    RouterUpdateData data;
+    if(mInitDone) {
+        commonActions(data, action, context, currentObjects);
+        DLOG_F(ERROR, "Router: transmission request");
+        auto serviceData = std::dynamic_pointer_cast<const ServiceActionData>(action->getActionData());
+        enforce(serviceData, "Router: request not available");
+        auto packet = serviceData->packet;
+        auto dataRequest = serviceData->request;
+
+        vanetza::btp::HeaderB btp_header;
+        btp_header.destination_port = serviceData->port;
+        btp_header.destination_port_info = vanetza::host_cast<uint16_t>(0);
+        packet->layer(vanetza::OsiLayer::Transport) = btp_header;
+
+        switch (dataRequest.transport_type) {
+        case vanetza::geonet::TransportType::SHB: {
+            vanetza::geonet::GbcDataRequest gbcRequest(mMib(this));
+            gbcRequest.upper_protocol = vanetza::geonet::UpperProtocol::BTP_B;
+            gbcRequest.communication_profile = dataRequest.communication_profile;
+            gbcRequest.its_aid = dataRequest.its_aid;
+            if(dataRequest.maximum_lifetime) {
+                gbcRequest.maximum_lifetime = dataRequest.maximum_lifetime.get();
+            }
+            gbcRequest.repetition = dataRequest.repetition;
+            gbcRequest.traffic_class = dataRequest.traffic_class;
+
+            auto confirm = mRouter(this).request(gbcRequest, std::make_unique<vanetza::DownPacket>(*packet));
+            enforce(confirm.accepted(), "Router: Request was not accepted");
+            break;
+        }
+        case vanetza::geonet::TransportType::GBC: {
+            vanetza::geonet::ShbDataRequest shbRequest(mMib(this));
+            shbRequest.upper_protocol = vanetza::geonet::UpperProtocol::BTP_B;
+            shbRequest.communication_profile = dataRequest.communication_profile;
+            shbRequest.its_aid = dataRequest.its_aid;
+            if(dataRequest.maximum_lifetime) {
+                shbRequest.maximum_lifetime = dataRequest.maximum_lifetime.get();
+            }
+            shbRequest.repetition = dataRequest.repetition;
+            shbRequest.traffic_class = dataRequest.traffic_class;
+
+            auto confirm = mRouter(this).request(shbRequest, std::make_unique<vanetza::DownPacket>(*packet));
+            enforce(confirm.accepted(), "Router: Request was not accepted");
+            break;
+        }
+        default:
+            // TODO remaining transport types are not implemented
+            break;
+        }
+
+    }
+    return data;
+}
+
 RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
     COSIDIA_TIMING(action);
@@ -130,7 +197,7 @@ void Router::commonActions(RouterUpdateData& data, std::shared_ptr<Action> actio
 }
 
 void Router::endExecution(std::shared_ptr<Action> action) {
-    if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym) {
+    if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym || action->getType() == "ServiceRequest"_sym) {
         auto data = mFuture.get();
         for(auto action : data.actionsToSchedule) {
             action->scheduleStartHandler();
