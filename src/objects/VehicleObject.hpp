@@ -16,10 +16,10 @@ namespace cosidia
 
 struct VehicleObjectContext
 {
-    double speed = 0;  /* meter per second */
+    double speed = 0;   /* meter per second */
 
-    GeoPosition geo;
-    Position position;
+    GeoPosition geo;    /* degree */
+    Position position;  /* meter */
 
     double heading = 0; /* plane angle (-180 - 180)  */
 
