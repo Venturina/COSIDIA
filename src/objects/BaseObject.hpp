@@ -2,6 +2,7 @@
 #define _BASE_OBJECT_HPP_
 
 #include "core/DurationAction.hpp"
+#include "objects/ActionHistory.hpp"
 #include "objects/ObjectActionManager.hpp"
 #include "objects/ObjectContext.hpp"
 #include "objects/ObjectId.hpp"
@@ -53,6 +54,7 @@ protected:
 
     #ifdef COSIDIA_SAFE
     int mCurrentAction = 0;
+    std::unique_ptr<ActionHistory> mHistory;
     #endif
 };
 

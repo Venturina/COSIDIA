@@ -11,6 +11,9 @@ BaseObject::BaseObject() :
     mObjectId(ObjectId::stub()),
     mActionManager(new ObjectActionManager())
 {
+    #ifdef COSIDIA_SAFE
+    mHistory.reset(new ActionHistory(10));
+    #endif
 }
 
 BaseObject::~BaseObject()
@@ -63,6 +66,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
                 //getCoreP()->scheduleAction(makeEndAction(action));
                 #ifdef COSIDIA_SAFE
                 mCurrentAction = action->getActionId();
+                mHistory->addAction(action);
                 #endif
                 startExecution(std::move(action));
                 return mObjectId;
@@ -87,6 +91,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
                     getCoreP()->scheduleAction(makeEndAction(next));
                     #ifdef COSIDIA_SAFE
                     mCurrentAction = update.getActionId();
+                    mHistory->addAction(action);
                     #endif
                     startExecution(std::move(next));
                 }
