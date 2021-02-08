@@ -102,7 +102,7 @@ public:
      *
      * @return ObjectID
      */
-    ObjectId getGeneratingObject() { return mGeneratingObject; }
+    ObjectId getGeneratingObject() const { return mGeneratingObject; }
 
     /**
      * Schedule handlers in Future Action List
