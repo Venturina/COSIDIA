@@ -134,7 +134,7 @@ void CaService::makeCam(vanetza::asn1::Cam& message, Action* action, const Vehic
     auto microseconds = Runtime::convert(action->getStartTime()).time_since_epoch(); //TODO switch to UTC
     auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(microseconds).count();
 
-    cam.generationDeltaTime = milliseconds;
+    cam.generationDeltaTime = milliseconds % 65536;
 
     auto longitude = context->geo.longitude * 1000 * 1000 * boost::units::degree::degrees * boost::units::si::micro; // TODO Ask raphael
     auto latitude = context->geo.latitude * 1000 * 1000 * boost::units::degree::degrees * boost::units::si::micro;
