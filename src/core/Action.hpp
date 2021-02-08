@@ -76,7 +76,7 @@ public:
     /**
      * Get type string of Action
      */
-    const Symbol& getType() { return mType; }
+    const Symbol& getType() const { return mType; }
 
     /**
      * Set ID of Action
