@@ -49,7 +49,7 @@ Radio::Result Radio::startTransmission(ActionP action,  std::shared_ptr<const Ra
     contextCopy->insert(RadioContextPair(transmission, recipients));
 
     //TODO: decide how long the transmission takes and schedule Action accordingly
-    auto newAction = createSelfAction(std::chrono::milliseconds(2), action->getStartTime() + std::chrono::milliseconds(2));
+    auto newAction = createSelfAction(std::chrono::milliseconds(2), action->getStartTime() + action->getDuration() + std::chrono::milliseconds(2));
 
 
     newAction->setType("transmissionEnd"_sym);
@@ -72,7 +72,7 @@ Radio::Result Radio::endTransmission(ActionP action, std::shared_ptr<const Radio
 
     auto receivers = mDecider->decideOnInterference(transmission, context.get());
     for(auto& receiver : receivers) {
-        std::shared_ptr<Action> newAction(new Action(std::chrono::milliseconds(2), Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(1) , receiver ,mObjectId));
+        std::shared_ptr<Action> newAction(new Action(std::chrono::milliseconds(2), Action::Kind::START, action->getStartTime() + action->getDuration() + std::chrono::milliseconds(1) , receiver ,mObjectId));
         newAction->setType("transmission"_sym);
         newAction->setActionData(transmission);
         result.actionsToSchedule.push_back(newAction);
