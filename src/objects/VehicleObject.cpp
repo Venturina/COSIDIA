@@ -2,6 +2,7 @@
 #include "core/Core.hpp"
 #include "guiConnector/gui.hpp"
 #include "objects/VehicleObject.hpp"
+#include "output/TimingScope.hpp"
 #include "utils/enforce.hpp"
 
 #include <boost/fiber/future.hpp>
@@ -35,6 +36,7 @@ void VehicleObject::startExecution(std::shared_ptr<Action> action)
 
 VehicleObjectData VehicleObject::executeSumoUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context)
 {
+    COSIDIA_TIMING(action);
     auto newContext = std::make_shared<VehicleObjectContext>();
     auto actionData = std::dynamic_pointer_cast<const VehicleUpdateActionData>(action->getActionData());
     enforce(actionData, "VehicleObject: Could not cast ActionData to VehicleUpdateActionData");

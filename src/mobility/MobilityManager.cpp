@@ -2,6 +2,7 @@
 #include "mobility/MobilityManager.hpp"
 #include "objects/ObjectRemover.hpp"
 #include "objects/VehicleObject.hpp"
+#include "output/TimingScope.hpp"
 #include "utils/AnyMap.hpp"
 #include <boost/fiber/future.hpp>
 #include <loguru/loguru.hpp>
@@ -57,6 +58,7 @@ void MobilityManager::fetchVehicleIds(ConstObjectContainer_ptr objectList)
 
 std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shared_ptr<Action> action, ConstObjectContainer_ptr objectList)
 {
+    COSIDIA_TIMING(action);
     auto data = std::make_shared<MobilityManagerTasks>();
     DLOG_F(INFO, "MobilityManager: in fiber");
     fetchVehicleIds(objectList);

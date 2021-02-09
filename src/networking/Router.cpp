@@ -3,6 +3,7 @@
 #include "networking/DccPassThrough.hpp"
 #include "networking/Router.hpp"
 #include "networking/VanetzaDefs.hpp"
+#include "output/TimingScope.hpp"
 
 #include "vanetza/dcc/bursty_transmit_rate_control.hpp"
 #include "vanetza/dcc/flow_control.hpp"
@@ -65,6 +66,7 @@ void Router::startExecution(std::shared_ptr<Action> action) {
 
 RouterUpdateData Router::initRouter(std::shared_ptr<Action> action)
 {
+    COSIDIA_TIMING(action);
     mRuntime.constructElement(this, Runtime::makeRuntime(action->getStartTime()));
     mRouter.constructElement(this, mRuntime(this), mMib(this));
 
@@ -93,6 +95,7 @@ RouterUpdateData Router::initRouter(std::shared_ptr<Action> action)
 
 RouterUpdateData Router::executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
+    COSIDIA_TIMING(action);
     RouterUpdateData data;
     commonActions(data, action, context, currentObjects);
 
@@ -101,6 +104,7 @@ RouterUpdateData Router::executeUpdate(std::shared_ptr<Action> action, std::shar
 
 RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
+    COSIDIA_TIMING(action);
     RouterUpdateData data;
     if(mInitDone) {
         commonActions(data, action, context, currentObjects);

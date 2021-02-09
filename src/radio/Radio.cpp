@@ -1,7 +1,7 @@
 #include "radio/InterferenceDecider.hpp"
 #include "radio/PhysicalDecider.hpp"
 #include "radio/Radio.hpp"
-
+#include "output/TimingScope.hpp"
 
 #include "loguru/loguru.hpp"
 
@@ -42,6 +42,7 @@ void Radio::startExecution(std::shared_ptr<Action> action)
 
 Radio::Result Radio::startTransmission(ActionP action,  std::shared_ptr<const RadioContext> context)
 {
+    COSIDIA_TIMING(action);
     auto contextCopy = std::make_shared<RadioContext>(*context);
     auto transmission = std::static_pointer_cast<const Transmission>(action->getActionData());
 
@@ -64,6 +65,7 @@ Radio::Result Radio::startTransmission(ActionP action,  std::shared_ptr<const Ra
 
 Radio::Result Radio::endTransmission(ActionP action, std::shared_ptr<const RadioContext> context)
 {
+    COSIDIA_TIMING(action);
     auto contextCopy = std::make_shared<RadioContext>(*context);
 
     //TODO remove current transmission from context
