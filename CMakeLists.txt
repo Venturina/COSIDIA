@@ -51,6 +51,7 @@ add_library(cosidia STATIC
         src/objects/SimulationManager.cpp
         src/objects/TemporaryObject.cpp
         src/objects/VehicleObject.cpp
+        src/output/TimingScope.cpp
         src/output/SqliteBackend.cpp
         src/radio/InterferenceDecider.cpp
         src/radio/MediumAccess.cpp
@@ -94,6 +95,11 @@ target_link_libraries(cosidia PUBLIC
 option(COSIDIA_SAFE_MODE "Build COSIDIA with safety runtime checks" ON)
 if(COSIDIA_SAFE_MODE)
         target_compile_definitions(cosidia PUBLIC COSIDIA_SAFE)
+endif()
+
+option(COSIDIA_MEASURE_TIMING "Build COSIDIA with timing probes" ON)
+if(COSIDIA_MEASURE_TIMING)
+        target_compile_definitions(cosidia PUBLIC COSIDIA_MEASURE_TIMING)
 endif()
 
 macro(add_catch_test NAME)
