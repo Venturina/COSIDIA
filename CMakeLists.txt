@@ -17,6 +17,11 @@ set(VANETZA_EXPORT_PACKAGE OFF)
 set(VANETZA_INSTALL OFF)
 add_subdirectory(extern/vanetza)
 
+set(SQLITECPP_RUN_CPPCHECK OFF)
+set(SQLITECPP_RUN_CPPLINT OFF)
+set(SQLITECPP_USE_STATIC_RUNTIME OFF)
+add_subdirectory(extern/sqlitecpp)
+
 add_library(cosidia STATIC
         extern/loguru/loguru.cpp
 
@@ -81,6 +86,7 @@ target_link_libraries(cosidia PUBLIC
         yaml-cpp
         pthread
         PkgConfig::xxhash
+        SQLiteCpp
         TBB::tbb
 )
 
