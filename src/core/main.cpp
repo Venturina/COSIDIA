@@ -11,6 +11,7 @@
 #include "core/Core.hpp"
 #include "core/DebugClock.hpp"
 #include "core/SteadyClock.hpp"
+#include "output/SqliteBackend.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -48,6 +49,9 @@ int main(int argc, char* argv[])
         loguru::add_file(log_error_file->c_str(), loguru::FileMode::Truncate, loguru::Verbosity_ERROR);
     }
     LOG_F(INFO, "Hello World");
+
+    // initialize database now
+    cosidia::SqliteBackend::get();
 
     std::shared_ptr<cosidia::SteadyClock> clock = debug_mode ?
         std::make_shared<cosidia::DebugClock>(sim_speed) :
