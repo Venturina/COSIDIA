@@ -43,6 +43,7 @@ add_library(cosidia STATIC
         src/networking/PositionProvider.cpp
         src/networking/Router.cpp
         src/networking/Runtime.cpp
+        src/objects/ActionHistory.cpp
         src/objects/BaseObject.cpp
         src/objects/CacheQuery.cpp
         src/objects/ObjectActionManager.cpp
