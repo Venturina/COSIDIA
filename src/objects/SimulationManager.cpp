@@ -1,4 +1,5 @@
 #include "core/Core.hpp"
+#include "core/InitAction.hpp"
 //#include "debug/DebugObject.hpp"
 #include "objects/SimulationManager.hpp"
 #include "mobility/SumoMobilityManager.hpp"
@@ -28,8 +29,11 @@ void SimulationManager::startAndScheduleObject(std::shared_ptr<BaseObject> obj)
     obj->setObjectId(getCoreP()->getNextObjectId());
     getCoreP()->addUniqueObject(obj);
 
-    auto action = std::make_shared<Action>(SimClock::duration::zero(), Action::Kind::INIT, SimClock::atSecond(0), obj->getObjectId(), mObjectId);
-    getCoreP()->scheduleAction(std::move(action));
+    auto action = std::make_shared<InitAction>(SimClock::duration::zero(), SimClock::atSecond(0), obj->getObjectId(), mObjectId);
+    action->scheduleStartHandler();
+
+    std::cout << "use: " << action.use_count() << std::endl;
+    std::cout << "use: " << action.use_count() << std::endl;
 }
 
 } // namespace cosidia

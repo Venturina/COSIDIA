@@ -1,3 +1,4 @@
+#include "core/DurationAction.hpp"
 #include "mobility/SumoMobilityManager.hpp"
 #include "objects/VehicleObject.hpp"
 #include "traci/PosixLauncher.h"
@@ -11,10 +12,8 @@ namespace cosidia
 void SumoMobilityManager::initObject(std::shared_ptr<Action> action)
 {
     mUpdateInterval = std::chrono::milliseconds(100);
-    auto nextAction = std::make_shared<Action>(std::chrono::milliseconds(10),
-        Action::Kind::START, action->getStartTime()+mUpdateInterval, mObjectId, mObjectId);
-
-    getCoreP()->scheduleAction(nextAction);
+    auto nextAction = std::make_shared<DurationAction>(std::chrono::milliseconds(10), action->getStartTime()+mUpdateInterval, mObjectId, mObjectId);
+    nextAction->scheduleStartHandler();
     mTraci.reset(new traci::API());
     mLite.reset(new traci::LiteAPI(*mTraci));
     mLauncher.reset(new traci::PosixLauncher(getGlobalConfig()["launcher"]));
@@ -64,7 +63,7 @@ std::shared_ptr<MobilityManagerTasks> SumoMobilityManager::executeUpdate(const S
         ObjectId id = mIdMapper(this).at(sumoIdToUpdate);
         if (id.valid()) {
             updaterResult.updateData->setUpdateForVehicle(sumoIdToUpdate).mObjectId = id;
-            ActionP updateAction(new Action(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), id, mObjectId));
+            ActionP updateAction(new DurationAction(std::chrono::milliseconds(1), action->getStartTime()+action->getDuration()+std::chrono::milliseconds(1), id, mObjectId));
             updateAction->setActionData(updaterResult.updateData);
             updateAction->setType("SUMO"_sym);
             coreTasks->actionsToSchedule.push_back(updateAction);

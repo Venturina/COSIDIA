@@ -5,6 +5,7 @@
 #include <boost/asio/steady_timer.hpp>
 #include <boost/fiber/condition_variable.hpp>
 #include <stdlib.h>
+#include "core/ActionHandler.hpp"
 #include "core/ActionList.hpp"
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectList.hpp"
@@ -40,7 +41,7 @@ public:
      * Only to be called from main Fiber!
      * @param: action Action to be scheduled
      **/
-    virtual void scheduleAction(std::shared_ptr<Action>);
+    virtual void scheduleAction(std::shared_ptr<ActionHandler>);
 
     /**
      * Adds an Object to the global ObjectList

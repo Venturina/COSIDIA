@@ -1,7 +1,7 @@
 #ifndef _BASE_OBJECT_HPP_
 #define _BASE_OBJECT_HPP_
 
-#include "core/Action.hpp"
+#include "core/DurationAction.hpp"
 #include "objects/ObjectActionManager.hpp"
 #include "objects/ObjectContext.hpp"
 #include "objects/ObjectId.hpp"
@@ -19,7 +19,10 @@ class BaseObject
 public:
     BaseObject();
     ~BaseObject();
-    virtual ObjectId execute(std::shared_ptr<Action>);
+    virtual void startExecutionBase(std::shared_ptr<Action>);
+    virtual void endExecutionBase(std::shared_ptr<Action>);
+    virtual void initObjectBase(std::shared_ptr<Action>);
+
     virtual void startExecution(std::shared_ptr<Action>) = 0;
     virtual void endExecution(std::shared_ptr<Action>) = 0;
     virtual void initObject(std::shared_ptr<Action>) = 0;

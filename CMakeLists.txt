@@ -26,10 +26,13 @@ add_library(cosidia STATIC
         extern/loguru/loguru.cpp
 
         src/core/Action.cpp
+        src/core/ActionHandler.cpp
         src/core/ActionList.cpp
         src/core/Config.cpp
         src/core/Core.cpp
         src/core/DebugClock.cpp
+        src/core/DurationAction.cpp
+        src/core/InitAction.cpp
         src/core/Symbol.cpp
         src/core/SteadyClock.cpp
         src/fiber/customWorkStealing.cpp
@@ -118,7 +121,7 @@ endmacro()
 enable_testing()
 
 add_subdirectory(src/traci)
-add_subdirectory(src/tests/unitTests)
+#add_subdirectory(src/tests/unitTests)
 
 add_executable(cosidia_exec src/core/main.cpp)
 target_link_libraries(cosidia_exec cosidia)

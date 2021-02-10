@@ -7,7 +7,7 @@ namespace cosidia
 
 ActionList::ActionList()
 {
-    mActionMap = std::make_unique<ActionMap>();
+    mActionMap = std::make_unique<HandlerMap>();
 }
 
 SimClock::time_point ActionList::getNextTimePoint()
@@ -19,13 +19,13 @@ SimClock::time_point ActionList::getNextTimePoint()
     }
 }
 
-void ActionList::insertAction(ActionP action)
+void ActionList::insertAction(HandlerP handler)
 {
     enforce(onCoreThread(), "Inserted Action from wrong thread!");
-    (*mActionMap)[action->getStartTime()].push_back(action);
+    (*mActionMap)[handler->getAction()->getStartTime()].push_back(handler);
 }
 
-std::list<ActionP> ActionList::popNextActions()
+std::list<HandlerP> ActionList::popNextActions()
 {
     enforce(onCoreThread(), "Pop Action from wrong thread!");
     if(!mActionMap->empty()) {
@@ -35,29 +35,29 @@ std::list<ActionP> ActionList::popNextActions()
         mActionMap->erase(nextActionIt);
         return nextAction;
     } else {
-        return std::list<ActionP>{};
+        return std::list<HandlerP>{};
     }
 }
 
-std::list<ActionP> ActionList::getNextActionList() const
+std::list<HandlerP> ActionList::getNextActionList() const
 {
     enforce(onCoreThread(), "Get Action from wrong thread!");
     if(!mActionMap->empty()) {
         enforce(!mActionMap->begin()->second.empty(), "ActionList: Time point with empty list");
         return mActionMap->begin()->second;
     } else {
-        return std::list<ActionP>{};
+        return std::list<HandlerP>{};
     }
 }
 
-bool ActionList::removeAction(ConstActionP actionToRemove, SimClock::time_point removeTimeHint)
+bool ActionList::removeAction(ConstHandlerP actionToRemove, SimClock::time_point removeTimeHint)
 {
     auto actionTimePair = mActionMap->find(removeTimeHint);
     if(actionTimePair != mActionMap->end()) {
         enforce(!actionTimePair->second.empty(), "ActionList: tried to remove Action at timePoint with empty list");
         int size = actionTimePair->second.size();
 
-        actionTimePair->second.remove_if( [ actionToRemove ]( ConstActionP p ){ return actionToRemove == p; } );
+  //      actionTimePair->second.remove_if( [ actionToRemove ]( ConstHandlerP p ){ return actionToRemove == p; } );
         auto newSize = actionTimePair->second.size();
 
         if(size > newSize) {

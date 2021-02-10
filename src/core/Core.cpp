@@ -111,11 +111,11 @@ int Core::getNextActionId()
     return ++mCurrentActionId;
 }
 
-void Core::scheduleAction(std::shared_ptr<Action> action)
+void Core::scheduleAction(std::shared_ptr<ActionHandler> action)
 {
-    enforce(action->getActionId() == 0, "Core: tried to schedule Action with Id already set");
-    action->setActionId(getNextActionId());
-    mActions.insertAction(std::move(action));
+    enforce(action->getAction()->getActionId() == 0, "Core: tried to schedule Action with Id already set");
+    action->getAction()->setActionId(getNextActionId());
+    mActions.insertAction(action);
 }
 
 void Core::addObject(std::shared_ptr<BaseObject> obj)
@@ -190,18 +190,16 @@ void Core::runSimulationLoop()
 void Core::executeActionOnFinishedTimer()
 {
     auto actions = mActions.popNextActions();
-    enforce(mCurrentActionTime == actions.begin()->get()->getStartTime(), "Core: currentAction time corresponds not to fetched action time");
+    enforce(mCurrentActionTime == actions.begin()->get()->getAction()->getStartTime(), "Core: currentAction time corresponds not to fetched action time");
     for(auto& action : actions) {
-        enforce(action->getActionId() != 0, "Core: tried to execute Action without Id");
+        enforce(action->getAction()->getActionId() != 0, "Core: tried to execute Action without Id");
 
-        auto affected = action->getAffected();
+        auto affected = action->getAction()->getAffected();
         enforce(affected.valid(), "Core: tried to execute object with invalid id");
 
         auto obj = mObjectList.getObjectByIdFromCurrentContainer(affected);
         if (obj) {
-            if(obj->execute(action).valid()) {
-                scheduleAction(makeEndAction(action));
-            }
+            action->invoke(obj.get());
         } else {
             DLOG_F(INFO, "Core: dropped Action for deleted Object: %d", affected);
         }

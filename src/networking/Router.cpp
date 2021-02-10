@@ -35,7 +35,7 @@ void Router::initObject(std::shared_ptr<Action> action)
 
     auto nextAction = createSelfAction(std::chrono::milliseconds(2), action->getStartTime() + std::chrono::milliseconds(mRandomNumber.get()));
     nextAction->setType("initRouter"_sym);
-    getCoreP()->scheduleAction(nextAction);
+    nextAction->scheduleStartHandler();
 }
 
 
@@ -133,7 +133,7 @@ void Router::endExecution(std::shared_ptr<Action> action) {
     if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym) {
         auto data = mFuture.get();
         for(auto action : data.actionsToSchedule) {
-            getCoreP()->scheduleAction(std::move(action));
+            action->scheduleStartHandler();
         }
         if(data.actionToDelete) {
             getCoreP()->removeAction(data.actionToDelete);
@@ -172,7 +172,7 @@ void Router::scheduleTransmission(RouterUpdateData& data, const Action* currentA
     if(mAccessInterface(this).hasTransmissionRequest()) {
         auto transmission = mAccessInterface(this).getTransmission(currentObjects);
         data.transmission = transmission;
-        auto transmissionAction = std::make_shared<Action>(std::chrono::milliseconds(2), Action::Kind::START, currentAction->getEndTime() + std::chrono::milliseconds(1), mRadioObject.lock()->getObjectId(), mObjectId);
+        auto transmissionAction = std::make_shared<DurationAction>(std::chrono::milliseconds(2), currentAction->getEndTime() + std::chrono::milliseconds(1), mRadioObject.lock()->getObjectId(), mObjectId);
         transmissionAction->setType("transmissionStart"_sym);
         transmissionAction->setActionData(transmission);
         data.actionsToSchedule.push_back(transmissionAction);

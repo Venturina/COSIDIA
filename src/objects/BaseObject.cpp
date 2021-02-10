@@ -18,6 +18,42 @@ BaseObject::~BaseObject()
     DLOG_F(ERROR, "Called Destructor of %d, %s", mObjectId, mObjectName.c_str());
 }
 
+void BaseObject::startExecutionBase(std::shared_ptr<Action> action)
+{
+    enforce(isInitialized(), "Tried to execute a not initialized object");
+    if(!mActionManager->startOrDelay(action)) {
+        #ifdef COSIDIA_SAFE
+        mCurrentAction = action->getActionId();
+        #endif
+        action->scheduleEndHandler();
+        startExecution(action);
+    }
+
+}
+
+void BaseObject::endExecutionBase(std::shared_ptr<Action> action)
+{
+    //TODO: check if Start and End Action are the same 
+    endExecution(action);
+    //TODO: time tracking for realTime loss measurement
+
+    if(mActionManager->endAndCheckAvailable()) {
+        auto update = mActionManager->activateNextAvailableAction();
+        update->shiftStartTime(action->getEndTime());
+        #ifdef COSIDIA_SAFE
+        mCurrentAction = action->getActionId();
+        #endif
+        action->scheduleEndHandler();
+        startExecution(update);
+    }
+}
+
+void BaseObject::initObjectBase(std::shared_ptr<Action> action)
+{
+    initObject(action);
+}
+
+/*
 ObjectId BaseObject::execute(std::shared_ptr<Action> action)
 {
     enforce(isInitialized(), "Tried to execute a not initialized object");
@@ -63,6 +99,7 @@ ObjectId BaseObject::execute(std::shared_ptr<Action> action)
             return ObjectId::stub();
     }
 }
+*/
 
 bool BaseObject::isInitialized()
 {
@@ -75,7 +112,7 @@ bool BaseObject::isInitialized()
 
 std::shared_ptr<Action> BaseObject::createSelfAction(SimClock::duration duration, SimClock::time_point start)
 {
-    return std::move(std::make_shared<Action>(duration, Action::Kind::START, start, mObjectId, mObjectId));
+    return std::move(std::make_shared<DurationAction>(duration, start, mObjectId, mObjectId));
 }
 
 std::weak_ptr<BaseObject> getSiblingByName(BaseObject* obj, std::string name, ConstObjectContainer_ptr objects)

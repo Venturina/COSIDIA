@@ -1,4 +1,5 @@
 #include "core/Core.hpp"
+#include "core/DurationAction.hpp"
 #include "mobility/MobilityManager.hpp"
 #include "objects/ObjectRemover.hpp"
 #include "objects/VehicleObject.hpp"
@@ -74,8 +75,7 @@ std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shar
     }
 
     if(action->getStartTime() < SimClock::atSecond(20)) {
-        auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
-            Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
+        auto newAction = std::make_shared<DurationAction>(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100),
             mObjectId, mObjectId); // ugly as hell?
 
         data->actionsToSchedule.push_back(newAction);
@@ -108,7 +108,7 @@ void MobilityManager::endExecution(std::shared_ptr<Action> action)
         vehicle.resolveAndStart(action->getStartTime());
     }
     for(auto& a : data->actionsToSchedule) {
-        getCoreP()->scheduleAction(std::move(a));
+        a->scheduleStartHandler();
     }
     for (auto& vehicle : data->objectsToDelete) {
         DLOG_F(ERROR, "Remove Vehicle");
@@ -120,11 +120,8 @@ void MobilityManager::initObject(std::shared_ptr<Action> action)
 {
     DLOG_F(INFO, "Id of MobilityManager: %d", mObjectId);
 
-    auto newAction = std::make_shared<Action>(std::chrono::milliseconds(50),
-        Action::Kind::START, action->getStartTime() + std::chrono::milliseconds(100),
-        mObjectId, mObjectId); // ugly as hell?
-
-    getCoreP()->scheduleAction(newAction);
+    auto newAction = std::make_shared<DurationAction>(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100), mObjectId, mObjectId); // ugly as hell?
+    newAction->scheduleStartHandler();
 
 }
 

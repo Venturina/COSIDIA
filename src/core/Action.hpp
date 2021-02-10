@@ -24,28 +24,21 @@ typedef int ActionId;
  *  It contains a start time point, a duration and something to execute
  */
 
-class Action
+class Action : public std::enable_shared_from_this<Action>
 {
 public:
     using Duration = SimClock::duration;
     using TimePoint = SimClock::time_point;
 
-    enum class Kind {
-        INIT,
-        START,
-        END
-    };
-
     /**
      * Creates an Action for a specific object
      *
      * @param duration Time span a action takes to be calculated
-     * @param k Kind of Action (Init, Start, End)
      * @param start Time when the action should be started
      * @param id Object which is the receiver of the Action
      * @param generating object
      */
-    Action(Duration duration, Kind k, TimePoint start, ObjectId id, ObjectId generator);
+    Action(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
 
     /**
      * Get start time of an Action
@@ -57,6 +50,10 @@ public:
      */
     Duration getDuration() const { return mDuration; }
 
+    /**
+     * Shifts start time to the given TimePoint
+     */
+    void shiftStartTime(TimePoint);
 
     /**
      * Get End time
@@ -79,11 +76,6 @@ public:
      * @param ActionData to attach, overriding of existing ActionData is not allowed
      */
     void setActionData(std::shared_ptr<const ActionData>);
-
-    /**
-     * Get Kind of Action
-     */
-    Kind getKind() const { return mKind; }
 
     /**
      * Get affected object
@@ -134,6 +126,12 @@ public:
      */
     ObjectId getGeneratingObject() { return mGeneratingObject; }
 
+    /**
+     * Schedule
+     */
+    virtual void scheduleStartHandler() = 0;
+
+    virtual void scheduleEndHandler() = 0;
 
 protected:
     /**
@@ -163,8 +161,6 @@ protected:
     ObjectId mAffectedObject;
 
 private:
-    Kind mKind;
-
 
     int mActionId = 0;
 
@@ -182,9 +178,6 @@ private:
     static const Symbol default_type;
     Symbol mType = default_type;
 };
-
-std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>);
-std::shared_ptr<Action> makeEndAction(std::shared_ptr<Action>, std::list<ObjectId> endActionList);
 
 } // ns cosidia
 
