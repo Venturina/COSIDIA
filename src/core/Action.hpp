@@ -31,16 +31,6 @@ public:
     using TimePoint = SimClock::time_point;
 
     /**
-     * Creates an Action for a specific object
-     *
-     * @param duration Time span a action takes to be calculated
-     * @param start Time when the action should be started
-     * @param id Object which is the receiver of the Action
-     * @param generating object
-     */
-    Action(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
-
-    /**
      * Get start time of an Action
      */
     TimePoint getStartTime() const { return mStartTime; }
@@ -135,6 +125,16 @@ public:
 
 protected:
     /**
+     * Creates an Action for a specific object
+     *
+     * @param duration Time span a action takes to be calculated
+     * @param start Time when the action should be started
+     * @param id Object which is the receiver of the Action
+     * @param generating object
+     */
+    Action(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
+
+    /**
      * Action Data contains the needed data provided for action (like transmissions)
      */
     std::shared_ptr<const ActionData> mActionData = nullptr;
@@ -178,6 +178,17 @@ private:
     static const Symbol default_type;
     Symbol mType = default_type;
 };
+
+template <class T> class ActionFactory : public T
+{
+public:
+    static std::shared_ptr<T> create(Action::Duration duration, Action::TimePoint start, ObjectId id, ObjectId generator)
+    {
+        auto a = T::create(duration, start, id, generator);
+        return a;
+    }
+};
+
 
 } // ns cosidia
 

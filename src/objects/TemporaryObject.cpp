@@ -62,7 +62,7 @@ void TemporaryObject::initialize(SimClock::time_point t)
         auto id = getCoreP()->getNextObjectId();
         mBaseObject->setObjectId(id);
         setTempMapping(id);
-        auto newAction = std::make_shared<InitAction>(std::chrono::milliseconds(50), t + std::chrono::milliseconds(1), id, id);
+        auto newAction = ActionFactory<InitAction>::create(std::chrono::milliseconds(50), t + std::chrono::milliseconds(1), id, id);
         newAction->scheduleStartHandler();
     } else {
         setTempMapping(mBaseObject->getObjectId());

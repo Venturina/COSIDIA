@@ -8,14 +8,17 @@ namespace cosidia
 
 class InitAction : public Action {
 public:
-    InitAction(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
-
     void scheduleStartHandler();
 
     void scheduleEndHandler() {};
 
+
+protected:
+    static std::shared_ptr<InitAction> create(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
+    void afterConstruction();
+
 private:
-    void setup();
+    InitAction(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
     std::shared_ptr<ActionHandlerInit> mInitHandler;
 };
 

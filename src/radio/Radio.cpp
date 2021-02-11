@@ -1,3 +1,4 @@
+#include "core/DurationAction.hpp"
 #include "radio/InterferenceDecider.hpp"
 #include "radio/PhysicalDecider.hpp"
 #include "radio/Radio.hpp"
@@ -74,7 +75,7 @@ Radio::Result Radio::endTransmission(ActionP action, std::shared_ptr<const Radio
 
     auto receivers = mDecider->decideOnInterference(transmission, context.get());
     for(auto& receiver : receivers) {
-        std::shared_ptr<Action> newAction(new Action(std::chrono::milliseconds(2), Action::Kind::START, action->getStartTime() + action->getDuration() + std::chrono::milliseconds(1) , receiver ,mObjectId));
+        auto newAction = ActionFactory<DurationAction>::create(std::chrono::milliseconds(2), action->getStartTime() + action->getDuration() + std::chrono::milliseconds(1) ,receiver, mObjectId);
         newAction->setType("transmission"_sym);
         newAction->setActionData(transmission);
         result.actionsToSchedule.push_back(newAction);
@@ -94,7 +95,7 @@ void Radio::endExecution(std::shared_ptr<Action> action)
         }
         if(data.actionsToSchedule.size() > 0) {
             for(auto& action : data.actionsToSchedule) {
-                getCoreP()->scheduleAction(action);
+                action->scheduleStartHandler();
             }
         }
     } else {

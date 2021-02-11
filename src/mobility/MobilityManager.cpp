@@ -75,7 +75,7 @@ std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shar
     }
 
     if(action->getStartTime() < SimClock::atSecond(20)) {
-        auto newAction = std::make_shared<DurationAction>(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100),
+        auto newAction = ActionFactory<DurationAction>::create(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100),
             mObjectId, mObjectId); // ugly as hell?
 
         data->actionsToSchedule.push_back(newAction);
@@ -120,7 +120,7 @@ void MobilityManager::initObject(std::shared_ptr<Action> action)
 {
     DLOG_F(INFO, "Id of MobilityManager: %d", mObjectId);
 
-    auto newAction = std::make_shared<DurationAction>(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100), mObjectId, mObjectId); // ugly as hell?
+    auto newAction = ActionFactory<DurationAction>::create(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100), mObjectId, mObjectId); // ugly as hell?
     newAction->scheduleStartHandler();
 
 }

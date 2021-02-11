@@ -172,7 +172,7 @@ void Router::scheduleTransmission(RouterUpdateData& data, const Action* currentA
     if(mAccessInterface(this).hasTransmissionRequest()) {
         auto transmission = mAccessInterface(this).getTransmission(currentObjects);
         data.transmission = transmission;
-        auto transmissionAction = std::make_shared<DurationAction>(std::chrono::milliseconds(2), currentAction->getEndTime() + std::chrono::milliseconds(1), mRadioObject.lock()->getObjectId(), mObjectId);
+        auto transmissionAction = ActionFactory<DurationAction>::create(std::chrono::milliseconds(2), currentAction->getEndTime() + std::chrono::milliseconds(1), mRadioObject.lock()->getObjectId(), mObjectId);
         transmissionAction->setType("transmissionStart"_sym);
         transmissionAction->setActionData(transmission);
         data.actionsToSchedule.push_back(transmissionAction);

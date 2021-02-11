@@ -29,11 +29,8 @@ void SimulationManager::startAndScheduleObject(std::shared_ptr<BaseObject> obj)
     obj->setObjectId(getCoreP()->getNextObjectId());
     getCoreP()->addUniqueObject(obj);
 
-    auto action = std::make_shared<InitAction>(SimClock::duration::zero(), SimClock::atSecond(0), obj->getObjectId(), mObjectId);
+    auto action = ActionFactory<InitAction>::create(SimClock::duration::zero(), SimClock::atSecond(0), obj->getObjectId(), mObjectId);
     action->scheduleStartHandler();
-
-    std::cout << "use: " << action.use_count() << std::endl;
-    std::cout << "use: " << action.use_count() << std::endl;
 }
 
 } // namespace cosidia
