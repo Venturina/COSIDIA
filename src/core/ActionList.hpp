@@ -29,38 +29,38 @@ public:
     ActionList();
 
     /**
-     * Adds an Action to the ActionList
-     * @param Action to insert
+     * Adds an Handler to the ActionList
+     * @param Handler to insert
      */
-    void insertAction(HandlerP);
+    void insertHandler(HandlerP);
 
     /**
-     * Returns next time point at which an Action is available
+     * Returns next time point at which an Handler is available
      */
     SimClock::time_point getNextTimePoint();
 
     /**
-     * Remove actions for next time point fomr Action list
-     * @return next Actions
+     * Remove handlers for next time point from Action list
+     * @return next Handlers
      */
-    std::list<HandlerP> popNextActions();
+    std::list<HandlerP> popNextHandlers();
 
     /**
-     * Returns next actions without removing it.
-     * @return next actions
+     * Returns next handlers without removing it.
+     * @return next handlers
      */
-    std::list<HandlerP> getNextActionList() const;
+    std::list<HandlerP> getNextHandlerList() const;
 
     /**
-     * Removes specific Action from Action list
-     * @param action to remove
-     * @param time at which the action was scheduled
+     * Removes specific handler from Handler list
+     * @param handler to remove
+     * @param time at which the handler was scheduled
      * @return true if remove was successfull, false elsewise
      */
-    bool removeAction(ConstHandlerP, SimClock::time_point);
+    bool removeHandler(ConstHandlerP, SimClock::time_point);
 
 protected:
-    std::unique_ptr<HandlerMap> mActionMap;
+    std::unique_ptr<HandlerMap> mHandlerMap;
 };
 
 } // ns cosidia

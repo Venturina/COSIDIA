@@ -4,15 +4,18 @@
 namespace cosidia
 {
 
-void ActionHandlerStart::invoke(BaseObject* base) {
+void ActionHandlerStart::invoke(BaseObject* base)
+{
     base->startExecutionBase(mCorrespondingAction);
 }
 
-void ActionHandlerEnd::invoke(BaseObject* base) {
+void ActionHandlerEnd::invoke(BaseObject* base)
+{
     base->endExecutionBase(mCorrespondingAction);
 }
 
-void ActionHandlerInit::invoke(BaseObject* base) {
+void ActionHandlerInit::invoke(BaseObject* base)
+{
     base->initObjectBase(mCorrespondingAction);
 }
 

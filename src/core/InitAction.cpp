@@ -1,5 +1,6 @@
 #include "core/Core.hpp"
 #include "core/InitAction.hpp"
+#include "utils/enforce.hpp"
 
 namespace cosidia
 {
@@ -11,6 +12,7 @@ InitAction::InitAction(Duration duration, TimePoint start, ObjectId id, ObjectId
 
 void InitAction::scheduleStartHandler()
 {
+    enforce(mActionId == 0, "InitAction: tried to schedule Action with Id already set");
     getCoreP()->scheduleAction(mInitHandler);
 }
 

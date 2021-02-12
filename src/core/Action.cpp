@@ -15,16 +15,6 @@ Action::Action(Duration duration, TimePoint start, ObjectId obj, ObjectId genera
     enforce(start >= TimePoint { Duration::zero() }, "Action: negative start time");
 }
 
-void Action::setStartTime(TimePoint start)
-{
-    mStartTime = start;
-}
-
-void Action::setBeginId(int id)
-{
-    mBeginActionId = id;
-}
-
 void Action::setActionData(std::shared_ptr<const ActionData> data)
 {
     assert(mActionData == nullptr);

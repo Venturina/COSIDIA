@@ -111,11 +111,10 @@ int Core::getNextActionId()
     return ++mCurrentActionId;
 }
 
-void Core::scheduleAction(std::shared_ptr<ActionHandler> action)
+void Core::scheduleAction(std::shared_ptr<ActionHandler> handler)
 {
-    enforce(action->getAction()->getActionId() == 0, "Core: tried to schedule Action with Id already set");
-    action->getAction()->setActionId(getNextActionId());
-    mActions.insertAction(action);
+    handler->getAction()->setActionId(getNextActionId());
+    mActions.insertHandler(handler);
 }
 
 void Core::addObject(std::shared_ptr<BaseObject> obj)
@@ -189,17 +188,17 @@ void Core::runSimulationLoop()
 
 void Core::executeActionOnFinishedTimer()
 {
-    auto actions = mActions.popNextActions();
-    enforce(mCurrentActionTime == actions.begin()->get()->getAction()->getStartTime(), "Core: currentAction time corresponds not to fetched action time");
-    for(auto& action : actions) {
-        enforce(action->getAction()->getActionId() != 0, "Core: tried to execute Action without Id");
+    auto handlers = mActions.popNextHandlers();
+    enforce(mCurrentActionTime == handlers.begin()->get()->getAction()->getStartTime(), "Core: currentAction time corresponds not to fetched action time");
+    for(auto& handler : handlers) {
+        enforce(handler->getAction()->getActionId() != 0, "Core: tried to execute Action without Id");
 
-        auto affected = action->getAction()->getAffected();
+        auto affected = handler->getAction()->getAffected();
         enforce(affected.valid(), "Core: tried to execute object with invalid id");
 
         auto obj = mObjectList.getObjectByIdFromCurrentContainer(affected);
         if (obj) {
-            action->invoke(obj.get());
+            handler->invoke(obj.get());
         } else {
             DLOG_F(INFO, "Core: dropped Action for deleted Object: %d", affected);
         }
@@ -227,7 +226,8 @@ void Core::finishSimulation()
 }
 
 void Core::removeAction(std::shared_ptr<Action> action) {
-    enforce(mActions.removeAction(action, action->getStartTime()), "Core: tried to remove unavailable action");
+    //TODO Removing Actions not allowed yet
+    enforce(false, "Core: removing Actions is not implemented")
 }
 
 

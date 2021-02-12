@@ -56,12 +56,6 @@ public:
     std::shared_ptr<const ActionData> getActionData() { return mActionData; }
 
     /**
-     * Set start time of Action
-     * @param start The start Time
-     */
-    void setStartTime(TimePoint start);
-
-    /**
      * Attach ActionData to Action
      * @param ActionData to attach, overriding of existing ActionData is not allowed
      */
@@ -97,12 +91,6 @@ public:
     int getActionId() const { return mActionId; }
 
     /**
-     * Required for Actions with Kind=END
-     * Has to correspond to the ActionId of Start Action
-     */
-    void setBeginId(int id);
-
-    /**
      * Returns corresponding Start Action ID
      *
      * @return 0 for Start and Init Actions
@@ -117,10 +105,10 @@ public:
     ObjectId getGeneratingObject() { return mGeneratingObject; }
 
     /**
-     * Schedule
+     * Schedule handlers in Future Action List
+     * Must be defined in subclasses
      */
     virtual void scheduleStartHandler() = 0;
-
     virtual void scheduleEndHandler() = 0;
 
 protected:
@@ -160,9 +148,12 @@ protected:
      */
     ObjectId mAffectedObject;
 
-private:
-
+    /**
+     * ActionId's are deterministic. Each action gets the same ID in every simulation run
+     */
     int mActionId = 0;
+
+private:
 
     /**
      * Required for Actions with Kind=END
@@ -179,9 +170,21 @@ private:
     Symbol mType = default_type;
 };
 
+/**
+ * This class must be used to create actions via factory
+ */
 template <class T> class ActionFactory : public T
 {
 public:
+
+    /**
+     * Creates a fully constructed action
+     * @param duration Time span a action takes to be calculated
+     * @param start Time when the action should be started
+     * @param id Object which is the receiver of the Action
+     * @param generating object
+     * @return shared_ptr to the created action
+     */
     static std::shared_ptr<T> create(Action::Duration duration, Action::TimePoint start, ObjectId id, ObjectId generator)
     {
         auto a = T::create(duration, start, id, generator);

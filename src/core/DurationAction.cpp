@@ -1,5 +1,6 @@
 #include "core/Core.hpp"
 #include "core/DurationAction.hpp"
+#include "utils/enforce.hpp"
 
 namespace cosidia
 {
@@ -11,11 +12,13 @@ DurationAction::DurationAction(Duration duration, TimePoint start, ObjectId id, 
 
 void DurationAction::scheduleStartHandler()
 {
+    enforce(mActionId == 0, "DurationAction: tried to schedule Action with Id already set");
     getCoreP()->scheduleAction(mStartHandler);
 }
 
 void DurationAction::scheduleEndHandler()
 {
+    enforce(mActionId != 0, "DurationAction: tried to schedule endHandler without beginHandler scheduled");
     getCoreP()->scheduleAction(mEndHandler);
 }
 
