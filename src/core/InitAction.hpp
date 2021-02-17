@@ -18,12 +18,12 @@ public:
      */
     void scheduleEndHandler() {};
 
+    friend class ActionFactory<InitAction>;
 
 protected:
     /**
      * Used to create the Action using the factory class
      */
-    static std::shared_ptr<InitAction> create(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
     void afterConstruction();
 
     /**

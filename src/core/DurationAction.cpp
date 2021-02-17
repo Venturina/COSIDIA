@@ -28,12 +28,4 @@ void DurationAction::afterConstruction()
     mEndHandler = std::make_shared<ActionHandlerEnd>(shared_from_this());
 }
 
-std::shared_ptr<DurationAction> DurationAction::create(Duration duration, TimePoint start, ObjectId id, ObjectId generator)
-{
-    auto instance = std::shared_ptr<DurationAction>(new DurationAction {duration, start, id, generator});
-    instance->afterConstruction();
-    return instance;
-}
-
-
 } // namespace cosidia

@@ -173,7 +173,7 @@ private:
 /**
  * This class must be used to create actions via factory
  */
-template <class T> class ActionFactory : public T
+template <class T> class ActionFactory
 {
 public:
 
@@ -187,8 +187,9 @@ public:
      */
     static std::shared_ptr<T> create(Action::Duration duration, Action::TimePoint start, ObjectId id, ObjectId generator)
     {
-        auto a = T::create(duration, start, id, generator);
-        return a;
+        auto tmp = std::shared_ptr<T>(new T { duration, start, id, generator });
+        tmp->afterConstruction();
+        return tmp;
     }
 };
 
