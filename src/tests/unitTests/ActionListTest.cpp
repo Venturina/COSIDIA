@@ -208,4 +208,5 @@ TEST_CASE("Action List", "[ActionList]") {
 
         REQUIRE(list.getActionMap()->size() == 0);
     }
+    
 }

@@ -26,7 +26,6 @@ protected:
     static std::shared_ptr<InitAction> create(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
     void afterConstruction();
 
-private:
     /**
      * Actions can only be created using the factory class
      */

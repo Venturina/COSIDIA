@@ -24,11 +24,11 @@ protected:
     static std::shared_ptr<DurationAction> create(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
     void afterConstruction();
 
-private:
     /**
      * Actions can only be created using the factory class
      */
     DurationAction(Duration duration, TimePoint start, ObjectId id, ObjectId generator);
+
     std::shared_ptr<ActionHandlerStart> mStartHandler;
     std::shared_ptr<ActionHandlerEnd> mEndHandler;
 };

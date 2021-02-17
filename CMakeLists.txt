@@ -121,7 +121,7 @@ endmacro()
 enable_testing()
 
 add_subdirectory(src/traci)
-#add_subdirectory(src/tests/unitTests)
+add_subdirectory(src/tests/unitTests)
 
 add_executable(cosidia_exec src/core/main.cpp)
 target_link_libraries(cosidia_exec cosidia)
