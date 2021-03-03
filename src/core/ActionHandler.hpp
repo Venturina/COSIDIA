@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/SteadyClock.hpp"
 #include <memory>
 
 namespace cosidia
@@ -14,11 +15,15 @@ class BaseObject;
  */
 class ActionHandler {
 public:
+    using TimePoint = SimClock::time_point;
+
     ActionHandler(std::shared_ptr<Action> action) : mCorrespondingAction(action) {};
 
     virtual void invoke(BaseObject*) = 0;
 
     Action* getAction() { return mCorrespondingAction.get(); }
+
+    virtual TimePoint getTime() = 0;
 
 protected:
     std::shared_ptr<Action> mCorrespondingAction;
@@ -31,6 +36,7 @@ class ActionHandlerStart : public ActionHandler {
 public:
     ActionHandlerStart(std::shared_ptr<Action> action) : ActionHandler(action) {}
     void invoke(BaseObject*);
+    TimePoint getTime();
 };
 
 /**
@@ -40,6 +46,7 @@ class ActionHandlerEnd : public ActionHandler {
 public:
     ActionHandlerEnd(std::shared_ptr<Action> action) : ActionHandler(action) {}
     void invoke(BaseObject*);
+    TimePoint getTime();
 };
 
 /**
@@ -49,6 +56,7 @@ class ActionHandlerInit : public ActionHandler {
 public:
     ActionHandlerInit(std::shared_ptr<Action> action) : ActionHandler(action) {}
     void invoke(BaseObject*);
+    TimePoint getTime();
 };
 
 } // namespace cosidia

@@ -14,7 +14,7 @@ namespace cosidia
 using ActionP = std::shared_ptr<Action>;
 using ConstActionP = std::shared_ptr<const Action>;
 using HandlerP = std::shared_ptr<ActionHandler>;
-using ConstHandlerP = std::shared_ptr<const Action>;
+using ConstHandlerP = std::shared_ptr<const ActionHandler>;
 using HandlerMap = std::map<SimClock::time_point, std::list<HandlerP>>;
 
 /**

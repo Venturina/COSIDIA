@@ -2,18 +2,19 @@
 
 #include <catch2/catch.hpp>
 
-#include "core/Action.hpp"
+#include "core/DurationAction.hpp"
 #include "objects/ObjectActionManager.hpp"
 
 using namespace cosidia;
 
 TEST_CASE( "Test the action manager", "[Action Manager]" ) {
+    std::shared_ptr<DurationAction> a0 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
+    std::shared_ptr<DurationAction> a1 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
+    std::shared_ptr<DurationAction> a2 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
+    std::shared_ptr<DurationAction> a3 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
+    std::shared_ptr<DurationAction> a4 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
+    std::shared_ptr<DurationAction> a5 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
 
-    std::shared_ptr<Action> a0(new Action(std::chrono::nanoseconds(100),Action::Kind::START,SimClock::atNanosecond(0), ObjectId { 1 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a1(new Action(std::chrono::nanoseconds(100),Action::Kind::START,SimClock::atNanosecond(0), ObjectId { 1 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a2(new Action(std::chrono::nanoseconds(100),Action::Kind::START,SimClock::atNanosecond(0), ObjectId { 1 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a3(new Action(std::chrono::nanoseconds(100),Action::Kind::START,SimClock::atNanosecond(0), ObjectId { 1 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a4(new Action(std::chrono::nanoseconds(100),Action::Kind::START,SimClock::atNanosecond(0), ObjectId { 1 }, ObjectId { 5 }));
 
     ObjectActionManager manager;
 
@@ -70,7 +71,7 @@ TEST_CASE( "Test the action manager", "[Action Manager]" ) {
         REQUIRE_THROWS(manager.activateNextAvailableAction());  // should throw an runtime error, a3 must be ended
         REQUIRE(&manager.fetchNextAction() == a4.get());        // a4 in front
         REQUIRE(manager.endAndCheckAvailable());                // a3 ended
-        REQUIRE(manager.activateNextAvailableAction() == a4);    // a4 running
+        REQUIRE(manager.activateNextAvailableAction() == a4);   // a4 running
     }
 
 }

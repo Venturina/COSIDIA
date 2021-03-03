@@ -98,7 +98,6 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
         auto mockActionManager = dynamic_cast<MockObjectActionManager*>(child->getMockedObjectManager());
 
         std::shared_ptr<debug::DebugDurationAction> a1 = ActionFactory<debug::DebugDurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(500), ObjectId { 1 }, ObjectId { 5 });
-        std::shared_ptr<debug::DebugDurationAction> a2 = ActionFactory<debug::DebugDurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 2 }, ObjectId { 5 });
         a1->setActionId(5);
         std::shared_ptr<debug::DebugInitAction> a3 = ActionFactory<debug::DebugInitAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 2 }, ObjectId { 5 });
 
@@ -112,13 +111,14 @@ TEST_CASE( "BaseObject Test: Execution", "[BaseObject]" )
                     .WITH(std::shared_ptr<Action>(_1)->getStartTime() == (a1->getStartTime() + a1->getDuration()));
 
         **/
-        REQUIRE_CALL(*child, startExecution(a1));               // call_3
+        REQUIRE_CALL(*c, scheduleAction(a1->getEndHandler()));
+        REQUIRE_CALL(*child, startExecution(a1));               // call_2
+
 
         child->mockInit();                                      // initializes object properly
-        //REQUIRE(child->execute(a1)== child->getObjectId());     // enforces call_1
         a1->getStartHandler()->invoke(child.get());
 
-        REQUIRE_CALL(*child, endExecution(a2));
+        REQUIRE_CALL(*child, endExecution(a1));
         ALLOW_CALL(*mockClock, getSimTimeNow())
                     .RETURN(a1->getStartTime());
         a1->getEndHandler()->invoke(child.get());

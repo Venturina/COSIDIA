@@ -3,7 +3,7 @@
 
 #include "core/ActionList.hpp"
 #include "core/Core.hpp"
-
+#include "debug/DebugAction.hpp"
 
 using namespace cosidia;
 
@@ -25,188 +25,153 @@ public:
 class DebugActionMap : public ActionList
 {
 public:
-    ActionMap* getActionMap() { return mActionMap.get(); }
+    HandlerMap* getHandlerMap() { return mHandlerMap.get(); }
 };
 
 
 TEST_CASE("Action List", "[ActionList]") {
     MockCore core;
-    std::shared_ptr<Action> a1(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a2(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(2), ObjectId { 2 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a3(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(2), ObjectId { 3 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a4(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(3), ObjectId { 4 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a5(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(2), ObjectId { 5 }, ObjectId { 5 }));
-    std::shared_ptr<Action> a6(new Action(std::chrono::milliseconds(1), Action::Kind::START, SimClock::atMillisecond(3), ObjectId { 6 }, ObjectId { 5 }));
+    std::shared_ptr<debug::DebugDurationAction> a1 = ActionFactory<debug::DebugDurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
+    std::shared_ptr<debug::DebugDurationAction> a2 = ActionFactory<debug::DebugDurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(3), ObjectId { 1 }, ObjectId { 5 });
+    std::shared_ptr<debug::DebugDurationAction> a3 = ActionFactory<debug::DebugDurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(2), ObjectId { 1 }, ObjectId { 5 });
+
+    // a1s -> 1, a1e -> 2
+    // a2s -> 3, a2e -> 4
+    // a3s -> 2, a3e -> 3
 
     DebugActionMap list;
 
     SECTION("Insert and Get") {
         // insert actions
-        list.insertAction(a1); // start time = 1
-        REQUIRE(list.getActionMap()->size() == 1);
-        list.insertAction(a4); // start time = 3
-        REQUIRE(list.getActionMap()->size() == 2);
-        list.insertAction(a5); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 3);
-        list.insertAction(a2); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 3);
-        list.insertAction(a3); // start time = 2
-        REQUIRE(list.getActionMap()->size() == 3);
-        list.insertAction(a6); // start time = 3
-        REQUIRE(list.getActionMap()->size() == 3);
+        list.insertHandler(a1->getStartHandler()); // time = 1, a1s
+        REQUIRE(list.getHandlerMap()->size() == 1);
+        list.insertHandler(a2->getStartHandler()); // time = 3, a2s
+        REQUIRE(list.getHandlerMap()->size() == 2);
+        list.insertHandler(a1->getEndHandler()); // time = 2, a1e
+        REQUIRE(list.getHandlerMap()->size() == 3);
+        list.insertHandler(a3->getStartHandler()); // time = 2, a3s
+        REQUIRE(list.getHandlerMap()->size() == 3);
+        list.insertHandler(a2->getEndHandler()); // time = 4, a2e
+        REQUIRE(list.getHandlerMap()->size() == 4);
+        list.insertHandler(a3->getEndHandler()); // time = 3, a3e
+        REQUIRE(list.getHandlerMap()->size() == 4);
         // list layout
-        /*  Time    Actions
-            [1]     a1
-            [2]     a5, a2, a3
-            [3]     a4, a6
+        /*  Time    Handlers
+            [1]     a1s
+            [2]     a1e, a3s,
+            [3]     a2s, a3e,
+            [4]     a2e
         */
 
 
         // pop and get
-        REQUIRE(*(list.getNextActionList().begin()) == a1);
+        REQUIRE(*(list.getNextHandlerList().begin()) == a1->getStartHandler());
         REQUIRE(list.getNextTimePoint() == a1->getStartTime());
-        REQUIRE(list.getActionMap()->size() == 3);
+        REQUIRE(list.getHandlerMap()->size() == 4);
 
-        auto actions = list.popNextActions();
-        REQUIRE(actions.size() == 1);
-        REQUIRE(*(actions.begin()) == a1 );
-        REQUIRE(list.getActionMap()->size() == 2);
+        auto handlers = list.popNextHandlers();
+        REQUIRE(handlers.size() == 1);
+        REQUIRE(*(handlers.begin()) == a1->getStartHandler() );
+        REQUIRE(list.getHandlerMap()->size() == 3);
         /*  Time    Actions
-            [2]     a5, a2, a3
-            [3]     a4, a6
+            [2]     a1e, a3s,
+            [3]     a2s, a3e,
+            [4]     a2e
         */
 
 
-        REQUIRE(*(list.getNextActionList().begin()) == a5);
-        REQUIRE(list.getNextActionList().size() == 3);
-        REQUIRE(list.getNextTimePoint() == a5->getStartTime());
-        REQUIRE(list.getActionMap()->size() == 2);
+        REQUIRE(*(list.getNextHandlerList().begin()) == a1->getEndHandler());
+        REQUIRE(list.getNextHandlerList().size() == 2);
+        REQUIRE(list.getNextTimePoint() == a1->getEndTime());
+        REQUIRE(list.getHandlerMap()->size() == 3);
         /*  Time    Actions
-            [2]     a5, a2, a3
-            [3]     a4, a6
+            [2]     a1e, a3s,
+            [3]     a2s, a3e,
+            [4]     a2e
         */
 
-        actions = list.popNextActions();
-        REQUIRE(actions.size() == 3);
-        REQUIRE(list.getActionMap()->size() == 1);
+        handlers = list.popNextHandlers();
+        REQUIRE(handlers.size() == 2);
+        REQUIRE(list.getHandlerMap()->size() == 2);
+        REQUIRE(*(list.getNextHandlerList().begin()) == a2->getStartHandler());
         /*  Time    Actions
-            [3]     a4, a6
+            [3]     a2s, a3e,
+            [4]     a2e
         */
 
         // insert again
-        list.insertAction(a1);
-        REQUIRE(*(list.getNextActionList().begin()) == a1);
+        list.insertHandler(a1->getStartHandler());
+        REQUIRE(*(list.getNextHandlerList().begin()) == a1->getStartHandler());
         REQUIRE(list.getNextTimePoint() == a1->getStartTime());
-        REQUIRE(list.getActionMap()->size() == 2);
+        REQUIRE(list.getHandlerMap()->size() == 3);
         /*  Time    Actions
-            [1]     a1
-            [3]     a4, a6
+            [1]     a1s
+            [3]     a2s, a3e,
+            [4]     a2e
         */
     }
 
     SECTION("Remove") {
-        // insert actions
-        list.insertAction(a1); // start time = 1
-        list.insertAction(a4); // start time = 3
-        list.insertAction(a5); // start time = 2
-        list.insertAction(a2); // start time = 2
-        list.insertAction(a3); // start time = 2
-        list.insertAction(a6); // start time = 3
+        list.insertHandler(a1->getStartHandler()); // time = 1, a1s
+        REQUIRE(list.getHandlerMap()->size() == 1);
+        list.insertHandler(a2->getStartHandler()); // time = 3, a2s
+        REQUIRE(list.getHandlerMap()->size() == 2);
+        list.insertHandler(a1->getEndHandler()); // time = 2, a1e
+        REQUIRE(list.getHandlerMap()->size() == 3);
+        list.insertHandler(a3->getStartHandler()); // time = 2, a3s
+        REQUIRE(list.getHandlerMap()->size() == 3);
+        list.insertHandler(a2->getEndHandler()); // time = 4, a2e
+        REQUIRE(list.getHandlerMap()->size() == 4);
+        list.insertHandler(a3->getEndHandler()); // time = 3, a3e
+        REQUIRE(list.getHandlerMap()->size() == 4);
         // list layout
-        /*  Time    Actions
-            [1]     a1
-            [2]     a5, a2, a3
-            [3]     a4, a6
+        /*  Time    Handlers
+            [1]     a1s
+            [2]     a1e, a3s,
+            [3]     a2s, a3e,
+            [4]     a2e
         */
 
-        // wrong time hint
-        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(1)) == false);
-        REQUIRE(list.getActionMap()->size() == 3);
-
-        // actually remove
-        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == true);
-        REQUIRE(list.getActionMap()->size() == 3);
-        /*  Time    Actions
-            [1]     a1
-            [2]     a5, a2
-            [3]     a4, a6
-        */
-
-        // wrong pointer
-        REQUIRE(list.removeAction(a3, SimClock::atMillisecond(2)) == false);
-        REQUIRE(list.getActionMap()->size() == 3);
-
-        // remove with FAS
-        REQUIRE(list.removeAction(a1, SimClock::atMillisecond(1)) == true);
-        REQUIRE(list.getActionMap()->size() == 2);
-        /*  Time    Actions
-            [2]     a5, a2
-            [3]     a4, a6
-        */
-
-        auto l = list.getNextActionList();
-        REQUIRE(l.size() == 2);
-        auto lIterator = l.begin();
-        REQUIRE(lIterator->get() == a5.get());
-        lIterator++;
-        REQUIRE(lIterator->get() == a2.get());
-
-        // insert again
-        list.insertAction(a1);
-        REQUIRE(list.getActionMap()->size() == 3);
-        /*  Time    Actions
-            [1]     a1
-            [2]     a5, a2
-            [3]     a4, a6
-        */
-
-        REQUIRE(list.removeAction(a5, SimClock::atMillisecond(2)) == true);
-        REQUIRE(list.getActionMap()->size() == 3);
-        REQUIRE(list.removeAction(a2, SimClock::atMillisecond(2)) == true);
-        REQUIRE(list.getActionMap()->size() == 2);
-        /*  Time    Actions
-            [1]     a1
-            [3]     a4, a6
-        */
-        
+        // Removing Handlers is not yet implemented
+        #ifdef COSIDIA_SAFE
+        REQUIRE_THROWS(list.removeHandler(a1->getStartHandler(), a1->getStartTime()));
+        #endif
     }
 
 
 
     SECTION("check order") {
-        list.insertAction(a1); // start time = 1
-        list.insertAction(a4); // start time = 3
-        list.insertAction(a5); // start time = 2
-        list.insertAction(a2); // start time = 2
-        list.insertAction(a3); // start time = 2
-        list.insertAction(a6); // start time = 3
-        /*  Time    Actions
-            [1]     a1
-            [2]     a5, a2, a3
-            [3]     a4, a6
+        list.insertHandler(a1->getStartHandler()); // time = 1, a1s
+        list.insertHandler(a2->getStartHandler()); // time = 3, a2s
+        list.insertHandler(a1->getEndHandler()); // time = 2, a1e
+        list.insertHandler(a3->getStartHandler()); // time = 2, a3s
+        list.insertHandler(a2->getEndHandler()); // time = 4, a2e
+        list.insertHandler(a3->getEndHandler()); // time = 3, a3e
+        // list layout
+        /*  Time    Handlers
+            [1]     a1s
+            [2]     a1e, a3s,
+            [3]     a2s, a3e,
+            [4]     a2e
         */
 
-        REQUIRE(list.removeAction(a2, SimClock::atMillisecond(2)) == true);
-        /*  Time    Actions
-            [1]     a1
-            [2]     a5, a3
-            [3]     a4, a6
-        */
-
-        auto pop1 = list.popNextActions();
-        auto pop2 = list.popNextActions();
-        auto pop3 = list.popNextActions();
+        auto pop1 = list.popNextHandlers();
+        auto pop2 = list.popNextHandlers();
+        auto pop3 = list.popNextHandlers();
+        auto pop4 = list.popNextHandlers();
 
         REQUIRE(pop1.size() == 1);
-        REQUIRE(*(pop1.begin()) == a1);
+        REQUIRE(*(pop1.begin()) == a1->getStartHandler());
         REQUIRE(pop2.size() == 2);
-        REQUIRE(*(pop2.begin()) == a5);
-        REQUIRE(*(++pop2.begin()) == a3);
+        REQUIRE(*(pop2.begin()) == a1->getEndHandler());
+        REQUIRE(*(++pop2.begin()) == a3->getStartHandler());
         REQUIRE(pop3.size() == 2);
-        REQUIRE(*(pop3.begin()) == a4);
-        REQUIRE(*(++pop3.begin()) == a6);
+        REQUIRE(*(pop3.begin()) == a2->getStartHandler());
+        REQUIRE(*(++pop3.begin()) == a3->getEndHandler());
+        REQUIRE(pop4.size() == 1);
+        REQUIRE(*(pop4.begin()) == a2->getEndHandler());
 
-        REQUIRE(list.getActionMap()->size() == 0);
+        REQUIRE(list.getHandlerMap()->size() == 0);
     }
-    
+
 }

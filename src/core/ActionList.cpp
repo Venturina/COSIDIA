@@ -22,7 +22,7 @@ SimClock::time_point ActionList::getNextTimePoint()
 void ActionList::insertHandler(HandlerP handler)
 {
     enforce(onCoreThread(), "Inserted Action from wrong thread!");
-    (*mHandlerMap)[handler->getAction()->getStartTime()].push_back(handler);
+    (*mHandlerMap)[handler->getTime()].push_back(handler);
 }
 
 std::list<HandlerP> ActionList::popNextHandlers()
