@@ -23,7 +23,7 @@ void Action::setActionData(std::shared_ptr<const ActionData> data)
 
 void Action::shiftStartTime(TimePoint t)
 {
-    enforce(mStartTime < t, "Action: new time point must be later the old time point");
+    enforce(mStartTime <= t, "Action: new time point must be later the old time point");
     mStartTime = t;
 }
 

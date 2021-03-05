@@ -189,7 +189,7 @@ void Core::runSimulationLoop()
 void Core::executeActionOnFinishedTimer()
 {
     auto handlers = mActions.popNextHandlers();
-    enforce(mCurrentActionTime == handlers.begin()->get()->getAction()->getStartTime(), "Core: currentAction time corresponds not to fetched action time");
+    enforce(mCurrentActionTime == handlers.begin()->get()->getTime(), "Core: currentAction time corresponds not to fetched action time");
     for(auto& handler : handlers) {
         enforce(handler->getAction()->getActionId() != 0, "Core: tried to execute Action without Id");
 
