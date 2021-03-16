@@ -117,7 +117,6 @@ RouterUpdateData Router::requestReceived(std::shared_ptr<Action> action, std::sh
 {
     RouterUpdateData data;
     if(mInitDone) {
-        commonActions(data, action, context, currentObjects);
         DLOG_F(ERROR, "Router: transmission request");
         auto serviceData = std::dynamic_pointer_cast<const ServiceActionData>(action->getActionData());
         enforce(serviceData, "Router: request not available");
@@ -164,7 +163,7 @@ RouterUpdateData Router::requestReceived(std::shared_ptr<Action> action, std::sh
             // TODO remaining transport types are not implemented
             break;
         }
-
+    commonActions(data, action, context, currentObjects);
     }
     return data;
 }
@@ -187,7 +186,7 @@ RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, st
 
 void Router::commonActions(RouterUpdateData& data, std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
-    DLOG_F(ERROR, "current simulation time: %d ", SimClock::getMilliseconds(action->getStartTime()));
+    DLOG_F(ERROR, "current simulation time: %d, Router %d, Action id: %d", SimClock::getMilliseconds(action->getStartTime()), mObjectId.raw(), action->getActionId());
     mPositionProvider(this).updatePosition(*context);
     mRouter(this).update_position(mPositionProvider(this).position_fix());
     mRuntime(this).trigger((action->getStartTime()));

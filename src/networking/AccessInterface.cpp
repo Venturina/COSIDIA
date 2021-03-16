@@ -8,7 +8,7 @@ namespace cosidia
 void AccessInterface::request(const vanetza::access::DataRequest& request, std::unique_ptr<vanetza::ChunkPacket> packet)
 {
     enforce(!hasTransmissionRequest(), "AccessInterface: double transmission")
-    DLOG_F(ERROR, "Message from Vanetza");
+    DLOG_F(ERROR, "Transmission available");
     mCurrentTransmission = std::make_shared<Transmission>(request, std::move(packet));
     mHasRequest = true;
 }
@@ -18,7 +18,7 @@ std::shared_ptr<Transmission> AccessInterface::getTransmission(std::shared_ptr<c
     enforce(hasTransmissionRequest(), "AccessInterface: transmission request without pending transmission");
     enforce(mCacheQuery, "AccessInterface: ObjectCache was not initialized");
     mHasRequest = false;
-    DLOG_F(ERROR, "Message taken");
+    DLOG_F(ERROR, "Transmission Taken");
     auto receivers = mObjectCache->getObjectsByType(container, mRequestObjectType, mCacheQuery.get());
     for(const auto& receiver : receivers) {
         auto base = getSiblingByName(receiver, "VehicleObject", container);
@@ -38,7 +38,7 @@ void AccessInterface::initializeCache(std::string typeIdentifier, ObjectId exclu
 
 void AccessInterface::dropTransmission()
 {
-    DLOG_F(ERROR, "Message dropped");
+    DLOG_F(ERROR, "Transmission dropped");
     mHasRequest = false;
 }
 
