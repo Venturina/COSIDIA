@@ -12,6 +12,7 @@
 #include <boost/units/systems/si/prefixes.hpp>
 #include <boost/units/systems/angle/degrees.hpp>
 
+#include "loguru/loguru.hpp"
 namespace cosidia
 {
 
@@ -25,12 +26,16 @@ void CaService::initObject(std::shared_ptr<Action> action)
     auto newAction = createSelfAction(std::chrono::milliseconds(2), std::chrono::milliseconds(100) + action->getStartTime());
     newAction->setType("CaInit"_sym);
 
-    getCoreP()->scheduleAction(newAction);
+    newAction->scheduleStartHandler();
 }
 
 void CaService::startExecution(std::shared_ptr<Action> action)
 {
+    DLOG_F(INFO, "CA service at time: %d, Service %d, Action id: %d", SimClock::getMilliseconds(action->getStartTime()), mObjectId.raw(), action->getActionId());
+
     if(action->getType() == "CaUpdate"_sym) {
+        DLOG_F(INFO, "CA Update");
+
         boost::fibers::packaged_task<CaServiceUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>)>
             pt (std::bind(&CaService::executeUpdate, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -65,25 +70,26 @@ CaServiceUpdateData CaService::init(std::shared_ptr<Action> action, ConstObjectC
     return data;
 }
 
-void CaService::endExecution(std::shared_ptr<Action> action)
+void CaService::endExecution(std::shared_ptr<Action> endingAction)
 {
-    if(action->getType() == "CaUpdate"_sym) {
+    if(endingAction->getType() == "CaUpdate"_sym) {
         auto data = mFuture.get();
         for(auto action : data.actionsToSchedule) {
-            getCoreP()->scheduleAction(std::move(action));
+            action->scheduleStartHandler();
         }
         if(data.actionToDelete) {
-            getCoreP()->removeAction(data.actionToDelete);
+            // not allowed yet
+            // getCoreP()->removeAction(data.actionToDelete);
         }
-    } else if( action->getType() == "CaIndication"_sym) {
+    } else if( endingAction->getType() == "CaIndication"_sym) {
         auto data = mFuture.get();
-    }else if(action->getType() == "CaInit"_sym) {
+    }else if(endingAction->getType() == "CaInit"_sym) {
         auto data = mFuture.get();
         for(auto action : data.actionsToSchedule) {
-            getCoreP()->scheduleAction(std::move(action));
+            action->scheduleStartHandler();
         }
     } else {
-        std::cout << action->getType().value() << std::endl;
+        std::cout << endingAction->getType().value() << std::endl;
         throw std::runtime_error("CaService: wrong EndAction received");
     }
 }
@@ -106,8 +112,9 @@ CaServiceUpdateData CaService::executeUpdate(std::shared_ptr<Action> action, std
     serviceActionData->request = request;
     serviceActionData->port = vanetza::btp::ports::CAM;
 
-    auto transmitAction = std::make_shared<Action>(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime() + action->getDuration() 
-    + std::chrono::milliseconds(1), mRouterId, mObjectId);
+    std::shared_ptr<DurationAction> transmitAction = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), action->getStartTime(), mRouterId, mObjectId);
+    //auto transmitAction = std::make_shared<Action>(std::chrono::milliseconds(1), Action::Kind::START, action->getStartTime() + action->getDuration() 
+    //+ std::chrono::milliseconds(1), mRouterId, mObjectId);
 
     transmitAction->setType("ServiceRequest"_sym);
     transmitAction->setActionData(serviceActionData);
@@ -177,8 +184,8 @@ void CaService::makeCam(vanetza::asn1::Cam& message, Action* action, const Vehic
         throw std::runtime_error("Invalid high frequency CAM: %s" + error);
     }
 
-    std::cout << "Generated CAM contains\n";
-    vanetza::facilities::print_indented(std::cout, message, "  ", 1);
+    std::cout << "Generated CAM from " << mObjectId.raw() << " contains\n";
+    //vanetza::facilities::print_indented(std::cout, message, "  ", 1);
 }
 
 } // namespace cosidia
