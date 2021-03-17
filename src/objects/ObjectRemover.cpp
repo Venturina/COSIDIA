@@ -32,6 +32,9 @@ std::vector<ObjectId> ObjectRemover::getVehicleRelatedObjects(ObjectId id, Const
     auto router = getSiblingByName(obj.get(), "Router", objectList);
     removeList.push_back(router.lock()->getObjectId());
 
+    auto caService = getChildByName(router.lock().get(), "CaService", objectList);
+    removeList.push_back(caService.lock()->getObjectId());
+
     return removeList;
 }
 
