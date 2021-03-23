@@ -9,7 +9,7 @@ namespace cosidia
 
 BaseObject::BaseObject() :
     mObjectId(ObjectId::stub()),
-    mActionManager(new ObjectActionManager())
+    mActionManager(new ObjectActionManager(mObjectId))
 {
     #ifdef COSIDIA_SAFE
     mHistory.reset(new ActionHistory(10));

@@ -18,7 +18,7 @@ void PositionProvider::updatePosition(const VehicleObjectContext& context)
     mPositionFix.longitude = context.geo.longitude * degrees;
     mPositionFix.latitude = context.geo.latitude * degrees;
 
-    mPositionFix.course.assign(context.heading * north, north + 3.0 * degree);
+    mPositionFix.course.assign(north.from_value(context.heading), north + 3.0 * degree);
     mPositionFix.speed.assign(context.speed * si::meter_per_second, 1.0 * si::meter_per_second);
 }
 

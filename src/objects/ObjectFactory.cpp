@@ -39,13 +39,11 @@ TemporaryObjectList ObjectFactory::createVehicleObject(ConstObjectContainer_ptr 
     auto microchannel = std::make_shared<Microchannel>();
     auto vehicle = std::make_shared<VehicleObject>();
     vehicle->setExternalId(data->get<std::string>("id"));
-    auto caService = std::make_shared<CaService>();
 
     TemporaryObject tRadio(ObjectId { 0 }, objectList->getUnique("Radio"), true);
     TemporaryObject tChannel(ObjectId { 1 }, microchannel);
     TemporaryObject tVehicle(ObjectId { 2 }, vehicle);
     TemporaryObject tRouter(ObjectId { 3 }, router);
-    TemporaryObject tCaServide(ObjectId { 4 }, caService);
 
     tRadio.setTempChild(tChannel);
     tChannel.setTempParent(tRadio);
@@ -56,15 +54,11 @@ TemporaryObjectList ObjectFactory::createVehicleObject(ConstObjectContainer_ptr 
     tChannel.setTempChild(tRouter);
     tRouter.setTempParent(tChannel);
 
-    tCaServide.setTempParent(tRouter);
-    tRouter.setTempChild(tCaServide);
-
     TemporaryObjectList l;
     l.addToList(std::make_shared<TemporaryObject>(tRadio));
     l.addToList(std::make_shared<TemporaryObject>(tChannel));
     l.addToList(std::make_shared<TemporaryObject>(tVehicle));
     l.addToList(std::make_shared<TemporaryObject>(tRouter));
-    l.addToList(std::make_shared<TemporaryObject>(tCaServide));
 
     DLOG_F(ERROR, "Create vehicle");
     return l;

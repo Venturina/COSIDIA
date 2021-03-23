@@ -15,8 +15,8 @@ TEST_CASE( "Test the action manager", "[Action Manager]" ) {
     std::shared_ptr<DurationAction> a4 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
     std::shared_ptr<DurationAction> a5 = ActionFactory<DurationAction>::create(std::chrono::milliseconds(1), SimClock::atMillisecond(1), ObjectId { 1 }, ObjectId { 5 });
 
-
-    ObjectActionManager manager;
+    auto id = ObjectId{1};
+    ObjectActionManager manager(id);
 
     SECTION( "By default, no action is available" ) {
         REQUIRE_FALSE(manager.isActionAvailable());

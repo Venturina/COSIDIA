@@ -16,6 +16,7 @@ using namespace cosidia;
 class MockObjectActionManager : public ObjectActionManager
 {
 public:
+    MockObjectActionManager(ObjectId& id) : ObjectActionManager(id) {}
     MAKE_MOCK1(startOrDelay, bool(std::shared_ptr<Action>), override);
 };
 
@@ -40,7 +41,8 @@ class MockDebugObjectChild : public DebugObjectChild
 {
 public:
     MockDebugObjectChild() : DebugObjectChild() {
-        mActionManager.reset(new MockObjectActionManager);
+        ObjectId id{1};
+        mActionManager.reset(new MockObjectActionManager(id));
     }
     MAKE_MOCK1(startExecution, void(std::shared_ptr<Action>), override);
     MAKE_MOCK1(endExecution, void(std::shared_ptr<Action>), override);

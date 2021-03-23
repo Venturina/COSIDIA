@@ -25,6 +25,7 @@ add_subdirectory(extern/sqlitecpp)
 add_library(cosidia STATIC
         extern/loguru/loguru.cpp
         src/application/CaService.cpp
+        src/application/InternalCaService.cpp
         src/core/Action.cpp
         src/core/ActionHandler.cpp
         src/core/ActionList.cpp

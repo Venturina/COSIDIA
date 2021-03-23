@@ -14,7 +14,7 @@ namespace cosidia
 class ObjectActionManager
 {
 public:
-
+    ObjectActionManager(ObjectId& id) : mCorrespondingObject(id) {}
 
     /**
      * Checks if a Action can be started immediately
@@ -56,6 +56,8 @@ private:
 
     std::shared_ptr<Action> mActiveAction;
     std::queue<std::shared_ptr<Action>> mDelayedQueue;
+
+    ObjectId& mCorrespondingObject;
 };
 
 } // namespace cosidia

@@ -22,11 +22,12 @@ namespace cosidia
 {
 
 Router::Router() : mPositionProvider(this), mRuntime(this), mMib(this), mRouter(this), mDccRequestInterface(this), mDccStateMachine(this),
-                                mAccessInterface(this), mTransmitRateControl(this), BaseObject()
+                                mAccessInterface(this), mTransmitRateControl(this), mCaService(this), BaseObject()
 {
     mObjectName = "Router";
     mMib.constructElement(this);
     mPositionProvider.constructElement(this);
+    mCaService.constructElement(this, this);
 }
 
 void Router::initObject(std::shared_ptr<Action> action)
@@ -63,9 +64,9 @@ void Router::startExecution(std::shared_ptr<Action> action) {
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
-    } else if(action->getType() == "ServiceRequest"_sym) {
+    } else if(action->getType() == "caUpdate"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
-            pt (std::bind(&Router::requestReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+            pt (std::bind(&Router::caUpdate, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
@@ -100,6 +101,10 @@ RouterUpdateData Router::initRouter(std::shared_ptr<Action> action)
     }
 
     mInitDone = true;
+
+    auto caAction = createSelfAction(std::chrono::milliseconds(2), action->getStartTime()+std::chrono::milliseconds(100));
+    caAction->setType("caUpdate"_sym);
+    data.actionsToSchedule.push_back(caAction);
     scheduleNextUpdate(data, action.get());
     return data;
 }
@@ -113,58 +118,20 @@ RouterUpdateData Router::executeUpdate(std::shared_ptr<Action> action, std::shar
     return data;
 }
 
-RouterUpdateData Router::requestReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
+RouterUpdateData Router::caUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr currentObjects)
 {
+    COSIDIA_TIMING(action);
     RouterUpdateData data;
-    if(mInitDone) {
-        DLOG_F(ERROR, "Router: transmission request");
-        auto serviceData = std::dynamic_pointer_cast<const ServiceActionData>(action->getActionData());
-        enforce(serviceData, "Router: request not available");
-        auto packet = serviceData->packet;
-        auto dataRequest = serviceData->request;
-
-        vanetza::btp::HeaderB btp_header;
-        btp_header.destination_port = serviceData->port;
-        btp_header.destination_port_info = vanetza::host_cast<uint16_t>(0);
-        packet->layer(vanetza::OsiLayer::Transport) = btp_header;
-
-        switch (dataRequest.transport_type) {
-        case vanetza::geonet::TransportType::SHB: {
-            vanetza::geonet::GbcDataRequest gbcRequest(mMib(this));
-            gbcRequest.upper_protocol = vanetza::geonet::UpperProtocol::BTP_B;
-            gbcRequest.communication_profile = dataRequest.communication_profile;
-            gbcRequest.its_aid = dataRequest.its_aid;
-            if(dataRequest.maximum_lifetime) {
-                gbcRequest.maximum_lifetime = dataRequest.maximum_lifetime.get();
-            }
-            gbcRequest.repetition = dataRequest.repetition;
-            gbcRequest.traffic_class = dataRequest.traffic_class;
-
-            auto confirm = mRouter(this).request(gbcRequest, std::make_unique<vanetza::DownPacket>(*packet));
-            enforce(confirm.accepted(), "Router: Request was not accepted");
-            break;
-        }
-        case vanetza::geonet::TransportType::GBC: {
-            vanetza::geonet::ShbDataRequest shbRequest(mMib(this));
-            shbRequest.upper_protocol = vanetza::geonet::UpperProtocol::BTP_B;
-            shbRequest.communication_profile = dataRequest.communication_profile;
-            shbRequest.its_aid = dataRequest.its_aid;
-            if(dataRequest.maximum_lifetime) {
-                shbRequest.maximum_lifetime = dataRequest.maximum_lifetime.get();
-            }
-            shbRequest.repetition = dataRequest.repetition;
-            shbRequest.traffic_class = dataRequest.traffic_class;
-
-            auto confirm = mRouter(this).request(shbRequest, std::make_unique<vanetza::DownPacket>(*packet));
-            enforce(confirm.accepted(), "Router: Request was not accepted");
-            break;
-        }
-        default:
-            // TODO remaining transport types are not implemented
-            break;
-        }
-    commonActions(data, action, context, currentObjects);
+    auto fix = &mPositionProvider.getElement(this)->position_fix();
+    std::cout << fix->course.value().value() * 10 << std::endl;
+    if(mInitDone && fix->course.value().value() >= 0) {
+        DLOG_F(WARNING, "Router %d: CA Update", mObjectId.raw());
+        auto transmitssion = mCaService.getElement(this)->triggerCam(fix, action.get(), &mRouter(this), mMib(this));
     }
+    auto caAction = createSelfAction(std::chrono::milliseconds(2), action->getStartTime()+std::chrono::milliseconds(100));
+    caAction->setType("caUpdate"_sym);
+    data.actionsToSchedule.push_back(caAction);
+    commonActions(data, action, context, currentObjects);
     return data;
 }
 
@@ -173,13 +140,13 @@ RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, st
     COSIDIA_TIMING(action);
     RouterUpdateData data;
     if(mInitDone) {
-        commonActions(data, action, context, currentObjects);
-        DLOG_F(ERROR, "Router: received transmission");
+        DLOG_F(ERROR, "Router %d: received transmission", mObjectId.raw());
         auto transmission = std::dynamic_pointer_cast<const Transmission>(action->getActionData());
         auto dataRequest = transmission->getRequest();
         auto packetPtr = transmission->getPacket();
         vanetza::geonet::Router::UpPacketPtr upPacket { new vanetza::UpPacket(packetPtr) };
         mRouter(this).indicate(std::move(upPacket), dataRequest.source_addr, dataRequest.destination_addr);
+        commonActions(data, action, context, currentObjects);
     }
     return data;
 }
@@ -196,7 +163,7 @@ void Router::commonActions(RouterUpdateData& data, std::shared_ptr<Action> actio
 }
 
 void Router::endExecution(std::shared_ptr<Action> action) {
-    if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym || action->getType() == "ServiceRequest"_sym) {
+    if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym || action->getType() == "caUpdate"_sym) {
         auto data = mFuture.get();
         for(auto action : data.actionsToSchedule) {
             action->scheduleStartHandler();

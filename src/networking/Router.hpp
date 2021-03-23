@@ -1,5 +1,6 @@
 #pragma once
 
+#include "application/InternalCaService.hpp"
 #include "networking/PositionProvider.hpp"
 #include "networking/Runtime.hpp"
 #include "networking/AccessInterface.hpp"
@@ -37,7 +38,7 @@ public:
 private:
     RouterUpdateData executeUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
     RouterUpdateData transmissionReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
-    RouterUpdateData requestReceived(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
+    RouterUpdateData caUpdate(std::shared_ptr<Action> action, std::shared_ptr<const VehicleObjectContext> context, ConstObjectContainer_ptr);
 
     RouterUpdateData initRouter(std::shared_ptr<Action> action);
 
@@ -61,6 +62,7 @@ private:
     PureLocal<AccessInterface> mAccessInterface;
     PureLocal<vanetza::dcc::TransmitRateControl> mTransmitRateControl;
 
+    PureLocal<InternalCaService> mCaService;
 
     bool mInitDone = false;
     std::shared_ptr<Action> mNextAction;
