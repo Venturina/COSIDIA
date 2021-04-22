@@ -65,13 +65,13 @@ Core* getCoreP()
     return coreP;
 }
 
-Core::Core() : mTimer(mIoService)
+Core::Core() : mTimer(mIoService), mActions(mCurrentActionTime)
 {
     theMainThread = std::this_thread::get_id();
     setCoreP(this);
 }
 
-Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), mDistribution(1, 1000)
+Core::Core(std::shared_ptr<SteadyClock> clock) : mTimer(mIoService), mRnd(100), mDistribution(1, 1000), mActions(mCurrentActionTime)
 {
     theMainThread = std::this_thread::get_id();
     setCoreP(this);
@@ -175,6 +175,7 @@ void Core::startThread(int worker_this, int worker_total) {
 
 void Core::runSimulationLoop()
 {
+    enforce(mActions.getNextTimePoint() >= mCurrentActionTime, "Core: wrong order of actions");
     mCurrentActionTime = mActions.getNextTimePoint();
 
     if(mCurrentActionTime == SimClock::invalid()) {

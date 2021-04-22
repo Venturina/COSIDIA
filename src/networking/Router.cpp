@@ -14,7 +14,7 @@
 #include <vanetza/dcc/fully_meshed_state_machine.hpp>
 #include <vanetza/geonet/data_confirm.hpp>
 
-
+#include "boost/thread/futures/future_error.hpp"
 #include "loguru/loguru.hpp"
 
 
@@ -46,33 +46,40 @@ void Router::initObject(std::shared_ptr<Action> action)
 
 
 void Router::startExecution(std::shared_ptr<Action> action) {
-    if(action->getType() == "update"_sym) {
-        boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
-            pt (std::bind(&Router::executeUpdate, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
-        mFuture = pt.get_future();
-        boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
-    } else if (action->getType() == "initRouter"_sym) {
-        boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>)>
-            pt (std::bind(&Router::initRouter, this, std::placeholders::_1));
-
-        mFuture = pt.get_future();
-        boost::fibers::fiber(std::move(pt), action).detach();
-    } else if(action->getType() == "transmission"_sym) {
-        boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
-            pt (std::bind(&Router::transmissionReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
-        mFuture = pt.get_future();
-        boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
-    } else if(action->getType() == "caUpdate"_sym) {
+    if(action->getType() == "caUpdate"_sym) {
         boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
             pt (std::bind(&Router::caUpdate, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
         mFuture = pt.get_future();
         boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
-    } else {
+        return;
+    }  else if (action->getType() == "initRouter"_sym) {
+        boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>)>
+            pt (std::bind(&Router::initRouter, this, std::placeholders::_1));
+
+        mFuture = pt.get_future();
+        boost::fibers::fiber(std::move(pt), action).detach();
+        return;
+    } else if (mTracker.isStart(action.get())) {
+        if(action->getType() == "update"_sym) {
+            boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
+                pt (std::bind(&Router::executeUpdate, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+            mFuture = pt.get_future();
+            boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
+            return;
+        } else if(action->getType() == "indication"_sym) {
+            boost::fibers::packaged_task<RouterUpdateData(std::shared_ptr<Action>, std::shared_ptr<const VehicleObjectContext>, ConstObjectContainer_ptr)>
+                pt (std::bind(&Router::transmissionReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+            mFuture = pt.get_future();
+            boost::fibers::fiber(std::move(pt), action, mVehicleObject.lock()->getContext(), getCoreP()->getCurrentObjectList()).detach();
+            return;
+        }
         std::cout << action->getType().value() << std::endl;
         throw std::runtime_error("Router: wrong BeginAction received");
+    } else {
+        enforce(!mTracker.isStart(action.get()), "Router: Action thing went wrong")
     }
 }
 
@@ -147,7 +154,9 @@ RouterUpdateData Router::transmissionReceived(std::shared_ptr<Action> action, st
         vanetza::geonet::Router::UpPacketPtr upPacket { new vanetza::UpPacket(packetPtr) };
         mRouter(this).indicate(std::move(upPacket), dataRequest.source_addr, dataRequest.destination_addr);
         commonActions(data, action, context, currentObjects);
-    }
+    } else {
+        return data;
+    } 
     return data;
 }
 
@@ -163,17 +172,47 @@ void Router::commonActions(RouterUpdateData& data, std::shared_ptr<Action> actio
 }
 
 void Router::endExecution(std::shared_ptr<Action> action) {
-    if(action->getType() == "update"_sym || action->getType() == "initRouter"_sym || action->getType() == "transmission"_sym || action->getType() == "caUpdate"_sym) {
-        auto data = mFuture.get();
-        for(auto action : data.actionsToSchedule) {
-            action->scheduleStartHandler();
+    if((action->getType() == "update"_sym || action->getType() == "indication"_sym)) {
+        if (!mTracker.isEnd(action.get())) {
+            return;
         }
-        if(data.actionToDelete) {
-            getCoreP()->removeAction(data.actionToDelete);
+
+        try {
+            auto data = mFuture.get();
+            for(auto action : data.actionsToSchedule) {
+                action->scheduleStartHandler();
+            }
+            if(data.actionToDelete) {
+                getCoreP()->removeAction(data.actionToDelete);
+            }
+            if(data.transmission) {
+                data.transmission->setupReceiverContext();
+                data.transmission->addEmitter(mObjectId, mVehicleObject.lock()->getContext());
+            }
+        } catch (const std::exception& e) {
+            action->prettyPrint();
+            DLOG_F(ERROR, "Thrown exception '%s' on action %d at object %s with ID %d", e.what(), action->getActionId(), mObjectName.c_str(),  mObjectId);
+            throw e;
         }
-        if(data.transmission) {
-            data.transmission->setupReceiverContext();
-            data.transmission->addEmitter(mObjectId, mVehicleObject.lock()->getContext());
+
+    } else if (action->getType() == "caUpdate"_sym || action->getType() == "initRouter"_sym) {
+        try {
+            auto data = mFuture.get();
+            for(auto action : data.actionsToSchedule) {
+                action->scheduleStartHandler();
+            }
+            if(data.actionToDelete) {
+                getCoreP()->removeAction(data.actionToDelete);
+            }
+            if(data.transmission) {
+                data.transmission->setupReceiverContext();
+                data.transmission->addEmitter(mObjectId, mVehicleObject.lock()->getContext());
+            }
+        } catch (const std::exception& e) {
+            mHistory->prettyPrint();
+            action->prettyPrint();
+            DLOG_F(ERROR, "Thrown exception '%s' on action %d at object %s with ID %d", e.what(), action->getActionId(), mObjectName.c_str(),  mObjectId);
+            throw e;
         }
     } else {
         throw std::runtime_error("Router: wrong EndAction received");
@@ -183,21 +222,25 @@ void Router::endExecution(std::shared_ptr<Action> action) {
 void Router::scheduleNextUpdate(RouterUpdateData& data, const Action* currentAction)
 {   //TODO: not fully tested yet
     auto nextTp = mRuntime(this).getNextStart();
-    enforce(!mNextAction || mNextAction->getType() == "update"_sym, "Router: next action is no update"); // this should never happen
+    if(nextTp != mTracker.nextStart()) {
+    //enforce(!mTracker.getEnd() || mTracker.getEnd() == currentAction, "Router: messed up with ActionTracker");
+    //enforce(!mNextAction || mNextAction->getType() == "update"_sym, "Router: next action is no update"); // this should never happen
 
-    if(!mNextAction || mNextAction.get() == currentAction) { // new update must be scheduled
+    //if(mTracker.isStart(currentAction)) { // new update must be scheduled
         DLOG_F(ERROR, "next Update at: %d milliseconds", SimClock::getMilliseconds(nextTp));
         auto nextAction = createSelfAction(std::chrono::milliseconds(2), nextTp);
         nextAction->setType("update"_sym);
         data.actionsToSchedule.push_back(nextAction);
-        mNextAction = nextAction;
-    } else { // nextAction != current -> further decisions required
-        if(nextTp == mNextAction->getStartTime()) {  // a update is allready scheduled at the correct time point
-            // do nothing here
-        } else { // we have to cancel the update
-            data.actionToDelete = mNextAction;
-        }
+        mTracker.setNext(nextAction.get());
     }
+        //mNextAction = nextAction;
+    //} else { // nextAction != current -> further decisions required
+        //if(nextTp == mNextAction->getStartTime()) {  // a update is allready scheduled at the correct time point
+            // do nothing here
+        //} else { // we have to cancel the update
+            //data.actionToDelete = mNextAction;
+        //}
+    //}
 }
 
 void Router::scheduleTransmission(RouterUpdateData& data, const Action* currentAction, ConstObjectContainer_ptr currentObjects)

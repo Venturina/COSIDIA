@@ -26,7 +26,7 @@ public:
     /**
      * Creates the ActionList
      */
-    ActionList();
+    ActionList(const SimClock::time_point&);
 
     /**
      * Adds an Handler to the ActionList
@@ -37,7 +37,7 @@ public:
     /**
      * Returns next time point at which an Handler is available
      */
-    SimClock::time_point getNextTimePoint();
+    SimClock::time_point getNextTimePoint() const;
 
     /**
      * Remove handlers for next time point from Action list
@@ -61,6 +61,7 @@ public:
 
 protected:
     std::unique_ptr<HandlerMap> mHandlerMap;
+    const SimClock::time_point& mCurrentActionTime;
 };
 
 } // ns cosidia

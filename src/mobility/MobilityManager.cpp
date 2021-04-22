@@ -77,6 +77,7 @@ std::shared_ptr<MobilityManagerTasks> MobilityManager::doVehicleUpdate(std::shar
     if(action->getStartTime() < SimClock::atSecond(20)) {
         auto newAction = ActionFactory<DurationAction>::create(std::chrono::milliseconds(50), action->getStartTime() + std::chrono::milliseconds(100),
             mObjectId, mObjectId); // ugly as hell?
+        newAction->setType("MobilityManager:Update"_sym);
 
         data->actionsToSchedule.push_back(newAction);
     }
@@ -105,7 +106,7 @@ void MobilityManager::endExecution(std::shared_ptr<Action> action)
     auto data = mFuture.get();
     for (auto& vehicle : data->vehiclesToAdd) {
         DLOG_F(ERROR, "Add vehicle");
-        vehicle.resolveAndStart(action->getStartTime());
+        vehicle.resolveAndStart(action->getEndTime());
     }
     for(auto& a : data->actionsToSchedule) {
         a->scheduleStartHandler();

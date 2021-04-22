@@ -7,7 +7,7 @@ namespace cosidia
 {
 
 class SymbolData;
-    
+
 class Symbol
 {
 public:
@@ -28,8 +28,17 @@ public:
 
 private:
     tbb::concurrent_unordered_set<SymbolData>::iterator mIterator;
+
+    #ifdef COSIDIA_SAFE
+    std::string m_debug;
+    #endif
 };
 
 Symbol operator "" _sym(const char*, std::size_t);
+
+inline std::string symbol_as_string(Symbol sym) {
+    std::string_view v = sym.value();
+    return {v.data(), v.size()};
+}
 
 } // namespace cosidia

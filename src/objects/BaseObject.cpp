@@ -24,18 +24,35 @@ BaseObject::~BaseObject()
 void BaseObject::startExecutionBase(std::shared_ptr<Action> action)
 {
     enforce(isInitialized(), "Tried to execute a not initialized object");
+    #ifdef COSIDIA_SAFE
+        enforce(mCurrentAction != 0 || mFirstAction, "BaseObject: last action was not ended");
+        mFirstAction = false;
+        mHistory->addStartedAction(action);
+    #endif
+
     if(!mActionManager->startOrDelay(action)) {
         #ifdef COSIDIA_SAFE
         mCurrentAction = action->getActionId();
+        mHistory->addStartedAction(action);
         #endif
         action->scheduleEndHandler();
         startExecution(action);
+    } else {
+        #ifdef COSIDIA_SAFE
+        mHistory->addDelayedAction(action);
+        #endif
     }
 
 }
 
 void BaseObject::endExecutionBase(std::shared_ptr<Action> action)
 {
+    #ifdef COSIDIA_SAFE
+    mHistory->addEndedAction(action);
+    std::cout << mCurrentAction << " " << mObjectName << std::endl;
+    enforce(action->getActionId() == mCurrentAction, "BaseObject: Action ends wrong action");
+    #endif
+
     //TODO: check if Start and End Action are the same 
     endExecution(action);
     //TODO: time tracking for realTime loss measurement
@@ -45,6 +62,7 @@ void BaseObject::endExecutionBase(std::shared_ptr<Action> action)
         update->shiftStartTime(action->getEndTime());
         #ifdef COSIDIA_SAFE
         mCurrentAction = action->getActionId();
+        mHistory->addDequeuedAction(update);
         #endif
         action->scheduleEndHandler();
         startExecution(update);
@@ -53,7 +71,27 @@ void BaseObject::endExecutionBase(std::shared_ptr<Action> action)
 
 void BaseObject::initObjectBase(std::shared_ptr<Action> action)
 {
-    initObject(action);
+    if(!mActionManager->startOrDelay(action)) {
+        #ifdef COSIDIA_SAFE
+        mCurrentAction = action->getActionId();
+        mHistory->addInitAction(action);
+        #endif
+        initObject(action);
+        if(mActionManager->endAndCheckAvailable()) {
+            auto update = mActionManager->activateNextAvailableAction();
+            update->shiftStartTime(action->getEndTime());
+            #ifdef COSIDIA_SAFE
+            mCurrentAction = action->getActionId();
+            mHistory->addDequeuedAction(update);
+            #endif
+            update->scheduleEndHandler();
+            startExecution(update);
+        }
+    } else {
+        #ifdef COSIDIA_SAFE
+        mHistory->addDelayedAction(action);
+        #endif
+    }
 }
 
 /*

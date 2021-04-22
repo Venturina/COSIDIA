@@ -16,12 +16,12 @@ public:
 
     SymbolData(const std::string& s) : mData(s)
     {
-    } 
+    }
 
     SymbolData(const SymbolData& d)
     {
         mData = d.string();
-    } 
+    }
 
     SymbolData& operator=(const SymbolData& d)
     {
@@ -35,13 +35,13 @@ public:
         {
             std::string operator()(const std::string_view& sv) const
             {
-                return std::string { sv }; 
+                return std::string { sv };
             }
 
             std::string operator()(const std::string& s) const
             {
                 return s;
-            } 
+            }
         };
 
         return std::visit(get_value(), mData);
@@ -54,8 +54,8 @@ public:
             std::string_view operator()(const std::string_view& sv) const
             {
                 return sv;
-            } 
-        
+            }
+
             std::string_view operator()(const std::string& s) const
             {
                 return std::string_view { s };
@@ -63,7 +63,7 @@ public:
         };
 
         return std::visit(get_string_view(), mData);
-    } 
+    }
 
     std::size_t hash() const
     {
@@ -77,11 +77,11 @@ public:
             std::size_t operator()(const std::string_view& sv) const
             {
                 return XXH3_64bits(sv.data(), sv.size());
-            } 
+            }
         };
 
         return std::visit(get_hash(), mData);
-    } 
+    }
 
     bool operator==(const SymbolData& other) const
     {
@@ -97,7 +97,7 @@ struct SymbolHasher
     std::size_t operator()(const SymbolData& d) const
     {
         return d.hash();
-    } 
+    }
 };
 
 namespace {
@@ -120,6 +120,9 @@ find_or_create_symbol(const std::string_view& sv)
 Symbol::Symbol(const char* data, std::size_t len) :
     mIterator(find_or_create_symbol(std::string_view(data, len)))
 {
+    #ifdef COSIDIA_SAFE
+    m_debug = value();
+    #endif
 }
 
 Symbol::Symbol(const std::string_view& sv) :

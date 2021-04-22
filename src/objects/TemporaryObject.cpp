@@ -2,6 +2,7 @@
 #include "core/InitAction.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/TemporaryObject.hpp"
+#include "utils/enforce.hpp"
 
 #include "loguru/loguru.hpp"
 
@@ -74,6 +75,7 @@ void TemporaryObjectList::resolveAndStart(SimClock::time_point start)
 {
     DLOG_F(ERROR, "Try Resolve");
     for(auto& obj : mTempList) {
+        enforce(obj, "TemporaryObjectList: Something wrong with the pointer");
         obj->initialize(start);
         mResolvedIds[obj->getTempId()] = obj;
     }
@@ -81,6 +83,7 @@ void TemporaryObjectList::resolveAndStart(SimClock::time_point start)
     DLOG_F(ERROR, "Added Ids");
 
     for(auto& obj : mTempList) {
+        enforce(obj, "TemporaryObjectList: Something wrong with the pointer");
         for(auto children : obj->getTemporaryChildren()) {
             obj->setRealChildren(mResolvedIds[children]->getRealId());
             DLOG_F(ERROR, "           %s", mResolvedIds[children]->getObjectName().c_str());

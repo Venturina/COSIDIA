@@ -54,6 +54,7 @@ protected:
 
     #ifdef COSIDIA_SAFE
     int mCurrentAction = 0;
+    bool mFirstAction = true;
     std::unique_ptr<ActionHistory> mHistory;
     #endif
 };

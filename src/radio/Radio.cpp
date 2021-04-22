@@ -76,7 +76,7 @@ Radio::Result Radio::endTransmission(ActionP action, std::shared_ptr<const Radio
     auto receivers = mDecider->decideOnInterference(transmission, context.get());
     for(auto& receiver : receivers) {
         auto newAction = ActionFactory<DurationAction>::create(std::chrono::milliseconds(2), action->getStartTime() + action->getDuration() + std::chrono::milliseconds(1) ,receiver, mObjectId);
-        newAction->setType("transmission"_sym);
+        newAction->setType("indication"_sym);
         newAction->setActionData(transmission);
         result.actionsToSchedule.push_back(newAction);
     };

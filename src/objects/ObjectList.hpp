@@ -32,6 +32,8 @@ public:
 
     const std::map<ObjectId, std::shared_ptr<BaseObject>> getAll() const { return mActiveObjects; };
 
+    void prettyPrint() const;
+
 private:
     std::map<ObjectId, std::shared_ptr<BaseObject>> mActiveObjects;
     std::map<std::string, ObjectId> mUniqueObjects;
@@ -55,6 +57,8 @@ public:
     std::shared_ptr<BaseObject>getObjectByIdFromCurrentContainer(ObjectId id);
     ConstObjectContainer_ptr getCurrentObjectContainer() const;
     ObjectId getNextObjectId();
+
+    void prettyPrint() const { mCurrentCopy->prettyPrint(); }
 
 private:
     ObjectContainer_ptr mWorkingCopy;

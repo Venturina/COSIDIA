@@ -111,6 +111,8 @@ public:
     virtual void scheduleStartHandler() = 0;
     virtual void scheduleEndHandler() = 0;
 
+    virtual void prettyPrint() const;
+
 protected:
     /**
      * Creates an Action for a specific object

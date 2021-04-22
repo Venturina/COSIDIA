@@ -103,7 +103,7 @@ protected:
     boost::asio::io_service mIoService;
     boost::asio::steady_timer mTimer;
     ActionList mActions;
-    SimClock::time_point mCurrentActionTime;
+    SimClock::time_point mCurrentActionTime = SimClock::zero();
 
     ObjectList mObjectList;
 

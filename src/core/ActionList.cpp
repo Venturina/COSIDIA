@@ -5,12 +5,12 @@
 namespace cosidia
 {
 
-ActionList::ActionList()
+ActionList::ActionList(const SimClock::time_point& time) : mCurrentActionTime(time)
 {
     mHandlerMap = std::make_unique<HandlerMap>();
 }
 
-SimClock::time_point ActionList::getNextTimePoint()
+SimClock::time_point ActionList::getNextTimePoint() const
 {
     if(mHandlerMap->empty()) {
         return SimClock::invalid();
@@ -22,6 +22,7 @@ SimClock::time_point ActionList::getNextTimePoint()
 void ActionList::insertHandler(HandlerP handler)
 {
     enforce(onCoreThread(), "Inserted Action from wrong thread!");
+    enforce(handler->getTime() >= mCurrentActionTime, "ActionList: Wrong order of actions");
     (*mHandlerMap)[handler->getTime()].push_back(handler);
 }
 

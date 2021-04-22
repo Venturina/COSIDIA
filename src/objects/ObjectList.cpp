@@ -114,4 +114,11 @@ void ObjectList::removeFromSimulation(ObjectId id)
     mCurrentCopy = std::make_shared<ObjectContainer>(*mWorkingCopy);
 }
 
+void ObjectContainer::prettyPrint() const
+{
+    for(const auto& elem: mActiveObjects) {
+        std::cout << "Id: " << elem.second->getObjectId().raw() << " | Type: " << elem.second->getObjectName() << std::endl;
+    }
+}
+
 }

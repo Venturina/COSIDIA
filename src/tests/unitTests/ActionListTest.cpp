@@ -25,6 +25,7 @@ public:
 class DebugActionMap : public ActionList
 {
 public:
+    DebugActionMap(const SimClock::time_point& tp) : ActionList(tp) {};
     HandlerMap* getHandlerMap() { return mHandlerMap.get(); }
 };
 
@@ -39,7 +40,9 @@ TEST_CASE("Action List", "[ActionList]") {
     // a2s -> 3, a2e -> 4
     // a3s -> 2, a3e -> 3
 
-    DebugActionMap list;
+    SimClock::time_point tp = SimClock::zero();
+
+    DebugActionMap list(tp);
 
     SECTION("Insert and Get") {
         // insert actions

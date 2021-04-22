@@ -27,4 +27,10 @@ void Action::shiftStartTime(TimePoint t)
     mStartTime = t;
 }
 
+void Action::prettyPrint() const
+{
+    std::cout << "Action Id: " << getActionId() << " | Destination: " << getAffected().raw() << " | Start time: " << getStartTime().time_since_epoch().count() / 1000 <<
+            " | Originating Object: " << getGeneratingObject().raw() << " | Type: " << getType().value() << std::endl;
+}
+
 } // ns cosidia

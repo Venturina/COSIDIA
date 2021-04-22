@@ -4,6 +4,7 @@
 #include "networking/PositionProvider.hpp"
 #include "networking/Runtime.hpp"
 #include "networking/AccessInterface.hpp"
+#include "networking/ActiveActionTracker.hpp"
 #include "objects/BaseObject.hpp"
 #include "objects/ObjectCache.hpp"
 #include "objects/VehicleObject.hpp"
@@ -65,7 +66,7 @@ private:
     PureLocal<InternalCaService> mCaService;
 
     bool mInitDone = false;
-    std::shared_ptr<Action> mNextAction;
+    ActiveActionTracker mTracker;
     ReadOnly<int> mRandomNumber;
     //runtime
     //router

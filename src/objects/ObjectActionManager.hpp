@@ -50,6 +50,10 @@ public:
      **/
     bool endAndCheckAvailable();
 
+    void endManually();
+
+    void prettyPrint();
+
 private:
     bool isActionRunning();
     void setActiveAction(std::shared_ptr<Action>);
