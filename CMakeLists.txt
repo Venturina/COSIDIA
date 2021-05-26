@@ -41,6 +41,7 @@ add_library(cosidia STATIC
         src/mobility/SumoMobilityManager.cpp
         src/mobility/SumoUpdater.cpp
         src/networking/AccessInterface.cpp
+        src/networking/ActiveActionTracker.cpp
         src/networking/PositionProvider.cpp
         src/networking/Router.cpp
         src/networking/Runtime.cpp
