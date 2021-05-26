@@ -13,6 +13,10 @@ InitAction::InitAction(Duration duration, TimePoint start, ObjectId id, ObjectId
 void InitAction::scheduleStartHandler()
 {
     enforce(mActionId == 0, "InitAction: tried to schedule Action with Id already set");
+    #ifdef COSIDIA_SAFE
+    mStateMachine.setRunning();
+    mStateMachine.setFinished();
+    #endif
     getCoreP()->scheduleAction(mInitHandler);
 }
 

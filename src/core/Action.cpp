@@ -13,6 +13,10 @@ Action::Action(Duration duration, TimePoint start, ObjectId obj, ObjectId genera
 {
     enforce(mAffectedObject.valid(), "Action: tried to add invalid object id to action");
     enforce(start >= TimePoint { Duration::zero() }, "Action: negative start time");
+
+    #ifdef COSIDIA_SAFE
+    mStateMachine.setAction(this);
+    #endif
 }
 
 void Action::setActionData(std::shared_ptr<const ActionData> data)

@@ -9,6 +9,7 @@
 #include "core/SteadyClock.hpp"
 #include "objects/ObjectContext.hpp"
 #include "objects/ObjectId.hpp"
+#include "core/ActionStateMachine.hpp"
 #include "core/Symbol.hpp"
 
 
@@ -154,6 +155,10 @@ protected:
      * ActionId's are deterministic. Each action gets the same ID in every simulation run
      */
     int mActionId = 0;
+
+    #ifdef COSIDIA_SAFE
+    ActionStateMachine mStateMachine;
+    #endif
 
 private:
 

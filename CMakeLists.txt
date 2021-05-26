@@ -29,6 +29,7 @@ add_library(cosidia STATIC
         src/core/Action.cpp
         src/core/ActionHandler.cpp
         src/core/ActionList.cpp
+        src/core/ActionStateMachine.cpp
         src/core/Config.cpp
         src/core/Core.cpp
         src/core/DebugClock.cpp

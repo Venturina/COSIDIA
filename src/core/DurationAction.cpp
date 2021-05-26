@@ -13,12 +13,18 @@ DurationAction::DurationAction(Duration duration, TimePoint start, ObjectId id, 
 void DurationAction::scheduleStartHandler()
 {
     enforce(mActionId == 0, "DurationAction: tried to schedule Action with Id already set");
+    #ifdef COSIDIA_SAFE
+    mStateMachine.setRunning();
+    #endif
     getCoreP()->scheduleAction(mStartHandler);
 }
 
 void DurationAction::scheduleEndHandler()
 {
     enforce(mActionId != 0, "DurationAction: tried to schedule endHandler without beginHandler scheduled");
+    #ifndef COSIDIA_SAFE
+    mStateMachine.setFinished();
+    #endif
     getCoreP()->scheduleAction(mEndHandler);
 }
 
