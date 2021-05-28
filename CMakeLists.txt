@@ -56,6 +56,7 @@ add_library(cosidia STATIC
         src/objects/ObjectList.cpp
         src/objects/ObjectRemover.cpp
         src/objects/SimulationManager.cpp
+        src/objects/SimulationStarter.cpp
         src/objects/TemporaryObject.cpp
         src/objects/VehicleObject.cpp
         src/output/TimingScope.cpp

@@ -2,6 +2,7 @@
 #define SIMULATION_MANAGER_HPP
 
 #include "BaseObject.hpp"
+#include "objects/SimulationStarter.hpp"
 
 namespace cosidia
 {
@@ -18,6 +19,8 @@ public:
 
 private:
     void startAndScheduleObject(std::shared_ptr<BaseObject>);
+
+    SimulationStarter mStarter;
 };
 
 
